@@ -1,0 +1,168 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 基础应用主题 -->
+    <style name="Theme.PDA" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- 主要颜色 -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/primary_light</item>
+        <item name="colorPrimaryVariant">@color/primary_variant</item>
+        
+        <!-- 次要颜色 -->
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary_dark</item>
+        <item name="colorOnSecondary">@color/surface</item>
+        
+        <!-- 背景颜色 -->
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+        
+        <!-- 状态栏 -->
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:windowLightStatusBar">true</item>
+        
+        <!-- 导航栏 -->
+        <item name="android:navigationBarColor">@color/surface</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        
+        <!-- 文字颜色 -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorTertiary">@color/text_tertiary</item>
+        <item name="android:textColorPrimaryInverse">@color/surface</item>
+        <item name="android:textColorSecondaryInverse">@color/surface_variant</item>
+        <item name="android:textColorTertiaryInverse">@color/text_disabled</item>
+        
+        <!-- 控件颜色 -->
+        <item name="colorControlNormal">@color/text_tertiary</item>
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="colorControlHighlight">@color/primary_light</item>
+        <item name="colorButtonNormal">@color/button_primary</item>
+        <item name="colorSwitchThumbNormal">@color/text_tertiary</item>
+        
+        <!-- 涟漪效果 -->
+        <item name="android:colorControlHighlight">@color/primary_light</item>
+        
+        <!-- 对话框主题 -->
+        <item name="alertDialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog.Alert</item>
+        
+        <!-- 底部表单主题 -->
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.MaterialComponents.BottomSheetDialog</item>
+        
+        <!-- 工具栏主题 -->
+        <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
+        
+        <!-- 按钮主题 -->
+        <item name="materialButtonStyle">@style/Widget.App.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.App.Button.Secondary</item>
+        
+        <!-- 文本输入框主题 -->
+        <item name="textInputStyle">@style/Widget.App.EditText</item>
+        
+        <!-- 卡片主题 -->
+        <item name="materialCardViewStyle">@style/Widget.App.CardView</item>
+        
+        <!-- 进度条主题 -->
+        <item name="progressBarStyle">@style/Widget.App.ProgressBar</item>
+        
+        <!-- 开关主题 -->
+        <item name="switchStyle">@style/Widget.App.Switch</item>
+        
+        <!-- 复选框主题 -->
+        <item name="checkboxStyle">@style/Widget.App.CheckBox</item>
+        
+        <!-- 单选按钮主题 -->
+        <item name="radioButtonStyle">@style/Widget.App.RadioButton</item>
+        
+        <!-- 浮动操作按钮主题 -->
+        <item name="floatingActionButtonStyle">@style/Widget.App.FloatingActionButton</item>
+        
+        <!-- 底部导航栏主题 -->
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+        
+        <!-- 徽章主题 -->
+        <item name="badgeStyle">@style/Widget.App.Badge</item>
+        
+        <!-- 标签页主题 -->
+        <item name="tabStyle">@style/Widget.MaterialComponents.TabLayout.Colored</item>
+        <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Button</item>
+        <item name="tabSelectedTextColor">@color/primary</item>
+        
+        <!-- 分割线 -->
+        <item name="dividerColor">@color/divider</item>
+        
+        <!-- 列表项 -->
+        <item name="listPreferredItemHeight">56dp</item>
+        <item name="listPreferredItemHeightSmall">48dp</item>
+        <item name="listPreferredItemHeightLarge">64dp</item>
+        
+        <!-- 字体 -->
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+        
+        <!-- 自定义属性 -->
+        <!-- <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">4dp</item>
+        <item name="buttonCornerRadius">8dp</item> -->
+        
+        <!-- 禁用覆盖 -->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">false</item>
+        <item name="android:windowAllowReturnTransitionOverlap">false</item>
+        
+        <!-- Customize your theme here. -->
+    </style>
+    
+    <!-- 启动画面主题 -->
+    <style name="Theme.PDA.Splash" parent="Theme.PDA">
+        <item name="android:windowBackground">@drawable/shape_gradient_background</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:navigationBarColor">@color/primary_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+    
+    <!-- 全屏主题 -->
+    <style name="Theme.PDA.Fullscreen" parent="Theme.PDA">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+    
+    <!-- 对话框主题 -->
+    <style name="Theme.PDA.Dialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:windowBackground">@color/surface</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Button.Primary</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.Button.Secondary</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.App.Button.Secondary</item>
+    </style>
+    
+    <!-- 底部表单主题 -->
+    <style name="Theme.PDA.BottomSheet" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="android:windowBackground">@color/surface</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="bottomSheetStyle">@style/Widget.MaterialComponents.BottomSheet.Modal</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+    </style>
+    
+    <!-- 透明主题 -->
+    <style name="Theme.PDA.Transparent" parent="Theme.PDA">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+</resources>

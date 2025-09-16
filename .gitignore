@@ -1,0 +1,33 @@
+# Android/Gradle
+*.iml
+.gradle/
+local.properties
+**/build/
+**/captures/
+.externalNativeBuild/
+.cxx/
+
+# Android Studio / IntelliJ
+.idea/
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+
+# Build artifacts
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+
+# Signing files (do not commit secrets)
+*.keystore
+*.jks
+key.properties
+
+# Project-local data
+/checkout_records.db
+*.Zone.Identifier

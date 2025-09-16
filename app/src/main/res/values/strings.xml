@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 应用名称 -->
+    <string name="app_name">智慧耗材屋</string>
+    
+    <!-- 通用文本 -->
+    <string name="common_ok">确定</string>
+    <string name="common_cancel">取消</string>
+    <string name="common_confirm">确认</string>
+    <string name="common_back">返回</string>
+    <string name="common_save">保存</string>
+    <string name="common_delete">删除</string>
+    <string name="common_edit">编辑</string>
+    <string name="common_search">搜索</string>
+    <string name="common_refresh">刷新</string>
+    <string name="common_loading">加载中...</string>
+    <string name="common_error">错误</string>
+    <string name="common_success">成功</string>
+    <string name="common_failed">失败</string>
+    <string name="common_retry">重试</string>
+    <string name="common_settings">设置</string>
+    <string name="common_version">版本</string>
+    
+    <!-- 主界面 -->
+    <string name="main_title">智慧耗材屋</string>
+    <string name="main_subtitle">智能仓储管理平台</string>
+    <string name="main_user_not_logged_in">未登录</string>
+    <string name="main_user_login_prompt">请先登录</string>
+    <string name="main_login">登录</string>
+    <string name="main_logout">退出</string>
+    <string name="main_function_menu">功能菜单</string>
+    <string name="main_consumable_checkout">取用</string>
+    <string name="main_consumable_checkout_desc">扫码领用</string>
+    <string name="main_inventory">库存盘点</string>
+    <string name="main_inventory_desc">RFID盘点</string>
+    <string name="main_nfc">NFC功能</string>
+    <string name="main_nfc_desc">刷卡识别</string>
+    <string name="main_settings">设置</string>
+    <string name="main_settings_desc">系统配置</string>
+    <string name="main_device_info">设备信息</string>
+    <string name="main_device_info_loading">设备信息加载中...</string>
+    <string name="main_basic_data">基础资料</string>
+    <string name="main_basic_data_desc">数据维护</string>
+    <!-- 入库验收入口 -->
+    <string name="main_inbound_acceptance">入库验收</string>
+    <string name="main_inbound_acceptance_desc">上架前批量验收RFID</string>
+    
+    <!-- 登录界面 -->
+    <string name="login_title">用户登录</string>
+    <string name="login_password_login">账号密码登录</string>
+    <string name="login_nfc_login">NFC刷卡登录</string>
+    <string name="login_username">用户名</string>
+    <string name="login_username_hint">请输入用户名</string>
+    <string name="login_password">密码</string>
+    <string name="login_password_hint">请输入密码</string>
+    <string name="login_remember_password">记住密码</string>
+    <string name="login_login">登录</string>
+    <string name="login_quick_login">快速登录</string>
+    <string name="login_admin">管理员</string>
+    <string name="login_operator">操作员</string>
+    <string name="login_nfc_wait">请将NFC卡片靠近设备</string>
+    <string name="login_nfc_desc">支持员工卡、门禁卡等NFC卡片</string>
+    <string name="login_nfc_waiting">等待NFC卡片...</string>
+    <string name="login_nfc_manual_input">手动输入卡号</string>
+    <string name="login_contact_admin">如有问题，请联系系统管理员</string>
+    
+    <!-- 用户角色 -->
+    <string name="role_admin">管理员</string>
+    <string name="role_operator">操作员</string>
+    <string name="role_user">用户</string>
+    <string name="role_worker">工人</string>
+    
+    <!-- 耗材管理 -->
+    <string name="consumable_title">取用</string>
+    <string name="consumable_scan">扫描条码</string>
+    <string name="consumable_scan_hint">请扫描耗材条码</string>
+    <string name="consumable_manual_input">手动输入</string>
+    <string name="consumable_name">耗材名称</string>
+    <string name="consumable_code">耗材编码</string>
+    <string name="consumable_specification">规格型号</string>
+    <string name="consumable_unit">单位</string>
+    <string name="consumable_stock">库存</string>
+    <string name="consumable_quantity">数量</string>
+    <string name="consumable_recipient">领用人</string>
+    <string name="consumable_department">部门</string>
+    <string name="consumable_purpose">用途</string>
+    <string name="consumable_operator">操作员</string>
+    <string name="consumable_checkout">领用</string>
+    <string name="consumable_checkout_history">取用记录</string>
+    <string name="consumable_checkout_time">领用时间</string>
+    <string name="consumable_not_found">未找到耗材</string>
+    <string name="consumable_insufficient_stock">库存不足</string>
+    <string name="consumable_checkout_success">取用成功</string>
+    <string name="consumable_checkout_failed">取用失败</string>
+    
+    <!-- 耗材领用新界面 -->
+    <string name="consumable_checkout_title">取用</string>
+    <string name="consumable_select_room">选择术间</string>
+    <string name="consumable_room_required">请选择术间</string>
+    <string name="consumable_total_count">总数量</string>
+    <string name="consumable_barcode_input">请扫码</string>
+    <string name="consumable_product_code">商品编号</string>
+    <string name="consumable_barcode_hint">请扫描或输入条码</string>
+    <string name="consumable_clear_all">清屏</string>
+    <string name="consumable_confirm">确认取用</string>
+    <string name="consumable_submit">提交</string>
+    <string name="consumable_logout">登出</string>
+    <string name="consumable_remove">移除</string>
+    <string name="consumable_new_checkout">新建取用</string>
+    <string name="consumable_submitting">提交中…</string>
+    <string name="consumable_history">取用记录</string>
+    <string name="consumable_serial_no">序号</string>
+    <string name="consumable_barcode">条码号</string>
+    <string name="consumable_common_name">通用名称</string>
+    <string name="consumable_manufacturer">生产企业</string>
+    
+    <!-- 库存盘点 -->
+    <string name="inventory_rfid_scan">RFID扫描</string>
+    <string name="inventory_rfid_start">开始扫描</string>
+    <string name="inventory_rfid_stop">停止扫描</string>
+    <string name="inventory_rfid_clear">清空记录</string>
+    <string name="inventory_rfid_export">导出数据</string>
+    <string name="inventory_scanned_count">已扫描：%d</string>
+    <string name="inventory_unique_count">唯一标签：%d</string>
+    <string name="inventory_scanning">扫描中...</string>
+    <string name="inventory_stopped">已停止</string>
+    <string name="inventory_no_data">暂无数据</string>
+    <string name="inventory_export_success">导出成功</string>
+    <string name="inventory_export_failed">导出失败</string>
+    
+    <!-- NFC功能 -->
+    <string name="nfc_title">NFC功能</string>
+    <string name="nfc_scan">NFC扫描</string>
+    <string name="nfc_start">开始扫描</string>
+    <string name="nfc_stop">停止扫描</string>
+    <string name="nfc_clear">清空记录</string>
+    <string name="nfc_tag_id">标签ID</string>
+    <string name="nfc_tag_type">标签类型</string>
+    <string name="nfc_tag_data">标签数据</string>
+    <string name="nfc_read_success">读取成功</string>
+    <string name="nfc_read_failed">读取失败</string>
+    <string name="nfc_not_supported">设备不支持NFC</string>
+    <string name="nfc_waiting">等待NFC标签...</string>
+    <string name="nfc_scanning">扫描中...</string>
+    
+    <!-- 扫码功能 -->
+    <string name="scanner_title">扫码功能</string>
+    <string name="scanner_start">开始扫码</string>
+    <string name="scanner_stop">停止扫码</string>
+    <string name="scanner_result">扫码结果</string>
+    <string name="scanner_copy">复制</string>
+    <string name="scanner_share">分享</string>
+    <string name="scanner_clear">清空</string>
+    <string name="scanner_not_supported">设备不支持扫码</string>
+    <string name="scanner_waiting">等待扫码...</string>
+    <string name="scanner_scanning">扫描中...</string>
+    
+    <!-- 错误信息 -->
+    <string name="error_network_error">网络错误</string>
+    <string name="error_permission_denied">权限被拒绝</string>
+    <string name="error_device_not_supported">设备不支持此功能</string>
+    <string name="error_login_required">需要登录</string>
+    <string name="error_invalid_credentials">用户名或密码错误</string>
+    <string name="error_user_not_found">用户不存在</string>
+    <string name="error_password_incorrect">密码错误</string>
+    <string name="error_user_disabled">用户已被禁用</string>
+    <string name="error_camera_permission">需要相机权限</string>
+    <string name="error_nfc_permission">需要NFC权限</string>
+    <string name="error_storage_permission">需要存储权限</string>
+    <string name="error_unknown_error">未知错误</string>
+    
+    <!-- 提示信息 -->
+    <string name="tip_login_success">登录成功</string>
+    <string name="tip_logout_success">退出成功</string>
+    <string name="tip_save_success">保存成功</string>
+    <string name="tip_delete_success">删除成功</string>
+    <string name="tip_delete_confirm">确定要删除吗？</string>
+    <string name="tip_network_retry">网络错误，是否重试？</string>
+    <string name="tip_permission_request">请授予权限以使用此功能</string>
+    <string name="tip_settings_not_available">设置功能开发中</string>
+    
+    <!-- 入库验收 -->
+    <string name="inbound_acceptance_title">入库验收</string>
+    <string name="inbound_barcode_hint">请扫描RFID条码（18位）</string>
+    <string name="inbound_accept">验收</string>
+    <string name="inbound_clear_delta">清空本次增量</string>
+    <string name="inbound_no_orders">暂时没有待入库验收的订单</string>
+    <string name="inbound_start_rfid">开始RFID扫描</string>
+    <string name="inbound_stop_rfid">停止RFID扫描</string>
+    
+    <!-- 菜单项 -->
+    <string name="menu_settings">设置</string>
+    <string name="menu_api_settings">API设置</string>
+    
+    <!-- 版本信息 -->
+    <string name="version_info">版本 1.0.0</string>
+    <string name="build_info">Build 2024</string>
+    <string name="copyright_info">© 2024 智慧耗材屋</string>
+    
+    <!-- 库存盘点 -->
+    <string name="inventory_title">库存盘点</string>
+    <string name="inventory_task_list">盘点任务</string>
+    <string name="inventory_recent_records">最近7次记录</string>
+    <string name="inventory_refresh_tasks">刷新任务</string>
+    <string name="inventory_task_info">盘点任务：%s</string>
+    <string name="inventory_status">状态：%s</string>
+    <string name="inventory_total_items">总数：%d</string>
+    <string name="inventory_progress" formatted="false">进度：%d/%d (%.1f%%)</string>
+    <string name="inventory_tab_all">全部\n%d</string>
+    <string name="inventory_tab_matched">盘毕\n%d</string>
+    <string name="inventory_tab_unmatched">未盘\n%d</string>
+    <string name="inventory_tab_surplus">盈余\n%d</string>
+    <string name="inventory_clear_screen">清屏</string>
+    <string name="inventory_save_progress">暂存</string>
+    <string name="inventory_submit">提交</string>
+    <string name="inventory_rfid_scanning">📡 RFID正在扫描...</string>
+    <string name="inventory_rfid_stats" formatted="false">已扫描：%d | 匹配：%d | 盈余：%d</string>
+    <string name="inventory_location_summary">地点汇总</string>
+    <string name="inventory_location_detail">%s - 明细</string>
+    <string name="inventory_completion_rate">完成度：%.1f%%</string>
+    <string name="inventory_status_completed">已完成</string>
+    <string name="inventory_status_in_progress">进行中</string>
+    <string name="inventory_status_not_started">未开始</string>
+    <string name="inventory_status_no_data">无数据</string>
+    <string name="inventory_surplus_tag_found">发现盈余标签</string>
+    <string name="inventory_epc_code">EPC编码</string>
+    <string name="inventory_scan_time">扫描时间</string>
+    <string name="inventory_item_info">耗材信息</string>
+    <string name="inventory_select_location">请选择地点</string>
+    <string name="inventory_ignore">忽略</string>
+    <string name="inventory_export">导出</string>
+    <string name="inventory_task_status_pending">未执行</string>
+    <string name="inventory_task_status_saved">暂存</string>
+    <string name="inventory_task_status_completed">已完成</string>
+    
+    <!-- 提示信息 -->
+    <string name="inventory_no_tasks">暂无盘点任务</string>
+    <string name="inventory_load_tasks_failed">加载任务失败</string>
+    <string name="inventory_rfid_connect_failed">RFID设备连接失败</string>
+    <string name="inventory_rfid_init_failed">RFID初始化失败</string>
+    <string name="inventory_rfid_start_failed">RFID启动失败</string>
+    <string name="inventory_task_selected">已选择盘点任务：%s</string>
+    <string name="inventory_scan_cleared">已清空扫描数据</string>
+    <string name="inventory_progress_saved">盘点进度已暂存</string>
+    <string name="inventory_submit_confirm">发现%d个盈余标签，是否继续提交？</string>
+    <string name="inventory_submit_success">盘点结果提交成功</string>
+    <string name="inventory_submit_failed">提交失败</string>
+    <string name="inventory_tasks_refreshed">任务列表已刷新</string>
+    <string name="inventory_refresh_failed">刷新失败</string>
+    <string name="inventory_exit_confirm">退出后将停止盘点，是否继续？</string>
+    
+    <!-- 地点选项 -->
+    <string name="location_supply_room">耗材屋</string>
+
+    <!-- 超时未归还 -->
+    <string name="overtime_unreturn_title">超时未归还</string>
+    <string name="overtime_unreturn_empty">暂无数据（占位页）</string>
+    <string name="overtime_unreturn_desc">此页面用于展示当前用户超时未归还耗材列表</string>
+    <string name="home_unreturn_label">超时未归还</string>
+    <string name="home_unreturn_unit">个</string>
+    <string name="home_unreturn_failed">获取失败</string>
+
+    <!-- 未归还查询卡片 -->
+    <string name="unreturn_query_title">未归还查询</string>
+    <string name="unreturn_query_desc_dev">开发中</string>
+
+    <!-- Banner 文案 -->
+    <string name="overtime_unreturn_banner" formatted="false">您有%d个超时未归还耗材，请尽快处理</string>
+    <string name="overtime_unreturn_fetch_failed">未归还提醒查询失败，请检查网络和接口配置</string>
+    <string name="feature_under_dev">功能开发中</string>
+    <string name="location_operating_room_1">术间1</string>
+    <string name="location_operating_room_2">术间2</string>
+    <string name="location_operating_room_3">术间3</string>
+    <string name="location_operating_room_4">术间4</string>
+    <string name="location_operating_room_5">术间5</string>
+    <string name="location_warehouse">仓库</string>
+    <string name="location_other">其他</string>
+    
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 自定义属性 -->
+    <attr name="textViewStyle" format="reference" />
+    <attr name="colorRipple" format="color" />
+    <attr name="buttonCornerRadius" format="dimension" />
+    <attr name="boxCornerRadius" format="dimension" />
+    <attr name="cardCornerRadius" format="dimension" />
+    <attr name="cardElevation" format="dimension" />
+</resources>

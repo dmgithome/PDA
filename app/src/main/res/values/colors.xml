@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主色调 - 专业商务蓝 -->
+    <color name="primary">#1E40AF</color>
+    <color name="primary_dark">#1E3A8A</color>
+    <color name="primary_light">#3B82F6</color>
+    <color name="primary_variant">#2563EB</color>
+    
+    <!-- 辅助色 -->
+    <color name="secondary">#10B981</color>
+    <color name="secondary_dark">#059669</color>
+    <color name="secondary_light">#34D399</color>
+    
+    <!-- 功能色 -->
+    <color name="success">#10B981</color>
+    <color name="warning">#F59E0B</color>
+    <color name="error">#EF4444</color>
+    <color name="info">#3B82F6</color>
+    <!-- 提示横幅浅色背景 -->
+    <color name="error_bg">#FEE2E2</color>
+    <color name="warning_bg">#FEF3C7</color>
+    <color name="info_bg">#DBEAFE</color>
+    
+    <!-- 中性色 -->
+    <color name="background">#F8FAFC</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F1F5F9</color>
+    <color name="on_surface">#1E293B</color>
+    <color name="on_surface_variant">#64748B</color>
+    
+    <!-- 文本色 -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#475569</color>
+    <color name="text_tertiary">#64748B</color>
+    <color name="text_disabled">#CBD5E1</color>
+    
+    <!-- 边框和分割线 -->
+    <color name="border">#E2E8F0</color>
+    <color name="divider">#CBD5E1</color>
+    
+    <!-- 状态色 -->
+    <color name="online">#10B981</color>
+    <color name="offline">#EF4444</color>
+    <color name="pending">#F59E0B</color>
+    
+    <!-- 卡片背景 -->
+    <color name="card_background">#FFFFFF</color>
+    <color name="card_background_selected">#F0F9FF</color>
+    
+    <!-- 按钮状态 -->
+    <color name="button_primary">#1E40AF</color>
+    <color name="button_primary_pressed">#1E3A8A</color>
+    <color name="button_secondary">#F1F5F9</color>
+    <color name="button_secondary_pressed">#E2E8F0</color>
+    
+    <!-- 输入框 -->
+    <color name="input_background">#F8FAFC</color>
+    <color name="input_border">#E2E8F0</color>
+    <color name="input_border_focused">#3B82F6</color>
+    <color name="input_error">#EF4444</color>
+    
+    <!-- 阴影 -->
+    <color name="shadow_light">#00000010</color>
+    <color name="shadow_medium">#00000020</color>
+    <color name="shadow_dark">#00000030</color>
+    
+    <!-- 渐变色 -->
+    <color name="gradient_start">#1E40AF</color>
+    <color name="gradient_end">#3B82F6</color>
+    <color name="gradient_success_start">#10B981</color>
+    <color name="gradient_success_end">#34D399</color>
+    <color name="gradient_warning_start">#F59E0B</color>
+    <color name="gradient_warning_end">#FCD34D</color>
+    
+    <!-- 标准Android颜色 -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- 额外的边框颜色 -->
+    <color name="outline">#CBD5E1</color>
+    <color name="outline_light">#E2E8F0</color>
+    
+</resources>

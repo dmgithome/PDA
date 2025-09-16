@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".LoginActivity">
+
+    <!-- 顶部应用栏 -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        android:elevation="4dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/surface"
+            app:title="用户登录"
+            app:titleTextColor="@color/text_primary"
+            app:navigationIcon="?attr/homeAsUpIndicator"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- 主要内容区域 -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center">
+
+            <!-- 应用Logo区域 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginBottom="32dp">
+
+                <!-- Logo背景 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:cardCornerRadius="40dp"
+                    app:cardElevation="8dp"
+                    app:cardBackgroundColor="@color/primary"
+                    android:layout_marginBottom="16dp">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_inventory"
+                        app:tint="@color/surface"
+                        android:layout_gravity="center"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 应用标题 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="智能耗材屋"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="华燕康源"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="4dp"/>
+
+            </LinearLayout>
+
+            <!-- 登录卡片 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="@color/surface"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/border">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <!-- 登录方式选择 -->
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/login_type_tabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="24dp"
+                        app:tabMode="fixed"
+                        app:tabGravity="fill"
+                        app:tabIndicatorColor="@color/primary"
+                        app:tabSelectedTextColor="@color/primary"
+                        app:tabTextColor="@color/text_tertiary"
+                        app:tabIndicatorHeight="4dp"
+                        app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium"
+                        app:tabRippleColor="@color/primary_light">
+
+                        <com.google.android.material.tabs.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="账号密码"/>
+
+                        <com.google.android.material.tabs.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="NFC刷卡"/>
+
+                    </com.google.android.material.tabs.TabLayout>
+
+                    <!-- 账号密码登录布局 -->
+                    <LinearLayout
+                        android:id="@+id/password_login_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <!-- 用户名输入框 -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/username_input_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:hint="用户名"
+                            app:startIconDrawable="@drawable/ic_user"
+                            app:startIconTint="@color/primary"
+                            app:helperText="请输入您的用户名"
+                            app:helperTextTextColor="@color/text_tertiary"
+                            style="@style/Widget.App.EditText">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/username_edit"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="text"
+                                android:maxLength="20"
+                                android:singleLine="true"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- 密码输入框 -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/password_input_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:hint="密码"
+                            app:passwordToggleEnabled="true"
+                            app:passwordToggleTint="@color/primary"
+                            app:startIconDrawable="@drawable/ic_info"
+                            app:startIconTint="@color/primary"
+                            app:helperText="请输入您的密码"
+                            app:helperTextTextColor="@color/text_tertiary"
+                            style="@style/Widget.App.EditText">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/password_edit"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPassword"
+                                android:maxLength="20"
+                                android:singleLine="true"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+  
+                        <!-- 登录按钮 -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/login_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:text="登录"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:cornerRadius="8dp"
+                            app:backgroundTint="@color/primary"
+                            android:textColor="@color/surface"
+                            android:layout_marginBottom="24dp"/>
+
+  
+                    </LinearLayout>
+
+                    <!-- NFC登录布局 -->
+                    <LinearLayout
+                        android:id="@+id/nfc_login_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <!-- NFC图标和提示 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_marginBottom="32dp">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                app:cardCornerRadius="40dp"
+                                app:cardElevation="4dp"
+                                app:cardBackgroundColor="@color/surface_variant"
+                                android:layout_marginBottom="16dp">
+
+                                <ImageView
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:src="@drawable/ic_star"
+                                    app:tint="@color/primary"
+                                    android:layout_gravity="center"/>
+
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="请将NFC卡片靠近设备"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/text_primary"/>
+
+                            
+                        </LinearLayout>
+
+                        <!-- NFC状态显示 -->
+                        <TextView
+                            android:id="@+id/nfc_status_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="等待NFC卡片..."
+                            android:textSize="14sp"
+                            android:textColor="@color/text_tertiary"
+                            android:gravity="center"
+                            android:layout_marginBottom="16dp"/>
+
+                        <!-- NFC读取进度条 -->
+                        <ProgressBar
+                            android:id="@+id/nfc_progress_bar"
+                            style="?attr/progressBarStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="24dp"
+                            android:indeterminateTint="@color/primary"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 底部提示 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="如有问题，请联系系统管理员"
+                android:textSize="12sp"
+                android:textColor="@color/text_tertiary"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,62 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+    namespace 'com.pda.hcw'
+    compileSdk 34
+    
+    // 配置ADB可执行文件路径
+    adbOptions {
+        timeOutInMs 10 * 60 * 1000  // 10分钟超时
+        installOptions '-r', '-t'
+    }
+    
+    defaultConfig {
+        applicationId "com.pda.hcw"
+        minSdk 28
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    
+    // Build Tools版本由Android Gradle Plugin自动管理
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    
+    // 扫码功能（未使用依赖已移除）
+
+    // RFID/UHF功能 - 本地JAR库
+    implementation files('libs/UHF67_v3.6.jar')
+    implementation files('libs/DeviceAPIver20150204.jar')
+    implementation files('libs/ModuleAPI_J.jar')
+    implementation files('libs/App_Demo_API.jar')
+    implementation files('libs/reader(1).jar')
+    implementation files('libs/logutil-1.5.1.1.jar')
+    
+    // 网络通信依赖（精简，仅保留OkHttp）
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    // retrofit/gson/rxjava 未使用，移除以减小体积
+
+    // 测试依赖
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}

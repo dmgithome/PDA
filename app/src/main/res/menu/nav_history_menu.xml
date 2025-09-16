@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!-- 移除时间过滤菜单项，直接显示今日记录 -->
+        
+</menu>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 工具栏样式 -->
+    <style name="Widget.App.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">@color/primary</item>
+        <item name="titleTextColor">@color/surface</item>
+        <item name="subtitleTextColor">@color/surface_variant</item>
+    </style>
+
+    <!-- 按钮样式 -->
+    <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">@color/button_primary</item>
+        <item name="android:textColor">@color/surface</item>
+    </style>
+
+    <style name="Widget.App.Button.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">@color/button_primary</item>
+        <item name="android:textColor">@color/surface</item>
+    </style>
+
+    <style name="Widget.App.Button.Secondary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:background">@color/button_secondary</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="strokeColor">@color/border</item>
+    </style>
+
+    <!-- 文本输入框样式 -->
+    <style name="Widget.App.EditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:background">@color/input_background</item>
+        <item name="boxStrokeColor">@color/input_border</item>
+        <item name="hintTextColor">@color/text_tertiary</item>
+    </style>
+
+    <!-- 卡片样式 -->
+    <style name="Widget.App.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">4dp</item>
+    </style>
+
+    <!-- 进度条样式 -->
+    <style name="Widget.App.ProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressTint">@color/primary</item>
+        <item name="android:progressBackgroundTint">@color/surface_variant</item>
+    </style>
+
+    <!-- 开关样式 -->
+    <style name="Widget.App.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="thumbTint">@color/primary</item>
+        <item name="trackTint">@color/surface_variant</item>
+    </style>
+
+    <!-- 复选框样式 -->
+    <style name="Widget.App.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="buttonTint">@color/primary</item>
+    </style>
+
+    <!-- 单选按钮样式 -->
+    <style name="Widget.App.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
+        <item name="buttonTint">@color/primary</item>
+    </style>
+
+    <!-- 浮动操作按钮样式 -->
+    <style name="Widget.App.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="tint">@color/surface</item>
+    </style>
+
+    <!-- 底部导航栏样式 -->
+    <style name="Widget.App.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/surface</item>
+        <item name="itemIconTint">@color/primary</item>
+        <item name="itemTextColor">@color/primary</item>
+    </style>
+
+    <!-- 徽章样式 -->
+    <style name="Widget.App.Badge" parent="Widget.MaterialComponents.Badge">
+        <item name="backgroundColor">@color/error</item>
+        <item name="badgeTextColor">@color/surface</item>
+    </style>
+</resources>

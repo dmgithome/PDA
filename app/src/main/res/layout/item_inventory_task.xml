@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="@color/surface"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/border">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- 任务基本信息行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+
+            <!-- 任务名称 -->
+            <TextView
+                android:id="@+id/task_name_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TASK-20250812-001"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <!-- 状态标签 -->
+            <TextView
+                android:id="@+id/task_status_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="未执行"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:background="@drawable/shape_rounded_corner"
+                android:padding="4dp"
+                android:paddingHorizontal="8dp"/>
+
+        </LinearLayout>
+
+        <!-- 任务详情行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+
+            <!-- 操作员 -->
+            <TextView
+                android:id="@+id/operator_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="操作员：admin"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"/>
+
+            <!-- 时间 -->
+            <TextView
+                android:id="@+id/time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="08-12 14:30"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"/>
+
+        </LinearLayout>
+
+        <!-- 统计信息行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- 总数 -->
+            <TextView
+                android:id="@+id/total_items_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="总数：200"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"/>
+
+            <!-- 进度（如果已开始） -->
+            <TextView
+                android:id="@+id/progress_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="进度：100/200"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
