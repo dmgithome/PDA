@@ -105,6 +105,50 @@ public class CheckoutRecordManager {
             return false;
         }
     }
+
+    /**
+     * 生成归还记录（支持记录服务器返回的recordId）
+     * 归还不需要术间信息，operatingRoom 传空字符串保存
+     */
+    public boolean generateReturnRecord(int totalQuantity,
+                                        List<ConsumableItem> items,
+                                        String operator,
+                                        Long serverRecordId) {
+        try {
+            // 归还单据编号使用 GH 前缀
+            java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyMMddHHmmss", java.util.Locale.getDefault());
+            String recordId = "GH" + df.format(new java.util.Date()) + String.format("%04d", (int)(Math.random() * 10000));
+
+            CheckoutRecord record = new CheckoutRecord(
+                recordId,
+                serverRecordId,
+                System.currentTimeMillis(),
+                "", // 归还无术间
+                totalQuantity,
+                operator,
+                items
+            );
+            try {
+                UserInfo u = SessionManager.getInstance(context).getCurrentUser();
+                if (u != null) record.operatorUserId = u.getUserId();
+            } catch (Exception ignore) {}
+
+            long result = database.insertReturnRecord(record);
+            if (result != -1) {
+                Log.d(TAG, "Generated return record with serverRecordId: " + serverRecordId);
+                return true;
+            } else {
+                Log.e(TAG, "Failed to generate return record. totalQuantity=" + totalQuantity
+                        + ", operator=" + operator
+                        + ", itemsSize=" + (items != null ? items.size() : -1)
+                        + ", serverRecordId=" + serverRecordId);
+                return false;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error generating return record", e);
+            return false;
+        }
+    }
     
     /**
      * 根据时间过滤获取记录
@@ -114,6 +158,18 @@ public class CheckoutRecordManager {
             return database.getRecordsByTimeFilter(filter, operatorUserId);
         } catch (Exception e) {
             Log.e(TAG, "Error getting records by time filter", e);
+            return null;
+        }
+    }
+
+    /**
+     * 根据时间与类型过滤获取记录
+     */
+    public List<CheckoutRecord> getRecordsByTimeFilter(TimeFilter filter, String operatorUserId, String recordType) {
+        try {
+            return database.getRecordsByTimeFilterAndType(filter, operatorUserId, recordType);
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting records by time filter and type", e);
             return null;
         }
     }

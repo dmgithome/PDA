@@ -625,6 +625,10 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                     }
                 }
                 
+                // 明确标记记录类型为取用（兼容旧数据默认值）
+                try { ensureColumnExists(db, TABLE_CHECKOUT_RECORDS, COLUMN_RECORD_TYPE, "TEXT"); } catch (Exception ignore) {}
+                values.put(COLUMN_RECORD_TYPE, "checkout");
+
                 long result = db.insert(TABLE_CHECKOUT_RECORDS, null, values);
                 Log.d(TAG, "Inserted checkout record: " + record.recordId + ", result: " + result);
                 if (result == -1) {
@@ -655,6 +659,56 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
             } finally {
                 // 不在这里关闭数据库连接，保持连接池开放
                 Log.d(TAG, "Database connection kept open for pool management");
+            }
+        }
+    }
+
+    /**
+     * 插入归还记录（record_type = 'return'）
+     */
+    public long insertReturnRecord(CheckoutRecord record) {
+        synchronized (databaseLock) {
+            SQLiteDatabase db = null;
+            try {
+                db = getWritableDatabase();
+                ContentValues values = new ContentValues();
+
+                values.put(COLUMN_RECORD_ID, record.recordId);
+                values.put(COLUMN_CHECKOUT_TIME, record.checkoutTime);
+                // 归还无术间，保持非空字符串
+                values.put(COLUMN_OPERATING_ROOM, record.operatingRoom == null ? "" : record.operatingRoom);
+                values.put(COLUMN_TOTAL_QUANTITY, record.totalQuantity);
+                values.put(COLUMN_OPERATOR, record.operator);
+                try { ensureColumnExists(db, TABLE_CHECKOUT_RECORDS, COLUMN_OPERATOR_USER_ID, "TEXT"); } catch (Exception ignore) {}
+                values.put(COLUMN_OPERATOR_USER_ID, record.operatorUserId);
+                values.put(COLUMN_ITEMS_JSON, itemsToJson(record.items));
+                if (record.serverRecordId != null) {
+                    try { values.put(COLUMN_SERVER_RECORD_ID, record.serverRecordId); } catch (Exception ignore) {}
+                }
+                // 标记记录类型
+                try { ensureColumnExists(db, TABLE_CHECKOUT_RECORDS, COLUMN_RECORD_TYPE, "TEXT"); } catch (Exception ignore) {}
+                values.put(COLUMN_RECORD_TYPE, "return");
+
+                long result = db.insert(TABLE_CHECKOUT_RECORDS, null, values);
+                Log.d(TAG, "Inserted return record: " + record.recordId + ", result: " + result);
+                if (result == -1) {
+                    // 自动修复一次缺列后重试
+                    try {
+                        ensureColumnExists(db, TABLE_CHECKOUT_RECORDS, COLUMN_SERVER_RECORD_ID, "INTEGER");
+                        ensureColumnExists(db, TABLE_CHECKOUT_RECORDS, COLUMN_RECORD_TYPE, "TEXT");
+                        result = db.insert(TABLE_CHECKOUT_RECORDS, null, values);
+                        Log.d(TAG, "Retry insert return record, result: " + result);
+                    } catch (Exception repairEx) {
+                        Log.w(TAG, "Retry insert return record failed", repairEx);
+                    }
+                }
+
+                // 清理过期记录
+                cleanupOldRecords();
+                return result;
+            } catch (Exception e) {
+                Log.e(TAG, "Error inserting return record", e);
+                return -1;
             }
         }
     }
@@ -707,6 +761,52 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                 // 不关闭数据库连接，保持连接池开放
             }
             
+            return records;
+        }
+    }
+
+    /**
+     * 根据时间与记录类型过滤获取记录（限制最近10条）
+     * @param filter 时间过滤
+     * @param operatorUserId 操作人用户ID
+     * @param recordType 记录类型："checkout" 或 "return"
+     */
+    public List<CheckoutRecord> getRecordsByTimeFilterAndType(TimeFilter filter, String operatorUserId, String recordType) {
+        synchronized (databaseLock) {
+            List<CheckoutRecord> records = new ArrayList<>();
+            SQLiteDatabase db = null;
+            Cursor cursor = null;
+
+            try {
+                db = getReadableDatabase();
+
+                long startTime = getFilterStartTime(filter);
+                long endTime = getFilterEndTime(filter);
+
+                // 确保列存在
+                try { ensureColumnExists(db, TABLE_CHECKOUT_RECORDS, COLUMN_OPERATOR_USER_ID, "TEXT"); } catch (Exception ignore) {}
+                try { ensureColumnExists(db, TABLE_CHECKOUT_RECORDS, COLUMN_RECORD_TYPE, "TEXT"); } catch (Exception ignore) {}
+
+                String selection = COLUMN_CHECKOUT_TIME + " >= ? AND " + COLUMN_CHECKOUT_TIME + " <= ? AND " + COLUMN_OPERATOR_USER_ID + " = ? AND " + COLUMN_RECORD_TYPE + " = ?";
+                String[] selectionArgs = {String.valueOf(startTime), String.valueOf(endTime), operatorUserId, recordType};
+                String orderBy = COLUMN_CHECKOUT_TIME + " DESC";
+                String limit = "10";
+
+                cursor = db.query(TABLE_CHECKOUT_RECORDS, null, selection, selectionArgs, null, null, orderBy, limit);
+
+                if (cursor != null && cursor.moveToFirst()) {
+                    do {
+                        CheckoutRecord record = cursorToCheckoutRecord(cursor);
+                        if (record != null) records.add(record);
+                    } while (cursor.moveToNext());
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error getting records by time filter and type", e);
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
             return records;
         }
     }

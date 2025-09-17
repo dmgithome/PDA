@@ -138,7 +138,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="2"
-                android:rowCount="3"
+                android:rowCount="4"
                 android:horizontalSpacing="12dp"
                 android:verticalSpacing="12dp">
 
@@ -184,6 +184,56 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/main_consumable_checkout_desc"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="4dp"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 耗材归还 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/consumable_return_card"
+                    android:layout_width="0dp"
+                    android:layout_height="140dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@color/surface"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/border">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_consumable"
+                            app:tint="@color/info"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/main_consumable_return"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"
+                            android:layout_marginTop="12dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/main_consumable_return_desc"
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary"
                             android:layout_marginTop="4dp"/>
