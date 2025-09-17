@@ -560,7 +560,15 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
             if (operationMode == OperationMode.RETURN) {
                 if (roomInputLayout != null) roomInputLayout.setVisibility(View.GONE);
                 if (roomSpinner != null) roomSpinner.setVisibility(View.GONE);
-                if (confirmButton != null) confirmButton.setText("确认归还");
+                if (confirmButton != null) {
+                    if (isViewMode) {
+                        // 查看归还记录界面：按钮应为“新建归还”
+                        confirmButton.setText(R.string.consumable_new_return);
+                    } else {
+                        // 新建归还界面：按钮为“确认归还”
+                        confirmButton.setText("确认归还");
+                    }
+                }
             } else {
                 if (roomInputLayout != null) roomInputLayout.setVisibility(View.VISIBLE);
                 if (roomSpinner != null) roomSpinner.setVisibility(View.VISIBLE);
@@ -1248,7 +1256,12 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
             if (confirmButton != null) {
                 confirmButton.setEnabled(true);
                 if (viewMode) {
-                    confirmButton.setText(R.string.consumable_new_checkout);
+                    // 查看模式：根据取用/归还模式设置“新建取用/新建归还”
+                    if (operationMode == OperationMode.RETURN) {
+                        confirmButton.setText(R.string.consumable_new_return);
+                    } else {
+                        confirmButton.setText(R.string.consumable_new_checkout);
+                    }
                     confirmButton.setOnClickListener(v -> startNewCheckout());
                 } else {
                     confirmButton.setText(R.string.consumable_confirm);
