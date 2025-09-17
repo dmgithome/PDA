@@ -33,6 +33,10 @@ import java.util.Map;
 
 public class ConsumableCheckoutNewActivity extends BaseActivity {
     private static final String TAG = "ConsumableCheckoutNew";
+    // 模式：取用/归还（默认取用）
+    private enum OperationMode { TAKE, RETURN }
+    private static final String EXTRA_OPERATION_MODE = "operation_mode"; // 值："take"/"return"
+    private OperationMode operationMode = OperationMode.TAKE;
     
     // UI组件
     private DrawerLayout drawerLayout;
@@ -77,12 +81,13 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
     
     @Override
     protected String getActivityName() {
-        return "取用";
+        return operationMode == OperationMode.RETURN ? "归还" : "取用";
     }
     
     @Override
     protected String getActivityTitle() {
-        return getString(R.string.consumable_checkout_title);
+        // 根据模式返回标题
+        return operationMode == OperationMode.RETURN ? "归还" : getString(R.string.consumable_checkout_title);
     }
     
     // 当前显示的弹窗
@@ -126,6 +131,18 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         
         try {
+            // 解析模式
+            try {
+                String mode = getIntent() != null ? getIntent().getStringExtra(EXTRA_OPERATION_MODE) : null;
+                if (mode != null && mode.equalsIgnoreCase("return")) {
+                    operationMode = OperationMode.RETURN;
+                } else {
+                    operationMode = OperationMode.TAKE;
+                }
+                Log.d(TAG, "Operation mode: " + operationMode);
+                // 解析模式后，立刻刷新标题栏
+                try { if (toolbarTitle != null) toolbarTitle.setText(getActivityTitle()); } catch (Throwable ignore) {}
+            } catch (Exception ignore) {}
             
             // 初始化数据
             consumableGroupList = new ArrayList<>();
@@ -162,6 +179,9 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
             
             // 设置事件监听
             setupListeners();
+
+            // 根据模式调整UI（归还隐藏术间、按钮文案）
+            applyOperationModeUi();
 
             // 初始化历史记录视图并加载（此时recordManager已就绪，避免空指针）
             setupHistoryView();
@@ -402,6 +422,24 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
             // 获取NavigationView中的RecyclerView
             View headerView = navView.getHeaderView(0);
             historyRecyclerView = headerView.findViewById(R.id.history_recycler_view);
+
+            // 覆盖标题与副标题文本（按模式显示取用/归还）
+            try {
+                if (headerView instanceof android.view.ViewGroup) {
+                    android.view.ViewGroup vg = (android.view.ViewGroup) headerView;
+                    if (vg.getChildCount() > 0 && vg.getChildAt(0) instanceof android.view.ViewGroup) {
+                        android.view.ViewGroup titleArea = (android.view.ViewGroup) vg.getChildAt(0);
+                        if (titleArea.getChildCount() >= 2) {
+                            if (titleArea.getChildAt(0) instanceof TextView) {
+                                ((TextView) titleArea.getChildAt(0)).setText(operationMode == OperationMode.RETURN ? "归还记录" : "取用记录");
+                            }
+                            if (titleArea.getChildAt(1) instanceof TextView) {
+                                ((TextView) titleArea.getChildAt(1)).setText(operationMode == OperationMode.RETURN ? "查看历史归还记录" : "查看历史取用记录");
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ignore) {}
             
             if (historyRecyclerView != null) {
                 historyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -411,8 +449,7 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                 Log.d(TAG, "History RecyclerView setup completed");
             }
             
-            // 移除时间过滤按钮监听，直接显示今日记录
-            // 默认显示今日记录
+            // 默认显示今日记录（按模式过滤）
             currentTimeFilter = TimeFilter.TODAY;
             loadHistoryRecords(TimeFilter.TODAY);
             
@@ -492,7 +529,7 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
             // 清屏按钮
             clearButton.setOnClickListener(v -> clearAllItems());
             
-            // 确认领用按钮
+            // 确认按钮（取用/归还）
             confirmButton.setOnClickListener(v -> confirmCheckout());
             
             // 登出按钮
@@ -510,6 +547,27 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
             applyUiState(CheckoutUiState.NEW_CHECKOUT);
         } catch (Exception e) {
             Log.e(TAG, "Error in setupListeners", e);
+        }
+    }
+
+    /**
+     * 根据模式调整UI：
+     * - RETURN: 隐藏术间输入，确认按钮显示“确认归还”
+     * - TAKE: 保持现状
+     */
+    private void applyOperationModeUi() {
+        try {
+            if (operationMode == OperationMode.RETURN) {
+                if (roomInputLayout != null) roomInputLayout.setVisibility(View.GONE);
+                if (roomSpinner != null) roomSpinner.setVisibility(View.GONE);
+                if (confirmButton != null) confirmButton.setText("确认归还");
+            } else {
+                if (roomInputLayout != null) roomInputLayout.setVisibility(View.VISIBLE);
+                if (roomSpinner != null) roomSpinner.setVisibility(View.VISIBLE);
+                // 文案保持为资源字符串（取用）
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error in applyOperationModeUi", e);
         }
     }
     
@@ -665,36 +723,44 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
             }
         }
         
-        // 2. 检查takeList（可取用）
-        if (response.hasTakeList()) {
-            Log.d(TAG, "Checking takeList with " + response.takeList.size() + " items");
-            for (ConsumableItem item : response.takeList) {
-                Log.d(TAG, "Comparing barcode '" + barcode + "' with takeList item RFID: " + item.getRfid());
-                if (barcode.equals(item.getRfid())) {
-                    Log.d(TAG, "Found exact match in takeList: " + item.getRfid());
-                    // 设置正确的条码
-                    item.setBarcode(barcode);
-                    return item; // 返回找到的耗材，调用方会展示弹窗
+        if (operationMode == OperationMode.TAKE) {
+            // 取用模式：takeList 可添加；returnList 阻止
+            if (response.hasTakeList()) {
+                Log.d(TAG, "Checking takeList with " + response.takeList.size() + " items");
+                for (ConsumableItem item : response.takeList) {
+                    if (barcode.equals(item.getRfid())) {
+                        item.setBarcode(barcode);
+                        return item;
+                    }
                 }
             }
-            // 如果没有找到精确匹配，记录所有takelist的rfid以便调试
-            StringBuilder allRfids = new StringBuilder();
-            for (ConsumableItem item : response.takeList) {
-                if (allRfids.length() > 0) allRfids.append(", ");
-                allRfids.append(item.getRfid());
+            if (response.hasReturnList()) {
+                Log.d(TAG, "Checking returnList with " + response.returnList.size() + " items");
+                for (ConsumableItem item : response.returnList) {
+                    if (barcode.equals(item.getRfid())) {
+                        showErrorOptimized("[" + barcode + "]领用后未归还请先归还");
+                        return null;
+                    }
+                }
             }
-            Log.d(TAG, "No exact match found. Available RFIDs in takeList: " + allRfids.toString());
-        }
-        
-        // 3. 检查returnList（未归还）
-        if (response.hasReturnList()) {
-            Log.d(TAG, "Checking returnList with " + response.returnList.size() + " items");
-            for (ConsumableItem item : response.returnList) {
-                Log.d(TAG, "Comparing with returnList item RFID: " + item.getRfid());
-                if (barcode.equals(item.getRfid())) {
-                    Log.d(TAG, "Found barcode in returnList: " + item.getRfid());
-                    showErrorOptimized("[" + barcode + "]领用后未归还请先归还");
-                    return null;
+        } else {
+            // 归还模式：returnList 可添加；takeList 阻止
+            if (response.hasReturnList()) {
+                Log.d(TAG, "Checking returnList with " + response.returnList.size() + " items");
+                for (ConsumableItem item : response.returnList) {
+                    if (barcode.equals(item.getRfid())) {
+                        item.setBarcode(barcode);
+                        return item;
+                    }
+                }
+            }
+            if (response.hasTakeList()) {
+                Log.d(TAG, "Checking takeList with " + response.takeList.size() + " items");
+                for (ConsumableItem item : response.takeList) {
+                    if (barcode.equals(item.getRfid())) {
+                        showErrorOptimized("[" + barcode + "]未领用，不可归还");
+                        return null;
+                    }
                 }
             }
         }
@@ -1261,6 +1327,8 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                 default:
                     updateModeUI(false);
             }
+            // 状态切换后按模式调整一次UI（确保确认按钮文案与术间显隐一致）
+            applyOperationModeUi();
         } catch (Exception e) {
             Log.e(TAG, "Error in applyUiState", e);
         }
@@ -1362,9 +1430,12 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
     private void confirmCheckout() {
         try {
             String selectedRoom = roomSpinner.getText().toString().trim();
-            if (TextUtils.isEmpty(selectedRoom)) {
-                roomInputLayout.setError(getString(R.string.consumable_room_required));
-                return;
+            // 取用需选择术间；归还无需术间
+            if (operationMode == OperationMode.TAKE) {
+                if (TextUtils.isEmpty(selectedRoom)) {
+                    roomInputLayout.setError(getString(R.string.consumable_room_required));
+                    return;
+                }
             }
             
             if (consumableGroupList.isEmpty()) {
@@ -1373,8 +1444,9 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
             }
             // 进入提交中状态，禁用交互
             applyUiState(CheckoutUiState.SUBMITTING);
-            // 使用缓存数据构造取用明细（以RFID为唯一键）
+            // 使用缓存数据构造提交明细（以RFID为唯一键）
             List<ConsumableItem> takeItems = new ArrayList<>();
+            List<ConsumableItem> returnItems = new ArrayList<>();
             for (ConsumableGroupItem groupItem : consumableGroupList) {
                 for (String rfid : groupItem.rfids) {
                     ConsumableItem full = selectedItemsByRfid.get(rfid);
@@ -1385,28 +1457,33 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                                 ", code=" + (full==null?"null":full.getProductCode()));
                         return;
                     }
-                    takeItems.add(full);
+                    if (operationMode == OperationMode.TAKE) takeItems.add(full); else returnItems.add(full);
                 }
             }
 
-            // 解析术间ID
+            // 解析术间ID（归还无需）
             Integer operationRoomId = null;
-            try {
-                OperatingRoomManager orm = OperatingRoomManager.getInstance(this);
-                List<OperatingRoom> rooms = orm.getAllRooms();
-                if (rooms != null) {
-                    for (OperatingRoom r : rooms) {
-                        if (r != null && r.name != null && r.name.equals(selectedRoom)) {
-                            operationRoomId = r.serverId;
-                            break;
+            if (operationMode == OperationMode.TAKE) {
+                try {
+                    OperatingRoomManager orm = OperatingRoomManager.getInstance(this);
+                    List<OperatingRoom> rooms = orm.getAllRooms();
+                    if (rooms != null) {
+                        for (OperatingRoom r : rooms) {
+                            if (r != null && r.name != null && r.name.equals(selectedRoom)) {
+                                operationRoomId = r.serverId;
+                                break;
+                            }
                         }
                     }
-                }
-            } catch (Exception ignore) {}
+                } catch (Exception ignore) {}
+            }
 
-            showInfo("正在提交取用数据...");
+            showInfo(operationMode == OperationMode.TAKE ? "正在提交取用数据..." : "正在提交归还数据...");
 
-            apiService.createTakeAndReturnLog(operationRoomId, takeItems, new ArrayList<>(), new ConsumableApiService.ApiCallback<ConsumableApiService.CreateTakeAndReturnResult>() {
+            apiService.createTakeAndReturnLog(operationRoomId,
+                    operationMode == OperationMode.TAKE ? takeItems : new ArrayList<>(),
+                    operationMode == OperationMode.TAKE ? new ArrayList<>() : returnItems,
+                    new ConsumableApiService.ApiCallback<ConsumableApiService.CreateTakeAndReturnResult>() {
                 @Override
                 public void onSuccess(ConsumableApiService.CreateTakeAndReturnResult result) {
                     runOnUiThread(() -> {
@@ -1422,30 +1499,28 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                         try {
                             UserInfo u = sessionManager.getCurrentUser();
                             if (u != null) {
-                                operator = u.getUsername();
+                                operator = u.getDisplayName();
                             }
                         } catch (Exception ignore) {}
                         if (operator == null || operator.isEmpty()) {
                             operator = recordManager.getCurrentUser(); // 兜底
                         }
-                        boolean ok = recordManager.generateCheckoutRecord(selectedRoom, totalCount, takeItems, operator, remoteId);
+                        boolean ok;
+                        if (operationMode == OperationMode.TAKE) {
+                            ok = recordManager.generateCheckoutRecord(selectedRoom, totalCount, takeItems, operator, remoteId);
+                        } else {
+                            ok = recordManager.generateReturnRecord(totalCount, returnItems, operator, remoteId);
+                        }
 
                         if (ok) {
                             UserInfo currentUserInfo = sessionManager.getCurrentUser();
                             if (currentUserInfo != null) {
-                                for (ConsumableItem item : takeItems) {
-                                    AuditLogger.logConsumableCheckout(
-                                        currentUserInfo.getUserId(),
-                                        item.getProductCode(),
-                                        item.getQuantity(),
-                                        selectedRoom
-                                    );
-                                }
+                                // 归还审计暂不细分事件类型（保持最小改动）
                             }
 
-                            showSuccess("取用成功！共 " + totalCount + " 项");
+                            showSuccess((operationMode == OperationMode.TAKE ? "取用成功！共 " : "归还成功！共 ") + totalCount + " 项");
                             clearAllItems();
-                            roomSpinner.setText("");
+                            if (operationMode == OperationMode.TAKE) roomSpinner.setText("");
                             loadHistoryRecords(TimeFilter.TODAY);
                             // 提交完成，回到新建取用状态
                             applyUiState(CheckoutUiState.NEW_CHECKOUT);
@@ -1459,17 +1534,17 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                 @Override
                 public void onFailure(Exception e) {
                     runOnUiThread(() -> {
-                        String msg = UIUtils.friendlyErrorMessage("提交失败", e);
-                        showError(msg);
-                        // 提交失败，恢复交互（保留当前明细供重试）
-                        applyUiState(CheckoutUiState.NEW_CHECKOUT);
-                    });
-                }
-            });
+                    String msg = UIUtils.friendlyErrorMessage("提交失败", e);
+                    showError(msg);
+                    // 提交失败，恢复交互（保留当前明细供重试）
+                    applyUiState(CheckoutUiState.NEW_CHECKOUT);
+                });
+            }
+        });
 
         } catch (Exception e) {
             Log.e(TAG, "Error in confirmCheckout", e);
-            showError(UIUtils.friendlyErrorMessage("取用失败", e));
+            showError(UIUtils.friendlyErrorMessage(operationMode == OperationMode.TAKE ? "取用失败" : "归还失败", e));
             // 异常时确保恢复交互
             applyUiState(CheckoutUiState.NEW_CHECKOUT);
         }
@@ -1479,7 +1554,8 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
     
     private void loadHistoryRecords(TimeFilter filter) {
         try {
-            List<CheckoutRecord> records = recordManager.getRecordsByTimeFilter(filter, currentUserId);
+            String type = (operationMode == OperationMode.RETURN ? "return" : "checkout");
+            List<CheckoutRecord> records = recordManager.getRecordsByTimeFilter(filter, currentUserId, type);
             
             if (records != null) {
                 historyRecordList.clear();

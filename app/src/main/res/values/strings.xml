@@ -31,6 +31,8 @@
     <string name="main_function_menu">功能菜单</string>
     <string name="main_consumable_checkout">取用</string>
     <string name="main_consumable_checkout_desc">扫码领用</string>
+    <string name="main_consumable_return">归还</string>
+    <string name="main_consumable_return_desc">扫码归还</string>
     <string name="main_inventory">库存盘点</string>
     <string name="main_inventory_desc">RFID盘点</string>
     <string name="main_nfc">NFC功能</string>

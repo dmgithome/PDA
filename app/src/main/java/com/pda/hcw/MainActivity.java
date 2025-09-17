@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private MaterialCardView userStatusCard;
     private MaterialCardView consumableCheckoutCard;
     private MaterialCardView inventoryCard;
+    private MaterialCardView consumableReturnCard;
     private MaterialCardView unreturnQueryCard;
     private MaterialCardView basicDataCard;
     private com.google.android.material.card.MaterialCardView inboundAcceptanceCard;
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
             consumableCheckoutCard = findViewById(R.id.consumable_checkout_card);
             inventoryCard = findViewById(R.id.inventory_card);
             unreturnQueryCard = findViewById(R.id.unreturn_query_card);
+            consumableReturnCard = findViewById(R.id.consumable_return_card);
             basicDataCard = findViewById(R.id.basic_data_card);
             inboundAcceptanceCard = findViewById(R.id.inbound_acceptance_card);
 
@@ -338,6 +340,17 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, ConsumableCheckoutNewActivity.class);
                 startActivity(intent);
             });
+
+            // 归还卡片
+            if (consumableReturnCard != null) {
+                consumableReturnCard.setOnClickListener(v -> {
+                    if (!isLoggedIn) { showLoginRequiredDialog(); return; }
+                    if (!hasScannerSupport) { showFeatureNotSupportedDialog(getString(R.string.main_consumable_return)); return; }
+                    Intent intent = new Intent(this, ConsumableCheckoutNewActivity.class);
+                    intent.putExtra("operation_mode", "return");
+                    startActivity(intent);
+                });
+            }
 
             // 入库验收卡片
             if (inboundAcceptanceCard != null) {

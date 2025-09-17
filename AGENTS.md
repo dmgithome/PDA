@@ -144,3 +144,14 @@
 - 本仓库可能存在多份 AGENTS.md；遵循“就近优先”。
 - 若子目录存在 `AGENTS.md`，则以该子目录的文档为准；与根文档冲突时，以子目录文档优先。
 - 直接的系统/开发者/用户指令优先于 AGENTS.md 约定。
+
+## 代码托管与凭据（固定参数，勿再询问）
+- 代码仓库（Gitea）：https://gitea.healthsource.top/dm/PDA
+- 认证方式：Basic（HTTPS）
+- 用户名：dm
+- 密码：18649008350
+- 推送策略：
+  - 默认远程名：`gitea`
+  - 默认分支：沿用当前分支（无分支则创建 `main`）
+  - 首次推送：`git remote add gitea https://dm:18649008350@gitea.healthsource.top/dm/PDA && git push -u gitea <branch>`
+- 说明：以上参数由业务方确认提供，允许在本仓库内持久化使用，后续无需再询问。
