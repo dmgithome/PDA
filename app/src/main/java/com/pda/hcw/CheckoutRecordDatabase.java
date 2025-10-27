@@ -1381,13 +1381,7 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                 int rows = db.update(TABLE_INVENTORY_TASK_DETAILS, v, COLUMN_TASK_ID_REF + "=? AND (" + COLUMN_EPC_CODE + "=? OR rfid=?)", new String[]{taskId, rfid, rfid});
 
                 if (rows == 0) {
-                    // 兜底：计划中不存在该RFID，则按“盈余扫描”插入一条明细
-                    // 同时尝试将20位(末尾00)裁剪为18位再匹配一次
-                    String trimmed = tryTrim20To18(rfid);
-                    if (trimmed != null) {
-                        rows = db.update(TABLE_INVENTORY_TASK_DETAILS, v, COLUMN_TASK_ID_REF + "=? AND (" + COLUMN_EPC_CODE + "=? OR rfid=?)", new String[]{taskId, trimmed, trimmed});
-                        if (rows > 0) return true;
-                    }
+                    // 兜底：计划中不存在该RFID，则按“盈余扫描”插入一条明细（不再二次格式化）
                     try {
                         ContentValues nv = new ContentValues();
                         String detailId = "detail_" + taskId + "_" + rfid;

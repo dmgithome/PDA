@@ -447,11 +447,11 @@ public class InventoryActivity extends BaseActivity {
 
     private void handleTagScanned(Reader.TAGINFO tag) {
         if (inventorySession == null) return;
-        String epcCode = bytesToHexString(tag.EpcId);
-        // 设备返回可能为20位十进制ASCII（以00结尾），交由会话规范化处理；
-        // 此处保持原始 hex 传入，规范化在 InventorySession 完成。
-        boolean accepted = inventorySession.onTag(epcCode);
-        Log.d(TAG, "扫描到EPC=" + epcCode + ", 接受=" + accepted + ", 当前状态=" + uiState);
+        String epcRawHex = bytesToHexString(tag.EpcId);
+        // 接收即格式化：只按两条合规规则转换；未命中则保留原值
+        String epc = com.pda.hcw.rfid.EpcFormatter.normalizeOnReceive(epcRawHex);
+        boolean accepted = inventorySession.onTag(epc);
+        Log.d(TAG, "扫描到EPC=" + epc + ", 接受=" + accepted + ", 当前状态=" + uiState);
         if (!accepted) return;
         // 业务增量模式：仅当实际计数增加时蜂鸣
         if (!beepModeRaw && rfidBeepManager != null) {
@@ -464,19 +464,7 @@ public class InventoryActivity extends BaseActivity {
             });
             try {
                 if (currentTask != null) {
-                    boolean ok = checkoutDb.markInventoryItemScanned(currentTask.getTaskId(), epcCode, tag.RSSI);
-                    if (!ok) {
-                        // 兼容DB存储为18位数字或ASCII十六进制两种情况
-                        String alt = tryHexToAsciiDigits(epcCode);
-                        if (alt != null) {
-                            Log.d(TAG, "DB更新未命中，尝试以十进制形式更新=" + alt);
-                            ok = checkoutDb.markInventoryItemScanned(currentTask.getTaskId(), alt, tag.RSSI);
-                        } else if (is18Digits(epcCode)) {
-                            String asciiHex = toAsciiHex(epcCode);
-                            Log.d(TAG, "DB更新未命中，尝试以ASCII十六进制形式更新=" + asciiHex);
-                            ok = checkoutDb.markInventoryItemScanned(currentTask.getTaskId(), asciiHex, tag.RSSI);
-                        }
-                    }
+                    boolean ok = checkoutDb.markInventoryItemScanned(currentTask.getTaskId(), epc, tag.RSSI);
                 }
             } catch (Exception e) {
                 Log.w(TAG, "markInventoryItemScanned failed", e);

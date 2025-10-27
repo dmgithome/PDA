@@ -263,9 +263,9 @@ public class InboundAcceptanceActivity extends BaseActivity {
             }
         } catch (Exception ignore) {}
 
-        // 解析为18位RFID（与盘点一致）
-        String rfid = parseTo18Digits(s);
-        if (rfid == null) {
+        // 接收即格式化（只按两条合规规则；未命中则保留原值）
+        String rfid = com.pda.hcw.rfid.EpcFormatter.normalizeOnReceive(s);
+        if (rfid == null || rfid.isEmpty()) {
             // 非上架RFID：自动过滤，不做提示
             return;
         }
@@ -395,8 +395,8 @@ public class InboundAcceptanceActivity extends BaseActivity {
             String epcHex = bytesToHexString(tag.EpcId);
             if (epcHex == null || epcHex.isEmpty()) return;
             if (beepModeRaw && rfidBeepManager != null) { try { rfidBeepManager.requestBeep(); } catch (Throwable ignore) {} }
-            String rfid18 = parseTo18Digits(epcHex);
-            if (rfid18 == null) return; // 非18位，过滤
+            String rfid18 = com.pda.hcw.rfid.EpcFormatter.normalizeOnReceive(epcHex);
+            if (rfid18 == null || rfid18.isEmpty()) return;
             // 去重（本轮）
             if (!seenEpcsThisRun.add(rfid18)) return;
             InboundOrder order = findOrderByPlannedRfid(rfid18);
