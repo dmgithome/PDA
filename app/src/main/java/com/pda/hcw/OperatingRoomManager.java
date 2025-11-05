@@ -86,5 +86,55 @@ public class OperatingRoomManager {
             }
         });
     }
-}
 
+    // 更新术间名称：成功后更新本地
+    public void updateRoom(OperatingRoom room, String newName, ConsumableApiService.ApiCallback<Boolean> callback) {
+        if (room == null || newName == null || newName.trim().isEmpty()) {
+            callback.onFailure(new IllegalArgumentException("参数无效"));
+            return;
+        }
+        Integer sid = room.serverId != null && room.serverId > 0 ? room.serverId : null;
+        if (sid == null) {
+            callback.onFailure(new IllegalStateException("缺少服务器ID，无法更新"));
+            return;
+        }
+        api.updateOperatingRoom(sid, newName.trim(), new ConsumableApiService.ApiCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                // 更新本地
+                db.updateOperatingRoomName(sid, room.name, newName.trim());
+                callback.onSuccess(true);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                callback.onFailure(e);
+            }
+        });
+    }
+
+    // 删除术间（软删除）：成功后本地移除
+    public void deleteRoom(OperatingRoom room, ConsumableApiService.ApiCallback<Boolean> callback) {
+        if (room == null) {
+            callback.onFailure(new IllegalArgumentException("参数无效"));
+            return;
+        }
+        Integer sid = room.serverId != null && room.serverId > 0 ? room.serverId : null;
+        if (sid == null) {
+            callback.onFailure(new IllegalStateException("缺少服务器ID，无法删除"));
+            return;
+        }
+        api.deleteOperatingRoom(sid, new ConsumableApiService.ApiCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                db.deleteOperatingRoom(sid, room.name);
+                callback.onSuccess(true);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                callback.onFailure(e);
+            }
+        });
+    }
+}

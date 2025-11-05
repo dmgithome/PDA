@@ -82,14 +82,9 @@ public class InventorySession {
             if (it == null) continue;
             String raw = safeRfid(it.getRfid());
             if (raw.isEmpty()) continue;
-            // 计算canonical及备用键
-            String canonical = computeCanonical(raw);
-            indexAltKeys(raw, canonical);
-            // 如果canonical是18位十进制，再添加其ASCII十六进制形式作为备用键
-            if (is18Digits(canonical)) {
-                String asciiHex = toAsciiHex(canonical);
-                indexAltKeys(asciiHex, canonical);
-            }
+            // 业务计划数据保持原样，不做格式化
+            String canonical = raw;
+            indexAltKeys(canonical, canonical);
 
             int roomId = it.getRoomId();
             String rn = it.getRoomName();
@@ -198,30 +193,18 @@ public class InventorySession {
     private String canonicalize(String raw) {
         if (raw == null || raw.isEmpty()) return null;
         if (altKeyToCanonical.containsKey(raw)) return altKeyToCanonical.get(raw);
-        // 尝试按规则直接规范化
+        // 不再二次格式化；仅按原值判断
         String c = computeCanonical(raw);
-        if (c != null) {
-            if (altKeyToCanonical.containsKey(c)) return altKeyToCanonical.get(c);
-            if (allPlanned.contains(c)) return c;
-        }
-        String asciiDecoded = tryHexToAsciiDigits(raw);
-        if (asciiDecoded != null && altKeyToCanonical.containsKey(asciiDecoded)) return altKeyToCanonical.get(asciiDecoded);
-        // 不在计划集则返回null
+        if (c != null && allPlanned.contains(c)) return c;
+        // 不在计划集则返回null（不做额外形态推断）
         return null;
     }
 
     private String computeCanonical(String val) {
         if (val == null) return null;
         String s = val.trim();
-        // 设备返回可能为20位十进制并以"00"结尾，需裁剪为18位
-        if (isAllDigits(s) && s.length() == 20 && s.endsWith("00")) s = s.substring(0, 18);
-        if (is18Digits(s)) return s;
-        String decoded = tryHexToAsciiDigits(s);
-        if (decoded != null) {
-            if (isAllDigits(decoded) && decoded.length() == 20 && decoded.endsWith("00")) decoded = decoded.substring(0, 18);
-            if (is18Digits(decoded)) return decoded;
-        }
-        return s; // 保底：不能识别则用原值
+        // 不在会话层做格式化，直接返回原值
+        return s;
     }
 
     private boolean is18Digits(String s) {
@@ -233,46 +216,5 @@ public class InventorySession {
         return true;
     }
 
-    private String toAsciiHex(String digits18) {
-        // 将18位十进制字符串每个字符转为ASCII，然后输出十六进制大写字符串
-        StringBuilder sb = new StringBuilder(36);
-        for (int i = 0; i < digits18.length(); i++) {
-            char c = digits18.charAt(i);
-            int v = (int) c; // ASCII code
-            sb.append(String.format("%02X", v));
-        }
-        return sb.toString();
-    }
-
-    private String tryHexToAsciiDigits(String hex) {
-        if (hex == null) return null;
-        String s = hex.trim();
-        if (s.length() % 2 != 0) return null;
-        // 仅处理可能的ASCII十六进制编码
-        try {
-            StringBuilder out = new StringBuilder(s.length() / 2);
-            for (int i = 0; i < s.length(); i += 2) {
-                int b = Integer.parseInt(s.substring(i, i + 2), 16);
-                if (b < 0x30 || b > 0x39) return null; // 非数字字符则放弃
-                out.append((char) b);
-            }
-            String decoded = out.toString();
-            // 设备返回20位数字且以00结尾时，裁剪为18位
-            if (isAllDigits(decoded) && decoded.length() == 20 && decoded.endsWith("00")) {
-                decoded = decoded.substring(0, 18);
-            }
-            return is18Digits(decoded) ? decoded : null;
-        } catch (Exception ignore) {
-            return null;
-        }
-    }
-
-    private boolean isAllDigits(String s) {
-        if (s == null || s.isEmpty()) return false;
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            if (c < '0' || c > '9') return false;
-        }
-        return true;
-    }
+    // 保留 is18Digits 供会话内部校验/排序使用
 }

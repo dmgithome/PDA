@@ -1,0 +1,1644 @@
+10-23 00:07:19.440 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:19.440 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:19.486 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:19.489 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:19.493 14658 11747 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:19.725   509  2541 D StNfcHal: (#0478E) Rx 6f 02 0f (hidden)
+10-23 00:07:19.726   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:19.727  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:19.727  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:19.950   509  2541 D StNfcHal: (#0478F) Rx 6f 02 27 (hidden)
+10-23 00:07:19.951   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:19.953  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:19.953  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:20.259   509  2541 D StNfcHal: (#04790) Rx 6f 02 0f (hidden)
+10-23 00:07:20.260   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:20.261  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:20.262  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:20.485   509  2541 D StNfcHal: (#04791) Rx 6f 02 27 (hidden)
+10-23 00:07:20.486   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:20.487  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:20.487  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:20.495 14658 11747 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:20.495 14658 11747 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:20.496 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:20.496 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:20.497 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:20.541 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:20.545 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:20.548 14658 11748 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:20.793   509  2541 D StNfcHal: (#04792) Rx 6f 02 0f (hidden)
+10-23 00:07:20.794   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:20.796  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:20.796  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:20.973   993   993 I thermal_repeater: [recvMdThermalInfo] ret=29, strLen=127,  1, 32767,,, -28404, 32767, 0
+10-23 00:07:21.018   509  2541 D StNfcHal: (#04793) Rx 6f 02 27 (hidden)
+10-23 00:07:21.019   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:21.021  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:21.021  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:21.327   509  2541 D StNfcHal: (#04794) Rx 6f 02 0f (hidden)
+10-23 00:07:21.328   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:21.329  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:21.330  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:21.549 14658 11748 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:21.550 14658 11748 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:21.550 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:21.551 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:21.551 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:21.551   509  2541 D StNfcHal: (#04795) Rx 6f 02 27 (hidden)
+10-23 00:07:21.552   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:21.553  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:21.553  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:21.597 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:21.601 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:21.606 14658 11749 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:21.861   509  2541 D StNfcHal: (#04796) Rx 6f 02 0f (hidden)
+10-23 00:07:21.862   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:21.863  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:21.864  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:22.086   509  2541 D StNfcHal: (#04797) Rx 6f 02 27 (hidden)
+10-23 00:07:22.087   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:22.089  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:22.090  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:22.396   509  2541 D StNfcHal: (#04798) Rx 6f 02 0f (hidden)
+10-23 00:07:22.397   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:22.399  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:22.399  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:22.609 14658 11749 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:22.609 14658 11749 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:22.610 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:22.610 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:22.610 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:22.621   509  2541 D StNfcHal: (#04799) Rx 6f 02 27 (hidden)
+10-23 00:07:22.622   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:22.623  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:22.623  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:22.665 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:22.669 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:22.672 14658 11750 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:22.930   509  2541 D StNfcHal: (#0479A) Rx 6f 02 0f (hidden)
+10-23 00:07:22.931   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:22.933  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:22.933  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:23.155   509  2541 D StNfcHal: (#0479B) Rx 6f 02 27 (hidden)
+10-23 00:07:23.156   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:23.158  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:23.158  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:23.464   509  2541 D StNfcHal: (#0479C) Rx 6f 02 0f (hidden)
+10-23 00:07:23.465   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:23.468  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:23.468  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:23.675 14658 11750 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:23.675 14658 11750 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:23.675 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:23.676 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:23.676 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:23.689   509  2541 D StNfcHal: (#0479D) Rx 6f 02 27 (hidden)
+10-23 00:07:23.690   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:23.691  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:23.692  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:23.721 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:23.725 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:23.728 14658 11751 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:23.999   509  2541 D StNfcHal: (#0479E) Rx 6f 02 0f (hidden)
+10-23 00:07:24.000   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:24.001  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:24.002  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:24.224   509  2541 D StNfcHal: (#0479F) Rx 6f 02 27 (hidden)
+10-23 00:07:24.225   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:24.227  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:24.227  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:24.532   509  2541 D StNfcHal: (#047A0) Rx 6f 02 0f (hidden)
+10-23 00:07:24.533   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:24.535  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:24.535  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:24.731 14658 11751 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:24.731 14658 11751 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:24.731 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:24.732 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:24.732 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:24.757   509  2541 D StNfcHal: (#047A1) Rx 6f 02 27 (hidden)
+10-23 00:07:24.758   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:24.759  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:24.760  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:24.785 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:24.789 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:24.793 14658 11752 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:25.068   509  2541 D StNfcHal: (#047A2) Rx 6f 02 0f (hidden)
+10-23 00:07:25.069   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:25.070  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:25.071  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:25.293   509  2541 D StNfcHal: (#047A3) Rx 6f 02 27 (hidden)
+10-23 00:07:25.293   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:25.295  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:25.296  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:25.602   509  2541 D StNfcHal: (#047A4) Rx 6f 02 0f (hidden)
+10-23 00:07:25.603   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:25.604  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:25.604  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:25.795 14658 11752 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:25.795 14658 11752 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:25.796 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:25.796 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:25.796 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:25.827   509  2541 D StNfcHal: (#047A5) Rx 6f 02 27 (hidden)
+10-23 00:07:25.827   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:25.828  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:25.829  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:25.837 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:25.841 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:25.844 14658 11753 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:26.136   509  2541 D StNfcHal: (#047A6) Rx 6f 02 0f (hidden)
+10-23 00:07:26.137   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:26.138  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:26.139  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:26.362   509  2541 D StNfcHal: (#047A7) Rx 6f 02 27 (hidden)
+10-23 00:07:26.363   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:26.364  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:26.365  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:26.670   509  2541 D StNfcHal: (#047A8) Rx 6f 02 0f (hidden)
+10-23 00:07:26.671   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:26.673  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:26.674  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:26.847 14658 11753 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:26.847 14658 11753 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:26.848 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:26.848 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:26.848 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:26.893 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:26.895   509  2541 D StNfcHal: (#047A9) Rx 6f 02 27 (hidden)
+10-23 00:07:26.895   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:26.897  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:26.897  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:26.898 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:26.900 14658 11754 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:27.205   509  2541 D StNfcHal: (#047AA) Rx 6f 02 0f (hidden)
+10-23 00:07:27.206   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:27.208  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:27.208  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:27.430   509  2541 D StNfcHal: (#047AB) Rx 6f 02 27 (hidden)
+10-23 00:07:27.432   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:27.433  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:27.433  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:27.600  1353  1480 D AES     : AEEIOCTL_GET/SET_SF_STATE IOCTL,cmd= 1074294797, lParam=0.
+10-23 00:07:27.600  1353  1480 D AES     : AEEIOCTL_RT_MON_Kick IOCTL,cmd= 2147774474, lParam=300.
+10-23 00:07:27.739   509  2541 D StNfcHal: (#047AC) Rx 6f 02 0f (hidden)
+10-23 00:07:27.740   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:27.742  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:27.742  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:27.902 14658 11754 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:27.903 14658 11754 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:27.903 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:27.903 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:27.903 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:27.942 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:27.945 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:27.949 14658 11755 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:27.963   509  2541 D StNfcHal: (#047AD) Rx 6f 02 27 (hidden)
+10-23 00:07:27.964   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:27.966  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:27.966  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:28.274   509  2541 D StNfcHal: (#047AE) Rx 6f 02 0f (hidden)
+10-23 00:07:28.275   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:28.276  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:28.276  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:28.499   509  2541 D StNfcHal: (#047AF) Rx 6f 02 27 (hidden)
+10-23 00:07:28.500   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:28.501  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:28.502  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:28.808   509  2541 D StNfcHal: (#047B0) Rx 6f 02 0f (hidden)
+10-23 00:07:28.809   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:28.811  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:28.811  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:28.950 14658 11755 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:28.951 14658 11755 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:28.951 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:28.952 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:28.952 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:28.990 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:28.993 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:28.998 14658 11756 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:29.033   509  2541 D StNfcHal: (#047B1) Rx 6f 02 27 (hidden)
+10-23 00:07:29.034   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:29.036  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:29.036  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:29.342   509  2541 D StNfcHal: (#047B2) Rx 6f 02 0f (hidden)
+10-23 00:07:29.343   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:29.345  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:29.345  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:29.568   509  2541 D StNfcHal: (#047B3) Rx 6f 02 27 (hidden)
+10-23 00:07:29.569   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:29.570  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:29.571  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:29.876   509  2541 D StNfcHal: (#047B4) Rx 6f 02 0f (hidden)
+10-23 00:07:29.877   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:29.878  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:29.878  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:30.000 14658 11756 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:30.000 14658 11756 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:30.001 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:30.002 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:30.002 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:30.033 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:30.036 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:30.039 14658 11757 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:30.102   509  2541 D StNfcHal: (#047B5) Rx 6f 02 27 (hidden)
+10-23 00:07:30.103   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:30.105  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:30.106  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:30.411   509  2541 D StNfcHal: (#047B6) Rx 6f 02 0f (hidden)
+10-23 00:07:30.412   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:30.414  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:30.415  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:30.636   509  2541 D StNfcHal: (#047B7) Rx 6f 02 27 (hidden)
+10-23 00:07:30.637   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:30.639  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:30.639  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:30.945   509  2541 D StNfcHal: (#047B8) Rx 6f 02 0f (hidden)
+10-23 00:07:30.946   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:30.948  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:30.948  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:30.999   993   993 I thermal_repeater: [recvMdThermalInfo] ret=29, strLen=127,  1, 32767,,, -28404, 32767, 0
+10-23 00:07:31.040 14658 11757 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:31.041 14658 11757 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:31.041 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:31.041 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:31.042 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:31.085 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:31.089 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:31.092 14658 11758 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:31.171   509  2541 D StNfcHal: (#047B9) Rx 6f 02 27 (hidden)
+10-23 00:07:31.172   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:31.174  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:31.174  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:31.479   509  2541 D StNfcHal: (#047BA) Rx 6f 02 0f (hidden)
+10-23 00:07:31.480   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:31.482  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:31.482  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:31.705   509  2541 D StNfcHal: (#047BB) Rx 6f 02 27 (hidden)
+10-23 00:07:31.706   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:31.707  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:31.707  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:32.014   509  2541 D StNfcHal: (#047BC) Rx 6f 02 0f (hidden)
+10-23 00:07:32.015   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:32.017  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:32.018  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:32.093 14658 11758 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:32.093 14658 11758 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:32.094 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:32.094 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:32.094 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:32.125 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:32.129 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:32.131 14658 11759 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:32.239   509  2541 D StNfcHal: (#047BD) Rx 6f 02 27 (hidden)
+10-23 00:07:32.240   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:32.241  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:32.241  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:32.548   509  2541 D StNfcHal: (#047BE) Rx 6f 02 0f (hidden)
+10-23 00:07:32.549   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:32.550  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:32.550  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:32.773   509  2541 D StNfcHal: (#047BF) Rx 6f 02 27 (hidden)
+10-23 00:07:32.774   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:32.776  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:32.776  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:33.082   509  2541 D StNfcHal: (#047C0) Rx 6f 02 0f (hidden)
+10-23 00:07:33.083   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:33.085  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:33.085  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:33.133 14658 11759 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:33.133 14658 11759 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:33.134 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:33.134 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:33.135 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:33.173 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:33.177 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:33.180 14658 11760 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:33.307   509  2541 D StNfcHal: (#047C1) Rx 6f 02 27 (hidden)
+10-23 00:07:33.308   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:33.310  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:33.310  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:33.617   509  2541 D StNfcHal: (#047C2) Rx 6f 02 0f (hidden)
+10-23 00:07:33.618   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:33.620  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:33.620  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:33.842   509  2541 D StNfcHal: (#047C3) Rx 6f 02 27 (hidden)
+10-23 00:07:33.843   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:33.845  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:33.845  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:34.151   509  2541 D StNfcHal: (#047C4) Rx 6f 02 0f (hidden)
+10-23 00:07:34.152   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:34.154  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:34.154  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:34.182 14658 11760 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:34.183 14658 11760 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:34.183 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:34.183 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:34.183 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:34.229 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:34.233 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:34.236 14658 11761 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:34.375   509  2541 D StNfcHal: (#047C5) Rx 6f 02 27 (hidden)
+10-23 00:07:34.376   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:34.377  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:34.377  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:34.685   509  2541 D StNfcHal: (#047C6) Rx 6f 02 0f (hidden)
+10-23 00:07:34.686   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:34.688  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:34.688  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:34.910   509  2541 D StNfcHal: (#047C7) Rx 6f 02 27 (hidden)
+10-23 00:07:34.911   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:34.913  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:34.913  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:35.219   509  2541 D StNfcHal: (#047C8) Rx 6f 02 0f (hidden)
+10-23 00:07:35.220   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:35.222  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:35.222  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:35.238 14658 11761 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:35.238 14658 11761 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:35.239 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:35.239 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:35.240 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:35.297 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:35.301 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:35.304 14658 11762 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:35.445   509  2541 D StNfcHal: (#047C9) Rx 6f 02 27 (hidden)
+10-23 00:07:35.446   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:35.448  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:35.449  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:35.753   509  2541 D StNfcHal: (#047CA) Rx 6f 02 0f (hidden)
+10-23 00:07:35.754   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:35.756  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:35.756  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:35.979   509  2541 D StNfcHal: (#047CB) Rx 6f 02 27 (hidden)
+10-23 00:07:35.980   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:35.982  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:35.982  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:36.288   509  2541 D StNfcHal: (#047CC) Rx 6f 02 0f (hidden)
+10-23 00:07:36.289   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:36.290  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:36.291  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:36.306 14658 11762 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:36.307 14658 11762 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:36.307 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:36.307 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:36.308 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:36.362 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:36.366 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:36.370 14658 11763 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:36.513   509  2541 D StNfcHal: (#047CD) Rx 6f 02 27 (hidden)
+10-23 00:07:36.514   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:36.516  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:36.517  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:36.822   509  2541 D StNfcHal: (#047CE) Rx 6f 02 0f (hidden)
+10-23 00:07:36.823   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:36.825  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:36.825  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:37.048   509  2541 D StNfcHal: (#047CF) Rx 6f 02 27 (hidden)
+10-23 00:07:37.049   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:37.050  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:37.050  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:37.357   509  2541 D StNfcHal: (#047D0) Rx 6f 02 0f (hidden)
+10-23 00:07:37.358   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:37.359  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:37.359  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:37.371 14658 11763 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:37.371 14658 11763 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:37.372 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:37.373 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:37.373 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:37.434 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:37.438 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:37.441 14658 11764 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:37.582   509  2541 D StNfcHal: (#047D1) Rx 6f 02 27 (hidden)
+10-23 00:07:37.583   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:37.585  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:37.585  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:37.891   509  2541 D StNfcHal: (#047D2) Rx 6f 02 0f (hidden)
+10-23 00:07:37.892   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:37.893  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:37.894  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:38.116   509  2541 D StNfcHal: (#047D3) Rx 6f 02 27 (hidden)
+10-23 00:07:38.117   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:38.118  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:38.119  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:38.425   509  2541 D StNfcHal: (#047D4) Rx 6f 02 0f (hidden)
+10-23 00:07:38.426   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:38.428  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:38.428  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:38.443 14658 11764 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:38.443 14658 11764 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:38.445 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:38.445 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:38.445 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:38.509 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:38.513 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:38.516 14658 11765 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:38.651   509  2541 D StNfcHal: (#047D5) Rx 6f 02 27 (hidden)
+10-23 00:07:38.652   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:38.653  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:38.654  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:38.960   509  2541 D StNfcHal: (#047D6) Rx 6f 02 0f (hidden)
+10-23 00:07:38.961   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:38.962  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:38.963  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:39.185   509  2541 D StNfcHal: (#047D7) Rx 6f 02 27 (hidden)
+10-23 00:07:39.186   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:39.188  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:39.188  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:39.494   509  2541 D StNfcHal: (#047D8) Rx 6f 02 0f (hidden)
+10-23 00:07:39.495   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:39.498  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:39.499  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:39.518 14658 11765 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:39.518 14658 11765 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:39.519 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:39.519 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:39.520 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:39.574 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:39.578 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:39.581 14658 11767 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:39.719   509  2541 D StNfcHal: (#047D9) Rx 6f 02 27 (hidden)
+10-23 00:07:39.720   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:39.722  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:39.722  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:40.029   509  2541 D StNfcHal: (#047DA) Rx 6f 02 0f (hidden)
+10-23 00:07:40.030   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:40.031  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:40.031  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:40.254   509  2541 D StNfcHal: (#047DB) Rx 6f 02 27 (hidden)
+10-23 00:07:40.255   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:40.257  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:40.257  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:40.562   509  2541 D StNfcHal: (#047DC) Rx 6f 02 0f (hidden)
+10-23 00:07:40.563   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:40.565  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:40.565  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:40.583 14658 11767 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:40.583 14658 11767 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:40.584 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:40.585 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:40.585 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:40.637 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:40.641 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:40.644 14658 11768 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:40.788   509  2541 D StNfcHal: (#047DD) Rx 6f 02 27 (hidden)
+10-23 00:07:40.789   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:40.791  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:40.791  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:41.019   993   993 I thermal_repeater: [recvMdThermalInfo] ret=29, strLen=127,  1, 32767,,, -28404, 32767, 0
+10-23 00:07:41.096   509  2541 D StNfcHal: (#047DE) Rx 6f 02 0f (hidden)
+10-23 00:07:41.097   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:41.100  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:41.101  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:41.322   509  2541 D StNfcHal: (#047DF) Rx 6f 02 27 (hidden)
+10-23 00:07:41.323   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:41.324  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:41.324  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:41.632   509  2541 D StNfcHal: (#047E0) Rx 6f 02 0f (hidden)
+10-23 00:07:41.632   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:41.633  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:41.634  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:41.646 14658 11768 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:41.646 14658 11768 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:41.647 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:41.647 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:41.647 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:41.709 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:41.713 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:41.716 14658 11769 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:41.857   509  2541 D StNfcHal: (#047E1) Rx 6f 02 27 (hidden)
+10-23 00:07:41.858   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:41.860  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:41.860  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:42.165   509  2541 D StNfcHal: (#047E2) Rx 6f 02 0f (hidden)
+10-23 00:07:42.166   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:42.167  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:42.167  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:42.391   509  2541 D StNfcHal: (#047E3) Rx 6f 02 27 (hidden)
+10-23 00:07:42.392   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:42.394  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:42.394  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:42.602  1353  1480 D AES     : AEEIOCTL_GET/SET_SF_STATE IOCTL,cmd= 1074294797, lParam=0.
+10-23 00:07:42.602  1353  1480 D AES     : AEEIOCTL_RT_MON_Kick IOCTL,cmd= 2147774474, lParam=300.
+10-23 00:07:42.700   509  2541 D StNfcHal: (#047E4) Rx 6f 02 0f (hidden)
+10-23 00:07:42.701   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:42.702  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:42.703  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:42.718 14658 11769 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:42.718 14658 11769 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:42.719 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:42.720 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:42.720 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:42.773 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:42.777 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:42.781 14658 11770 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:42.925   509  2541 D StNfcHal: (#047E5) Rx 6f 02 27 (hidden)
+10-23 00:07:42.926   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:42.928  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:42.928  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:43.234   509  2541 D StNfcHal: (#047E6) Rx 6f 02 0f (hidden)
+10-23 00:07:43.235   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:43.237  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:43.238  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:43.459   509  2541 D StNfcHal: (#047E7) Rx 6f 02 27 (hidden)
+10-23 00:07:43.460   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:43.461  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:43.461  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:43.768   509  2541 D StNfcHal: (#047E8) Rx 6f 02 0f (hidden)
+10-23 00:07:43.769   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:43.770  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:43.771  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:43.782 14658 11770 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:43.783 14658 11770 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:43.783 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:43.783 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:43.783 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:43.825 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:43.829 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:43.832 14658 11771 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:43.993   509  2541 D StNfcHal: (#047E9) Rx 6f 02 27 (hidden)
+10-23 00:07:43.994   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:43.996  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:43.996  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:44.302   509  2541 D StNfcHal: (#047EA) Rx 6f 02 0f (hidden)
+10-23 00:07:44.303   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:44.304  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:44.304  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:44.528   509  2541 D StNfcHal: (#047EB) Rx 6f 02 27 (hidden)
+10-23 00:07:44.529   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:44.530  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:44.530  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:44.834 14658 11771 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:44.834 14658 11771 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:44.835 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:44.836 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:44.836   509  2541 D StNfcHal: (#047EC) Rx 6f 02 0f (hidden)
+10-23 00:07:44.836 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:44.837   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:44.838  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:44.838  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:44.881 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:44.885 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:44.889 14658 11772 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:45.061   509  2541 D StNfcHal: (#047ED) Rx 6f 02 27 (hidden)
+10-23 00:07:45.062   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:45.063  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:45.064  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:45.371   509  2541 D StNfcHal: (#047EE) Rx 6f 02 0f (hidden)
+10-23 00:07:45.372   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:45.373  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:45.374  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:45.597   509  2541 D StNfcHal: (#047EF) Rx 6f 02 27 (hidden)
+10-23 00:07:45.598   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:45.599  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:45.599  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:45.890 14658 11772 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:45.891 14658 11772 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:45.892 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:45.892 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:45.892 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:45.905   509  2541 D StNfcHal: (#047F0) Rx 6f 02 0f (hidden)
+10-23 00:07:45.906   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:45.908  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:45.908  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:45.946 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:45.949 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:45.953 14658 11773 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:46.131   509  2541 D StNfcHal: (#047F1) Rx 6f 02 27 (hidden)
+10-23 00:07:46.132   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:46.133  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:46.133  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:46.440   509  2541 D StNfcHal: (#047F2) Rx 6f 02 0f (hidden)
+10-23 00:07:46.441   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:46.442  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:46.443  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:46.665   509  2541 D StNfcHal: (#047F3) Rx 6f 02 27 (hidden)
+10-23 00:07:46.666   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:46.668  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:46.668  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:46.954 14658 11773 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:46.954 14658 11773 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:46.955 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:46.955 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:46.955 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:46.974   509  2541 D StNfcHal: (#047F4) Rx 6f 02 0f (hidden)
+10-23 00:07:46.975   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:46.977  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:46.977  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:46.989 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:46.993 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:46.997 14658 11774 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:47.200   509  2541 D StNfcHal: (#047F5) Rx 6f 02 27 (hidden)
+10-23 00:07:47.201   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:47.202  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:47.203  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:47.509   509  2541 D StNfcHal: (#047F6) Rx 6f 02 0f (hidden)
+10-23 00:07:47.510   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:47.511  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:47.512  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:47.734   509  2541 D StNfcHal: (#047F7) Rx 6f 02 27 (hidden)
+10-23 00:07:47.735   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:47.737  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:47.737  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:47.827   775   792 D ccci_mdinit: (1):monitor_time_update_thread round:51284 ########
+10-23 00:07:47.999 14658 11774 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:47.999 14658 11774 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:48.000 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:48.000 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:48.000 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:48.043   509  2541 D StNfcHal: (#047F8) Rx 6f 02 0f (hidden)
+10-23 00:07:48.043   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:48.044  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:48.045  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:48.054 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:48.058 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:48.061 14658 11775 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:48.268   509  2541 D StNfcHal: (#047F9) Rx 6f 02 27 (hidden)
+10-23 00:07:48.269   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:48.271  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:48.271  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:48.577   509  2541 D StNfcHal: (#047FA) Rx 6f 02 0f (hidden)
+10-23 00:07:48.579   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:48.581  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:48.581  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:48.664   767  1195 D SurfaceFlinger: calculateTimeoutTime, triggerInterval = 2 sec + 999999769 nsec
+10-23 00:07:48.784  2009  2009 D Launcher.Utilities: myTid=2009
+10-23 00:07:48.785  1353  7394 I mtkpower_client: perf_lock_acq, hdl:-1, dur:600, num:4, pid:1353, tid:7394
+10-23 00:07:48.788  1353  7394 I mtkpower_client: ret_hdl:2147
+10-23 00:07:48.789  2009  2009 I PowerHalMgrImpl: hdl:2147, pid:2009
+10-23 00:07:48.789  2009  2009 D Launcher.Utilities: perfLockAcquire mPowerHandle=2147
+10-23 00:07:48.790   736   825 I libPowerHal: [perfLockAcq] idx:0 hdl:2147 hint:-1 pid:1353 tid:7394 duration:600 lock_user:system_server => ret_hdl:2147
+10-23 00:07:48.790   736   825 I libPowerHal: value: 1
+10-23 00:07:48.790   736   825 I libPowerHal: [PE] system_server update cmd:300c600 param:1 pr:3
+10-23 00:07:48.791   736   825 I libPowerHal: value: 2009
+10-23 00:07:48.791   736   825 I libPowerHal: [PE] system_server update ONESHOT(set) cmd:300c700 param:2009 pr:3
+10-23 00:07:48.791   736   825 I libPowerHal: [perfLockAcq] Done for hdl : 2147
+10-23 00:07:48.796  1353  7394 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_ORIENTATION_OVERRIDE
+10-23 00:07:48.797  1353  7394 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@87221beb does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-23 00:07:48.798  1353  7394 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_RESIZEABLE_ACTIVITY_OVERRIDES
+10-23 00:07:48.798  1353  7394 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+10-23 00:07:48.799   767   767 I BufferQueueProducer: [com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher#5185](this:0xb40000749a0882e0,id:-1,api:0,p:-1,c:767) queueBuffer: fps=0.53 dur=65648.90 max=65024.58 min=16.05
+10-23 00:07:48.801   509  2541 D StNfcHal: (#047FB) Rx 6f 02 27 (hidden)
+10-23 00:07:48.801   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:48.802  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:48.802  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:48.803   713   713 I hwcomposer: [HWCDisplay] (0 updateFps():3663), (type:1, mode:2) fps:0.041038,dur:48735.80,max:48582.40,min:153.40
+10-23 00:07:48.805   767  1675 I BufferQueueDebug: [Task=164#5195](this:0xb40000749a14cab0,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:48.809   767  1675 I BufferQueueDebug: [ActivityRecord{e3857ee u0 com.pda.hcw/.SplashLoginActivity#5196](this:0xb40000749a0b2e50,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:48.813   736   785 I mtkpower@impl: [setMode] type:5, enabled:1
+10-23 00:07:48.815   736   825 I libPowerHal: [perfLockAcq] idx:1 hdl:2148 hint:77 pid:736 tid:736 duration:30000 lock_user:vendor.mediatek => ret_hdl:2148
+10-23 00:07:48.816   736   825 I libPowerHal: [PE] LAUNCH update cmd:1408300, param:100, pr:3
+10-23 00:07:48.816   736   825 I libPowerHal: [PE] LAUNCH update cmd:400000 param:3000000 pr:3
+10-23 00:07:48.816  1353  7394 I PowerHalWrapper: amsBoostNotify pid:2009,activity:com.android.launcher3.uioverrides.QuickstepLauncher, package:com.android.launcher3, mProcessCreatePackcom.pda.hcw
+10-23 00:07:48.816  1353  7394 I PowerHalWrapper: state: 0
+10-23 00:07:48.817   736   825 I libPowerHal: [PE] LAUNCH update cmd:400100 param:3000000 pr:3
+10-23 00:07:48.817   736   825 I libPowerHal: [setDvfsrcDevFreqOpp] opp:0, freq:3200000000
+10-23 00:07:48.817   736   825 I libPowerHal: [PE] LAUNCH update cmd:1000000 param:0 pr:3
+10-23 00:07:48.817   736   825 I libPowerHal: [recordCPUFreqInfo] set cluster[0] min(LAUNCH): 2301000 max(-1): -1 cluster[1] min(LAUNCH): 1800000 max(-1): -1
+10-23 00:07:48.817   736   825 I libPowerHal: [perfLockAcq] Done for hdl : 2148
+10-23 00:07:48.818  1353  7394 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher pid=2009 activityId:181779130 state:0
+10-23 00:07:48.818   733   733 I vendor.mediatek.hardware.mtkpower_applist-service.mediatek: packName: com.android.launcher3 actName: com.android.launcher3.uioverrides.QuickstepLauncher pid: 2009 activityId: 181779130 uid: 10085 state: 0
+10-23 00:07:48.819   733   733 I MTK_APPList: [notifyAPPstate] com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher, pid=2009, activityId=181779130, uid=10085, state:PAUSED, fps:-1, win:0
+10-23 00:07:48.819   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_count: 0
+10-23 00:07:48.819   733   733 I MTK_APPList: [getForegroundAPPCount] 1
+10-23 00:07:48.819   733   733 I MTK_APPList: [notifyNetdUID] 10085
+10-23 00:07:48.820   767  1675 D SurfaceFlinger: [SF client] NEW(0xb400007469f29070) for (1691:com.android.systemui)
+10-23 00:07:48.820   733   733 I MTK_APPList: [notifyPID] 2009
+10-23 00:07:48.821  1353  1845 I ActivityManager: PendingStartActivityUids startActivity to updateOomAdj delay:65291ms, uid:10085
+10-23 00:07:48.822  1353  1474 E ApplicationHelper: Fail to get PackageManager
+10-23 00:07:48.822   736   825 I libPowerHal: [perfSetSysInfo] pid type:24, 2009
+10-23 00:07:48.822  1353  7394 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:false
+10-23 00:07:48.825  1353  1353 E MBrainLocalService: notifyAppSwitch failed
+10-23 00:07:48.826  1691  1756 D VRI[hcw]: hardware acceleration = true, forceHwAccelerated = false
+10-23 00:07:48.829  1353  7394 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.pda.hcw/.SplashLoginActivity bnds=[180,1105][360,1344]} with LAUNCH_MULTIPLE from uid 10085 (BAL_ALLOW_VISIBLE_WINDOW) result code=0
+10-23 00:07:48.830  1691  1745 V WindowManagerShell: Transition requested (#470): android.os.BinderProxy@e21c96a TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=164 displayId=0 isRunning=true baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.pda.hcw/.SplashLoginActivity } baseActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.SplashLoginActivity} topActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.SplashLoginActivity} origActivity=null realActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.SplashLoginActivity} numActivities=1 lastActiveTime=375320387 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@1bd3e5b} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{bf576f8 com.pda.hcw.SplashLoginActivity} launchCookies=[android.os.BinderProxy@d9367d1] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= falseisLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false topActivityEligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=720 topActivityLetterboxHeight=1440 isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false cameraCompatTaskInfo=CameraCompatTaskInfo { cameraCompatControlState=hidden freeformCameraCompatMode=inactive}}}, pipTask = null, remoteTransition = RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@e0b1236, appThread = android.app.IApplicationThread$Stub$Proxy@6076537, debugName = QuickstepLaunch }, displayChange = null, flags = 0, debugId = 470 }
+10-23 00:07:48.830  2009  2009 D StatsLog: LAUNCHER_APP_LAUNCH_TAP
+10-23 00:07:48.831  1691  1745 V WindowManagerShell: RemoteTransition directly requested for (#470) android.os.BinderProxy@e21c96a: RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@e0b1236, appThread = android.app.IApplicationThread$Stub$Proxy@6076537, debugName = QuickstepLaunch }
+10-23 00:07:48.835  1353  1476 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@87221beb does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-23 00:07:48.837   767  1675 I BufferQueueDebug: [807aab Splash Screen com.pda.hcw#5197](this:0xb40000749a077180,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:48.840  2009  2009 W SplitSelectStateCtor: Missing session instanceIds
+10-23 00:07:48.840  2009  2009 D StatsLog: LAUNCHER_SPLIT_SELECTION_EXIT_INTERRUPTED
+10-23 00:07:48.841  1353  1476 I PowerHalWrapper: amsBoostProcessCreate package:com.pda.hcw
+10-23 00:07:48.841  1691  1756 D InputEventReceiver: Input log is disabled in InputEventReceiver.
+10-23 00:07:48.842   736   825 I libPowerHal: [perfLockRel] hdl:2146, idx:-1
+10-23 00:07:48.844  1353  1484 W ziparchive: Unable to open '/data/app/~~R25dxoza6tKWh96xKJ45FQ==/com.pda.hcw-lxwATRRj54Uatu0rzHUY4w==/base.dm': No such file or directory
+10-23 00:07:48.844   736   825 I libPowerHal: [perfLockAcq] idx:2 hdl:2149 hint:21 pid:736 tid:736 duration:10000 lock_user:vendor.mediatek => ret_hdl:2149
+10-23 00:07:48.845   736   825 I libPowerHal: [PE] MTKPOWER_HINT_PROCESS_CREATE update cmd:2024000, param:100, pr:3
+10-23 00:07:48.845   736   825 I libPowerHal: [perfLockAcq] Done for hdl : 2149
+10-23 00:07:48.845   736   825 I libPowerHal: [perfLockRel] hdl:2141, idx:-1
+10-23 00:07:48.845  1353  1484 D DexOptExtImpl: com.pda.hcw reason is 1 abi is arm64-v8a
+10-23 00:07:48.846  2009  2009 I TopTaskTracker: onTaskMovedToFront: (moved taskInfo to front) taskId=164, baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.pda.hcw/.SplashLoginActivity }
+10-23 00:07:48.849  1353  1474 E ApplicationHelper: Fail to get PackageManager
+10-23 00:07:48.849  2323  6618 D ForegroundUtils: Foreground UID status:
+10-23 00:07:48.849  2323  6618 D ForegroundUtils: UID: 10038 is in foreground: false
+10-23 00:07:48.849  2323  6618 D ForegroundUtils: UID: 10085 is in foreground: true
+10-23 00:07:48.849  2323  6618 D ForegroundUtils: UID: 10088 is in foreground: true
+10-23 00:07:48.849  2323  6618 D ForegroundUtils: UID: 10116 is in foreground: true
+10-23 00:07:48.849  2323  6618 D ForegroundUtils: UID: 10119 is in foreground: false
+10-23 00:07:48.855  1353 26525 D CoreBackPreview: Window{807aab u0 Splash Screen com.pda.hcw}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@5ca1687, mPriority=0, mIsAnimationCallback=false}
+10-23 00:07:48.856   767  1675 I BufferQueueDebug: [Splash Screen com.pda.hcw#5198](this:0xb40000749a02a350,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:48.859  1353  1845 W WindowManager: Changing focus from Window{e3b57f1 u0 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher} to null displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:468 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6587 com.android.server.wm.WindowManagerService.relayoutWindowInner:2678 com.android.server.wm.WindowManagerService.relayoutWindow:2348
+10-23 00:07:48.862  1691  1756 D BufferQueueConsumer: [](id:69b000001dc,api:0,p:-1,c:1691) connect: controlledByApp=false
+10-23 00:07:48.863  1691  1756 D BLASTBufferQueue: [VRI[hcw]#475](f:0,a:0) constructor()
+10-23 00:07:48.863  1691  1756 D BLASTBufferQueue: [VRI[hcw]#475](f:0,a:0) update width=720 height=1440 format=-3 mTransformHint=0
+10-23 00:07:48.867   767   767 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+10-23 00:07:48.869   690   690 D Zygote  : Forked child process 11777
+10-23 00:07:48.870  1353  1488 I ActivityManager: Start proc 11777:com.pda.hcw/u0a147 for next-top-activity {com.pda.hcw/com.pda.hcw.SplashLoginActivity}
+10-23 00:07:48.872   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.872   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.872   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.876   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.876   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.876   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.880   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.880   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.880   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.882  1691  1820 D BLASTBufferQueue: [VRI[hcw]#475](f:0,a:1) acquireNextBufferLocked size=720x1440 mFrameNumber=1 applyTransaction=true mTimestamp=58012823428841(auto) mPendingTransactions.size=0 graphicBufferId=7262789700978 transform=0
+10-23 00:07:48.885   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.885   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.885   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:48.888   767   851 I BufferQueueDebug: [Transition Root: Task=164#5199](this:0xb40000749a11f1b0,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:48.893  1353  1473 V WindowManager: Sent Transition (#470) createdAt=10-23 00:07:48.799 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=164 displayId=0 isRunning=true baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.pda.hcw/.SplashLoginActivity } baseActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.SplashLoginActivity} topActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.SplashLoginActivity} origActivity=null realActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.SplashLoginActivity} numActivities=1 lastActiveTime=375320387 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{d0eed20 Task{8dc248f #164 type=standard A=10147:com.pda.hcw}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{25ae6d9 com.pda.hcw.SplashLoginActivity} launchCookies=[android.os.BinderProxy@7e0989e] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= falseisLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false topActivityEligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=720 topActivityLetterboxHeight=1440 isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false cameraCompatTaskInfo=CameraCompatTaskInfo { cameraCompatControlState=hidden freeformCameraCompatMode=inactive}}}, pipTask = null, remoteTransition = RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@ac5bb4c, appThread = android.app.IApplicationThread$Stub$Proxy@e0a1795, debugName = QuickstepLaunch }, displayChange = null, flags = 0, debugId = 470 }
+10-23 00:07:48.894  1353  1473 V WindowManager:     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+10-23 00:07:48.894  1691  4298 V WindowManagerShell: onTransitionReady(transaction=5811090775300)
+10-23 00:07:48.894  1353  1473 V WindowManager:     info={id=470 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+10-23 00:07:48.894  1353  1473 V WindowManager:         {WCT{RemoteToken{d0eed20 Task{8dc248f #164 type=standard A=10147:com.pda.hcw}}} m=OPEN f=NONE leash=Surface(name=Task=164)/@0x75c3952 sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0 taskParent=-1},
+10-23 00:07:48.894  1353  1473 V WindowManager:         {WCT{RemoteToken{e1ebe75 Task{3e97d6b #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x8c3a352 sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0 taskParent=-1}
+10-23 00:07:48.894  1353  1473 V WindowManager:     ]}
+10-23 00:07:48.894   767   851 I BufferQueueDebug: [Surface(name=1d83571 StatusBar)/@0x5e5e76b - animation-leash of insets_animation#5200](this:0xb40000749a1057a0,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:48.895  1691  1745 V WindowManagerShell: onTransitionReady (#470) android.os.BinderProxy@e21c96a: {id=470 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@bece741} m=OPEN f=NONE leash=Surface(name=Task=164)/@0xdf7611a sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0 taskParent=-1},{WCT{android.window.IWindowContainerToken$Stub$Proxy@f9a74e6} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x606744b sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0 taskParent=-1}]}
+10-23 00:07:48.895  1691  1745 V WindowManagerShell: Playing animation for (#470) android.os.BinderProxy@e21c96a@0
+10-23 00:07:48.895  1691  1745 V WindowManagerShell:  try firstHandler com.android.wm.shell.transition.DefaultMixedHandler@4374c1e
+10-23 00:07:48.896  1691  1745 V WindowManagerShell: Mixed transition for opening an intent with a remote transition and PIP #470
+10-23 00:07:48.896  1691  1745 V WindowManagerShell:  Delegate animation for (#470) to RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@e0b1236, appThread = android.app.IApplicationThread$Stub$Proxy@6076537, debugName = QuickstepLaunch }
+10-23 00:07:48.897   767   851 I BufferQueueDebug: [Surface(name=81a206d NavigationBar0)/@0x81d9975 - animation-leash of insets_animation#5201](this:0xb40000749a135e30,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:48.898  1691  1745 V WindowManagerShell:  animated by firstHandler
+10-23 00:07:48.898 11777 11777 I com.pda.hcw: Late-enabling -Xcheck:jni
+10-23 00:07:48.900   767   851 I BufferQueueDebug: [Surface(name=Task=164)/@0xad2452_transition-leash#5202](this:0xb40000749a130310,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:48.902   767   851 I BufferQueueDebug: [Surface(name=Task=1)/@0x29d5020_transition-leash#5203](this:0xb40000749a116900,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:48.903   767   850 I BufferQueueDebug: [67d169 ActivityRecordInputSink com.pda.hcw/.SplashLoginActivity#5204](this:0xb40000749a10e050,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:48.908  1353  1845 W UserManagerService: Requested status bar icon for non-badged user 0
+10-23 00:07:48.913   767   851 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=1d83571 StatusBar)/@0x5e5e76b - animation-leash of insets_animation#5186, layerId=5186, parentId=0
+10-23 00:07:48.913   767   851 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=81a206d NavigationBar0)/@0x81d9975 - animation-leash of insets_animation#5187, layerId=5187, parentId=0
+10-23 00:07:48.928   767   767 I BufferQueueDebug: [Surface(name=81a206d NavigationBar0)/@0x81d9975 - animation-leash of insets_animation#5187](this:0xb40000749a10b2c0,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:48.929   767   767 I BufferQueueDebug: [Surface(name=1d83571 StatusBar)/@0x5e5e76b - animation-leash of insets_animation#5186](this:0xb40000749a13e6e0,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:48.953   767   767 I BufferQueueProducer: [FramebufferSurface](this:0xb4000075c9f06540,id:-1,api:1,p:767,c:767) queueBuffer: fps=0.02 dur=48733.41 max=48733.41 min=48733.41
+10-23 00:07:48.954 11777 11777 I com.pda.hcw: Using CollectorTypeCMC GC.
+10-23 00:07:48.966 14658 14669 I adbd    : jdwp connection from 11777
+10-23 00:07:48.978 11777 11777 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+10-23 00:07:48.998  1353 26219 V ActivityManager: New death recipient com.android.server.am.ActivityManagerService$AppDeathRecipient@a419811 for thread android.os.BinderProxy@8691d76
+10-23 00:07:49.005  1353  1474 E ApplicationHelper: Fail to get PackageManager
+10-23 00:07:49.007  2323  6618 D ForegroundUtils: Foreground UID status:
+10-23 00:07:49.010  2323  6618 D ForegroundUtils: UID: 10038 is in foreground: false
+10-23 00:07:49.010  2323  6618 D ForegroundUtils: UID: 10085 is in foreground: true
+10-23 00:07:49.010  2323  6618 D ForegroundUtils: UID: 10088 is in foreground: true
+10-23 00:07:49.010  2323  6618 D ForegroundUtils: UID: 10116 is in foreground: true
+10-23 00:07:49.010  2323  6618 D ForegroundUtils: UID: 10119 is in foreground: false
+10-23 00:07:49.010  2323  6618 D ForegroundUtils: UID: 10147 is in foreground: true
+10-23 00:07:49.024 11777 11777 D CompatChangeReporter: Compat change id reported: 242716250; UID 10147; state: ENABLED
+10-23 00:07:49.057 11777 11777 W ziparchive: Unable to open '/data/app/~~R25dxoza6tKWh96xKJ45FQ==/com.pda.hcw-lxwATRRj54Uatu0rzHUY4w==/base.dm': No such file or directory
+10-23 00:07:49.058 11777 11777 W ziparchive: Unable to open '/data/app/~~R25dxoza6tKWh96xKJ45FQ==/com.pda.hcw-lxwATRRj54Uatu0rzHUY4w==/base.dm': No such file or directory
+10-23 00:07:49.062 14658 11775 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:49.062 14658 11775 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:49.062 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:49.062 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:49.062 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:49.110   509  2541 D StNfcHal: (#047FC) Rx 6f 02 0f (hidden)
+10-23 00:07:49.110   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:49.110  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:49.110  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:49.128 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:49.130 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:49.132 14658 11790 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:49.242  1007  1136 D AALService: [CRTC_114] 10-23 12:07:49.063 BL= 278,ESS= 256, 10-23 12:07:49.116 BL= 277,ESS= 256, 10-23 12:07:49.152 BL= 276,ESS= 256, 10-23 12:07:49.206 BL= 275,ESS= 256, 10-23 12:07:49.242 BL= 274,ESS= 256,
+10-23 00:07:49.305 11777 11777 D nativeloader: Configuring clns-7 for other apk /data/app/~~R25dxoza6tKWh96xKJ45FQ==/com.pda.hcw-lxwATRRj54Uatu0rzHUY4w==/base.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~R25dxoza6tKWh96xKJ45FQ==/com.pda.hcw-lxwATRRj54Uatu0rzHUY4w==/lib/arm64:/data/app/~~R25dxoza6tKWh96xKJ45FQ==/com.pda.hcw-lxwATRRj54Uatu0rzHUY4w==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.pda.hcw
+10-23 00:07:49.334   509  2541 D StNfcHal: (#047FD) Rx 6f 02 27 (hidden)
+10-23 00:07:49.335   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:49.336  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:49.336  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:49.337 11777 11777 V GraphicsEnvironment: Currently set values for:
+10-23 00:07:49.338 11777 11777 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+10-23 00:07:49.338 11777 11777 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+10-23 00:07:49.338 11777 11777 V GraphicsEnvironment: Global.Settings values are invalid: number of packages: 0, number of values: 0
+10-23 00:07:49.339 11777 11777 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+10-23 00:07:49.369  1353  1353 W AccessibilityManagerService:  wait for adding window timeout: 373
+10-23 00:07:49.392   736   825 I mtkpower@impl: [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:2147
+10-23 00:07:49.392   736   825 I libPowerHal: [perfLockRel] hdl:2147, idx:0
+10-23 00:07:49.393   736   825 I libPowerHal: value: 0
+10-23 00:07:49.394   736   825 I libPowerHal: [PD] system_server update cmd:300c600 param:0 pr:6
+10-23 00:07:49.394   736   825 I libPowerHal: value: 2009
+10-23 00:07:49.394   736   825 I libPowerHal: [PD] system_server update ONESHOT(unset) cmd:300c700 param:2009 pr:3
+10-23 00:07:49.395   736   825 I libPowerHal: [perfLockRel] Done for hdl : 2147
+10-23 00:07:49.421  1353  1476 W AccessibilityWindowsPopulator: Windows change within in 2 frames continuously over 500 ms and notify windows changed immediately
+10-23 00:07:49.428  1691  1745 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#470) android.os.BinderProxy@e21c96a@0
+10-23 00:07:49.431  1353  1473 V WindowManager: Finish Transition (#470): created at 10-23 00:07:48.799 collect-started=0.134ms request-sent=27.799ms started=40.389ms ready=85.959ms sent=91.922ms finished=631.115ms
+10-23 00:07:49.434  2009  2009 D VRI[QuickstepLauncher]: visibilityChanged oldVisibility=true newVisibility=false
+10-23 00:07:49.437  1691  1745 V WindowManagerShell: Track 0 became idle
+10-23 00:07:49.437  1691  1745 V WindowManagerShell: All active transition animations finished
+10-23 00:07:49.440  1353 26219 W UserManagerService: Requested status bar icon for non-badged user 0
+10-23 00:07:49.441  1353 26219 W UserManagerService: Requested status bar icon for non-badged user 0
+10-23 00:07:49.444 11777 11777 D MbrainDebugManagerImpl: getService failed
+10-23 00:07:49.447   767   767 I SurfaceFlinger: onHandleDestroyed: name=Transition Root: Task=164#5199, layerId=5199, parentId=0
+10-23 00:07:49.448  2009  2352 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.448  2009  2352 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.448  2009  2352 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.448  2009  2352 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.448  2009  2352 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.449  2009  2352 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.449   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.449   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.449   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.450   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.450   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.450   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.450   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.450   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.450   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.450   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.450   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.450   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.450   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.450   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.451   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.452  2009  2385 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.453  2009  2385 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.453  2009  2385 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.454   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.454   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.454   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.454   767   851 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=Task=1)/@0x29d5020_transition-leash#5203, layerId=5203, parentId=0
+10-23 00:07:49.455   767   851 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=Task=164)/@0xad2452_transition-leash#5202, layerId=5202, parentId=0
+10-23 00:07:49.459  2009  2009 D BLASTBufferQueue: [VRI[QuickstepLauncher]#83](f:0,a:1) destructor()
+10-23 00:07:49.459  2009  2009 D BufferQueueConsumer: [VRI[QuickstepLauncher]#83(BLAST Consumer)83](id:7d90000005b,api:0,p:-1,c:2009) disconnect
+10-23 00:07:49.460  2009  2009 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.460  2009  2009 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.460  2009  2009 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.464   767   767 I BufferQueueDebug: [Surface(name=Task=1)/@0x29d5020_transition-leash#5203](this:0xb40000749a116900,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:49.464   767   767 I BufferQueueDebug: [Transition Root: Task=164#5199](this:0xb40000749a11f1b0,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:49.464   767   767 I BufferQueueDebug: [Surface(name=Task=164)/@0xad2452_transition-leash#5202](this:0xb40000749a130310,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:49.464   767   767 I SurfaceFlinger: onHandleDestroyed: name=19d0fe5 ActivityRecordInputSink com.android.launcher3/.uioverrides.QuickstepLauncher#5192, layerId=5192, parentId=0
+10-23 00:07:49.473  1007  1136 D AALService: [CRTC_114] 10-23 12:07:49.295 BL= 273,ESS= 256, 10-23 12:07:49.330 BL= 272,ESS= 256, 10-23 12:07:49.384 BL= 271,ESS= 256, 10-23 12:07:49.420 BL= 270,ESS= 256, 10-23 12:07:49.473 BL= 269,ESS= 256,
+10-23 00:07:49.481   767   767 I BufferQueueProducer: [NavigationBar0#4754](this:0xb40000749a0e34e0,id:-1,api:0,p:-1,c:767) queueBuffer: fps=0.21 dur=66293.59 max=66063.47 min=16.00
+10-23 00:07:49.482   767   767 I BufferQueueDebug: [19d0fe5 ActivityRecordInputSink com.android.launcher3/.uioverrides.QuickstepLauncher#5192](this:0xb40000749a121f40,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:49.485   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.485   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.485   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:49.485   713  1144 W hwcomposer: [DRMDEV] paramIsSame(), id 1503, w 720/720, h 1440/1440, pitch 736/736, format 0x1/0x2, secure 0/0
+10-23 00:07:49.486 11777 11777 D SessionManager: 加载会话超时设置: 15分钟
+10-23 00:07:49.489 11777 11777 D MyApplication: MyApplication初始化完成
+10-23 00:07:49.493  1353  1845 I AppsFilter: interaction: PackageSetting{b7b43ac com.pda.hcw/10147} -> PackageSetting{d86b31a com.android.launcher3/10085} BLOCKED
+10-23 00:07:49.496  1353  1845 I PowerHalWrapper: amsBoostNotify pid:11777,activity:com.pda.hcw.SplashLoginActivity, package:com.pda.hcw, mProcessCreatePackcom.pda.hcw
+10-23 00:07:49.496  1353  1845 I PowerHalWrapper: state: 1
+10-23 00:07:49.498  1353  1845 I ScnModule: [GameDetection] packname: com.pda.hcw, apkSize: 17966558.
+10-23 00:07:49.498  1353  1845 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.pda.hcw/com.pda.hcw.SplashLoginActivity pid=11777 activityId:238573550 state:1
+10-23 00:07:49.499   733   733 I vendor.mediatek.hardware.mtkpower_applist-service.mediatek: packName: com.pda.hcw actName: com.pda.hcw.SplashLoginActivity pid: 11777 activityId: 238573550 uid: 10147 state: 1
+10-23 00:07:49.499   733   733 I MTK_APPList: [notifyAPPstate] com.pda.hcw/com.pda.hcw.SplashLoginActivity, pid=11777, activityId=238573550, uid=10147, state:RESUMED, fps:-1, win:0
+10-23 00:07:49.499   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_count: 1
+10-23 00:07:49.499   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_info[0] com.pda.hcw/com.pda.hcw.SplashLoginActivity, pid:11777, activityId:238573550, fps:-1, isMultiWindow:0
+10-23 00:07:49.499   733   733 I MTK_APPList: [getForegroundAPPCount] 1
+10-23 00:07:49.499   733   733 I MTK_APPList: [notifyAPPstate] foreground:com.pda.hcw, pid:11777, activityId:238573550, uid:10147
+10-23 00:07:49.499   733   733 I MTK_APPList: [notifyNetdUID] 10147
+10-23 00:07:49.500   733   733 I MTK_APPList: [notifyPID] 11777
+10-23 00:07:49.501  1353  1845 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:true
+10-23 00:07:49.501   736   825 I libPowerHal: [perfSetSysInfo] pid type:24, 11777
+10-23 00:07:49.501   733   733 I MTK_APPList: [notifyAPPstate] pc:0, com.android.launcher3 => com.pda.hcw
+10-23 00:07:49.501  1353  1353 E MBrainLocalService: notifyAppSwitch failed
+10-23 00:07:49.520 11777 11777 D nativeloader: Load libpowerhalwrap_jni.so using system ns (caller=/system_ext/framework/mediatek-framework.jar): ok
+10-23 00:07:49.521 11777 11777 I PowerHalWrapper: PowerHalWrapper.getInstance
+10-23 00:07:49.523 11777 11777 I M-ProMotion: M-ProMotion is disabled
+10-23 00:07:49.539 11777 11797 D libMEOW : meow new tls: 0xb4000077611d8060
+10-23 00:07:49.539 11777 11797 D libMEOW : meow reload base cfg path: na
+10-23 00:07:49.539 11777 11797 D libMEOW : meow reload overlay cfg path: na
+10-23 00:07:49.543 11777 11797 E QT      : [QT]file does not exist
+10-23 00:07:49.545 11777 11797 D libMEOW : applied 1 plugins for [com.pda.hcw]:
+10-23 00:07:49.545 11777 11797 D libMEOW :   plugin 1: [libMEOW_gift.so]:
+10-23 00:07:49.546 11777 11797 D libMEOW : meow delete tls: 0xb4000077611d8060
+10-23 00:07:49.644   509  2541 D StNfcHal: (#047FE) Rx 6f 02 0f (hidden)
+10-23 00:07:49.644   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:49.645  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:49.645  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:49.650 11777 11777 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+10-23 00:07:49.687  1007  1136 D AALService: [CRTC_114] 10-23 12:07:49.509 BL= 268,ESS= 256, 10-23 12:07:49.562 BL= 267,ESS= 256, 10-23 12:07:49.598 BL= 266,ESS= 256, 10-23 12:07:49.652 BL= 265,ESS= 256, 10-23 12:07:49.687 BL= 264,ESS= 256,
+10-23 00:07:49.731 11777 11777 D MyApplication: Activity created: SplashLoginActivity
+10-23 00:07:49.734 11777 11777 D SplashLoginActivity: SplashLoginActivity启动
+10-23 00:07:49.791   733   816 I libPerfCtl: xgfGetFPS pid:767 fps:-1
+10-23 00:07:49.791   733   816 I libPerfCtl: xgfGetFPS pid:1691 fps:-1
+10-23 00:07:49.791   733   816 I libPerfCtl: xgfGetFPS pid:2009 fps:-1
+10-23 00:07:49.803   713   713 I hwcomposer: [HWCDisplay] (0 updateFps():3663), (type:1, mode:2) fps:53.955807,dur:1000.82,max:50.91,min:14.23
+10-23 00:07:49.869   509  2541 D StNfcHal: (#047FF) Rx 6f 02 27 (hidden)
+10-23 00:07:49.869   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:49.870  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:49.870  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:49.910 11777 11777 W com.pda.hcw: Accessing hidden method Landroid/view/View;->computeFitSystemWindows(Landroid/graphics/Rect;Landroid/graphics/Rect;)Z (unsupported, reflection, allowed)
+10-23 00:07:49.911 11777 11777 W com.pda.hcw: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (unsupported, reflection, allowed)
+10-23 00:07:49.919  1007  1136 D AALService: [CRTC_114] 10-23 12:07:49.741 BL= 263,ESS= 256, 10-23 12:07:49.777 BL= 262,ESS= 256, 10-23 12:07:49.830 BL= 261,ESS= 256, 10-23 12:07:49.866 BL= 260,ESS= 256, 10-23 12:07:49.919 BL= 259,ESS= 256,
+10-23 00:07:50.114 11777 11777 D MyApplication: Activity started: SplashLoginActivity
+10-23 00:07:50.133  1007  1136 D AALService: [CRTC_114] 10-23 12:07:49.955 BL= 258,ESS= 256, 10-23 12:07:50.009 BL= 257,ESS= 256, 10-23 12:07:50.044 BL= 256,ESS= 256, 10-23 12:07:50.098 BL= 255,ESS= 256, 10-23 12:07:50.133 BL= 254,ESS= 256,
+10-23 00:07:50.133 14658 11790 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:50.134 14658 11790 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:50.134 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:50.134 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:50.134 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:50.135 11777 11777 D MyApplication: Activity resumed: SplashLoginActivity (set as current)
+10-23 00:07:50.147 11777 11777 D ActivityThread: handleResumeActivity#3 r.window=nulla.mFinished = falsewillBeVisible = true
+10-23 00:07:50.147 11777 11777 D ActivityThread: handleResumeActivity#4 addView a.mVisibleFromClient=truea.mWindowAdded=falsedecor=DecorView@db2cf9e[]
+10-23 00:07:50.148 11777 11777 D ActivityThread: handleResumeActivity#5 addView decor=DecorView@db2cf9e[]
+10-23 00:07:50.149 11777 11794 I PowerHalWrapper: PowerHalWrapper.getInstance
+10-23 00:07:50.154 11777 11777 I SurfaceFactory: [static] sSurfaceFactory = com.mediatek.view.impl.SurfaceFactoryImpl@298ba7f
+10-23 00:07:50.155   767   850 D SurfaceFlinger: [SF client] NEW(0xb400007469f34e90) for (11777:com.pda.hcw)
+10-23 00:07:50.169 11777 11777 W HWUI    : Unknown dataspace 0
+10-23 00:07:50.178 11777 11777 D VRI[SplashLoginActivity]: hardware acceleration = true, forceHwAccelerated = false
+10-23 00:07:50.178   509  2541 D StNfcHal: (#04800) Rx 6f 02 0f (hidden)
+10-23 00:07:50.179   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:50.179  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:50.179  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:50.181   767   851 D SurfaceFlinger: [SF client] NEW(0xb400007469f34350) for (1353:system_server)
+10-23 00:07:50.183   767   850 I BufferQueueDebug: [5a7a781 com.pda.hcw/com.pda.hcw.SplashLoginActivity#5205](this:0xb40000749a13e6e0,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:50.190 11777 11777 D InputEventReceiver: Input log is disabled in InputEventReceiver.
+10-23 00:07:50.193 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:50.194 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:50.196 14658 11798 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:50.222  1353  1845 D CoreBackPreview: Window{5a7a781 u0 com.pda.hcw/com.pda.hcw.SplashLoginActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@f8d5214, mPriority=0, mIsAnimationCallback=false}
+10-23 00:07:50.255   767   850 I BufferQueueDebug: [com.pda.hcw/com.pda.hcw.SplashLoginActivity#5206](this:0xb40000749a10b2c0,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:50.259  1353  1845 W WindowManager: Changing focus from null to Window{5a7a781 u0 com.pda.hcw/com.pda.hcw.SplashLoginActivity} displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:468 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6587 com.android.server.wm.WindowManagerService.relayoutWindowInner:2678 com.android.server.wm.WindowManagerService.relayoutWindow:2348
+10-23 00:07:50.260   767   850 I BufferQueueDebug: [Surface(name=1d83571 StatusBar)/@0x5e5e76b - animation-leash of insets_animation#5207](this:0xb40000749a11f1b0,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:50.262   767   851 I BufferQueueDebug: [Surface(name=81a206d NavigationBar0)/@0x81d9975 - animation-leash of insets_animation#5208](this:0xb40000749a116900,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:50.264  1353  1845 I WindowManager: Relayout Window{5a7a781 u0 com.pda.hcw/com.pda.hcw.SplashLoginActivity}: oldVis=4 newVis=0 focusMayChange = true requestedWidth = 720 requestedHeight = 1440 outFrames = ClientWindowFrames{frame=[0,0][720,1440] display=[0,0][720,1440] parentFrame=[0,0][0,0]} outSurfaceControl = Surface(name=com.pda.hcw/com.pda.hcw.SplashLoginActivity)/@0xea8bdfe
+10-23 00:07:50.267  1353  1477 D SurfaceComposerClient: Transaction::apply InputWindowCommands.focusRequests timestamp=58014208634687, windowName=5a7a781 com.pda.hcw/com.pda.hcw.SplashLoginActivity
+10-23 00:07:50.270 11777 11777 D BufferQueueConsumer: [](id:2e0100000000,api:0,p:-1,c:11777) connect: controlledByApp=false
+10-23 00:07:50.273 11777 11777 D BLASTBufferQueue: [VRI[SplashLoginActivity]#0](f:0,a:0) constructor()
+10-23 00:07:50.274 11777 11777 D BLASTBufferQueue: [VRI[SplashLoginActivity]#0](f:0,a:0) update width=720 height=1440 format=-1 mTransformHint=0
+10-23 00:07:50.278 11777 11777 E FBI     : Can't load library: dlopen failed: library "libmagtsync.so" not found
+10-23 00:07:50.282 11777 11795 D libMEOW : meow new tls: 0xb4000077612180a0
+10-23 00:07:50.283 11777 11795 D libMEOW : applied 1 plugins for [com.pda.hcw]:
+10-23 00:07:50.283 11777 11795 D libMEOW :   plugin 1: [libMEOW_gift.so]:
+10-23 00:07:50.285   767   767 D SurfaceFlinger: Focus addInputWindowCommands timestamp=58014208634687, windowName=5a7a781 com.pda.hcw/com.pda.hcw.SplashLoginActivity
+10-23 00:07:50.286   767   767 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=81a206d NavigationBar0)/@0x81d9975 - animation-leash of insets_animation#5201, layerId=5201, parentId=0
+10-23 00:07:50.286   767   767 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=1d83571 StatusBar)/@0x5e5e76b - animation-leash of insets_animation#5200, layerId=5200, parentId=0
+10-23 00:07:50.289   767  1205 D SurfaceFlinger: updateWinowInfo=1, setFocusedWindow timestamp=58014208634687, windowName=5a7a781 com.pda.hcw/com.pda.hcw.SplashLoginActivity
+10-23 00:07:50.291 11777 11795 W libc    : Access denied finding property "ro.debuggable"
+10-23 00:07:50.296 11777 11795 W HidlServiceManagement: hwservicemanager is not supported on the device.
+10-23 00:07:50.296 11777 11795 I HidlServiceManagement: Trying to get transport of android.hardware.configstore@1.0::ISurfaceFlingerConfigs/default without hwservicemanager
+10-23 00:07:50.303   767   767 I BufferQueueDebug: [Surface(name=1d83571 StatusBar)/@0x5e5e76b - animation-leash of insets_animation#5200](this:0xb40000749a1057a0,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:50.303   767   767 I BufferQueueDebug: [Surface(name=81a206d NavigationBar0)/@0x81d9975 - animation-leash of insets_animation#5201](this:0xb40000749a135e30,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:50.333   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.333   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.333   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.337   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.337   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.337   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.341   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.341   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.341   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.345   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.345   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.345   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.345 11777 11795 W libc    : Access denied finding property "vendor.mbrain.enabled"
+10-23 00:07:50.346 11777 11795 D com.pda.hcw: MBrain is disabled
+10-23 00:07:50.346 11777 11795 D com.pda.hcw: initMbrain failed
+10-23 00:07:50.366  1007  1136 D AALService: [CRTC_114] 10-23 12:07:50.187 BL= 253,ESS= 256, 10-23 12:07:50.223 BL= 252,ESS= 256, 10-23 12:07:50.276 BL= 251,ESS= 256, 10-23 12:07:50.312 BL= 250,ESS= 256, 10-23 12:07:50.366 BL= 249,ESS= 256,
+10-23 00:07:50.391 11777 11795 I GrallocExtra: gralloc_extra_query:is_SW3D 0
+10-23 00:07:50.393 11777 11795 I GrallocExtra: gralloc_extra_query:is_SW3D 0
+10-23 00:07:50.393 11777 11795 D BLASTBufferQueue: [VRI[SplashLoginActivity]#0](f:0,a:1) acquireNextBufferLocked size=720x1440 mFrameNumber=1 applyTransaction=true mTimestamp=58014335959841(auto) mPendingTransactions.size=0 graphicBufferId=50581829844994 transform=0
+10-23 00:07:50.394 11777 11795 W libc    : Access denied finding property "vendor.mbrain.enabled"
+10-23 00:07:50.394 11777 11795 D com.pda.hcw: MBrain is disabled
+10-23 00:07:50.394 11777 11795 D com.pda.hcw: initMbrain failed
+10-23 00:07:50.395   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.395   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.395   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.401   767   851 I BufferQueueDebug: [Surface(name=5a7a781 com.pda.hcw/com.pda.hcw.SplashLoginActivity)/@0x830795f - animation-leash of starting_reveal#5209](this:0xb40000749a121f40,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:50.403   509  2541 D StNfcHal: (#04801) Rx 6f 02 27 (hidden)
+10-23 00:07:50.403   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:50.404  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:50.404  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:50.405  1353  1473 W ziparchive: Unable to open '/data/app/~~R25dxoza6tKWh96xKJ45FQ==/com.pda.hcw-lxwATRRj54Uatu0rzHUY4w==/base.dm': No such file or directory
+10-23 00:07:50.410  1353  1473 I ActivityTaskManager: Displayed com.pda.hcw/.SplashLoginActivity for user 0: +1s610ms
+10-23 00:07:50.427   767   767 I BufferQueueProducer: [Splash Screen com.pda.hcw#5198](this:0xb40000749a02a350,id:-1,api:0,p:-1,c:767) queueBuffer: fps=0.65 dur=1534.98 max=1534.98 min=1534.98
+10-23 00:07:50.434   713  1144 W hwcomposer: [DRMDEV] paramIsSame(), id 1503, w 720/720, h 1440/1440, pitch 736/736, format 0x2/0x1, secure 0/0
+10-23 00:07:50.471  1353  1568 I ImeTracker: com.pda.hcw:76483847: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-23 00:07:50.471  1353  1568 I ImeTracker: com.pda.hcw:76483847: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-23 00:07:50.474  2985  2985 I ImeTracker: com.iflytek.inputmethod.google:8440b917: onRequestHide at ORIGIN_IME reason HIDE_WINDOW_LEGACY_DIRECT fromUser false
+10-23 00:07:50.475   736   785 I mtkpower@impl: [setMode] type:5, enabled:0
+10-23 00:07:50.475  1353 26219 I PowerHalWrapper: amsBoostNotify pid:2009,activity:com.android.launcher3.uioverrides.QuickstepLauncher, package:com.android.launcher3, mProcessCreatePackcom.pda.hcw
+10-23 00:07:50.475   736   825 I libPowerHal: [perfLockRel] hdl:2148, idx:1
+10-23 00:07:50.476  2985  2985 D InputEventReceiver: Input log is disabled in InputEventReceiver.
+10-23 00:07:50.476  1353 26219 I PowerHalWrapper: state: 0
+10-23 00:07:50.477  1353 26219 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher pid=2009 activityId:181779130 state:0
+10-23 00:07:50.477   736   825 I libPowerHal: [perfLockRel] Done for hdl : 2148
+10-23 00:07:50.477   733   733 I vendor.mediatek.hardware.mtkpower_applist-service.mediatek: packName: com.android.launcher3 actName: com.android.launcher3.uioverrides.QuickstepLauncher pid: 2009 activityId: 181779130 uid: 10085 state: 0
+10-23 00:07:50.477   733   733 I MTK_APPList: [notifyAPPstate] com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher, pid=2009, activityId=181779130, uid=10085, state:PAUSED, fps:-1, win:0
+10-23 00:07:50.477   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_count: 1
+10-23 00:07:50.477   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_info[0] com.pda.hcw/com.pda.hcw.SplashLoginActivity, pid:11777, activityId:238573550, fps:-1, isMultiWindow:0
+10-23 00:07:50.477   733   733 I MTK_APPList: [getForegroundAPPCount] 1
+10-23 00:07:50.477   733   733 I MTK_APPList: [notifyNetdUID] 10147
+10-23 00:07:50.478   733   733 I MTK_APPList: [notifyPID] 11777
+10-23 00:07:50.479   736   825 I libPowerHal: [perfSetSysInfo] pid type:24, 11777
+10-23 00:07:50.480  1353 26219 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:true
+10-23 00:07:50.480  1353 26219 I PowerHalWrapper: amsBoostStop AMS_BOOST_PACK_SWITCH:false, AMS_BOOST_ACT_SWITCH:false, AMS_BOOST_PROCESS_CREATE:true, AMS_BOOST_PROCESS_CREATE_FOR_GAME:false, AMS_BOOST_HOT_LAUNCH:false
+10-23 00:07:50.481   736   785 I libPowerHal: [mtkPowerHint] hint:21, hold:6000, ext:30, ext_hold:35000
+10-23 00:07:50.482  2009  2009 D BaseDepthController: setSurface:
+10-23 00:07:50.482  2009  2009 D BaseDepthController:   mWaitingOnSurfaceValidity: false
+10-23 00:07:50.482  2009  2009 D BaseDepthController:   mSurface: null
+10-23 00:07:50.483   736   825 I libPowerHal: [perfLockAcq] idx:0 hdl:2150 hint:21 pid:736 tid:736 duration:6000 lock_user:vendor.mediatek => ret_hdl:2150
+10-23 00:07:50.483  2009  2009 D StatsLog: LAUNCHER_ONSTOP
+10-23 00:07:50.483   736   825 I libPowerHal: [perfLockAcq] Done for hdl : 2150
+10-23 00:07:50.483  2009  2009 D Launcher.Utilities: perfLockRelease mPowerHandle=2147
+10-23 00:07:50.483  1353  1529 I mtkpower_client: perf_lock_rel, hdl:2147, tid:1529
+10-23 00:07:50.487   736   825 I libPowerHal: [perfLockRel] hdl:2149, idx:2
+10-23 00:07:50.487  1353  1474 E ApplicationHelper: Fail to get PackageManager
+10-23 00:07:50.488   736   825 I libPowerHal: [perfLockRel] Done for hdl : 2149
+10-23 00:07:50.489  2323  6618 D ForegroundUtils: Foreground UID status:
+10-23 00:07:50.490   736   825 I libPowerHal: [perfLockAcq] idx:1 hdl:2151 hint:30 pid:736 tid:736 duration:35000 lock_user:vendor.mediatek => ret_hdl:2151
+10-23 00:07:50.490   736   825 I libPowerHal: [perfLockAcq] Done for hdl : 2151
+10-23 00:07:50.490  2323  6618 D ForegroundUtils: UID: 10038 is in foreground: false
+10-23 00:07:50.490  2323  6618 D ForegroundUtils: UID: 10085 is in foreground: false
+10-23 00:07:50.490  2323  6618 D ForegroundUtils: UID: 10088 is in foreground: true
+10-23 00:07:50.490  2323  6618 D ForegroundUtils: UID: 10116 is in foreground: true
+10-23 00:07:50.490  2323  6618 D ForegroundUtils: UID: 10119 is in foreground: false
+10-23 00:07:50.490  2323  6618 D ForegroundUtils: UID: 10147 is in foreground: true
+10-23 00:07:50.490   736   825 I libPowerHal: [perfLockRel] hdl:2147, idx:-1
+10-23 00:07:50.491   767   851 I BufferQueueDebug: [Surface(name=606ea40 InputMethod)/@0x21caabe - animation-leash of insets_animation#5210](this:0xb40000749a135e30,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:50.496  2009  2009 D InsetsController: hide(ime(), fromIme=true)
+10-23 00:07:50.497  2009  2009 I ImeTracker: com.iflytek.inputmethod.google:8440b917: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+10-23 00:07:50.499   767   767 I BufferQueueProducer: [NavigationBar0#4754](this:0xb40000749a0e34e0,id:-1,api:0,p:-1,c:767) queueBuffer: fps=54.03 dur=1017.86 max=52.68 min=16.93
+10-23 00:07:50.518   767   767 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=606ea40 InputMethod)/@0x21caabe - animation-leash of insets_animation#5193, layerId=5193, parentId=0
+10-23 00:07:50.518   767   767 I SurfaceFlinger: onHandleDestroyed: name=com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher#5185, layerId=5185, parentId=0
+10-23 00:07:50.535   767   767 I BufferQueueDebug: [com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher#5185](this:0xb40000749a0882e0,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:50.536   767   767 I BufferQueueDebug: [Surface(name=606ea40 InputMethod)/@0x21caabe - animation-leash of insets_animation#5193](this:0xb40000749a0fcef0,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:50.712   509  2541 D StNfcHal: (#04802) Rx 6f 02 0f (hidden)
+10-23 00:07:50.713   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:50.714  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:50.714  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:50.768  1353  1474 E ApplicationHelper: Fail to get PackageManager
+10-23 00:07:50.770  1691  1820 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.770  1691  1820 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.770  1691  1820 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.771  1691  1820 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.771  1691  1820 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.771  1691  1820 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.771   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.771   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.771   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.773  1691  1756 D View    : [Warning] assignParent to null: this = android.widget.FrameLayout{67c2d10 G.E...... ......ID 0,0-720,1440}
+10-23 00:07:50.773  1691  1708 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.773  1691  1708 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.773  1691  1708 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.776   767  1675 I BufferQueueDebug: [Surface(name=807aab Splash Screen com.pda.hcw)/@0x532c262 - animation-leash of window_animation#5211](this:0xb40000749a1057a0,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:50.780  1691  1756 D BLASTBufferQueue: [VRI[hcw]#475](f:0,a:1) destructor()
+10-23 00:07:50.781  1691  1756 D BufferQueueConsumer: [VRI[hcw]#475(BLAST Consumer)475](id:69b000001dc,api:0,p:-1,c:1691) disconnect
+10-23 00:07:50.781  1691  1756 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.781  1691  1756 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.781  1691  1756 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.782  1691  1756 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@46e1bc2
+10-23 00:07:50.783  1353  1529 D CoreBackPreview: Window{807aab u0 Splash Screen com.pda.hcw EXITING}: Setting back callback null
+10-23 00:07:50.786   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.786   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.786   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.786   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.787   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.787   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713  3104 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713  3104 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713  3104 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713  3104 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713  3104 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713  3104 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713  3104 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713  3104 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.788   713  3104 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.789  1353 26525 W InputManager-JNI: Input channel object '807aab Splash Screen com.pda.hcw (client)' was disposed without first being removed with the input manager!
+10-23 00:07:50.791   733   816 I libPerfCtl: xgfGetFPS pid:767 fps:-1
+10-23 00:07:50.791   733   816 I libPerfCtl: xgfGetFPS pid:1691 fps:-1
+10-23 00:07:50.792   733   816 I libPerfCtl: xgfGetFPS pid:2009 fps:-1
+10-23 00:07:50.792   733   816 I libPerfCtl: xgfGetFPS pid:11777 fps:-1
+10-23 00:07:50.804   713   713 I hwcomposer: [HWCDisplay] (0 updateFps():3663), (type:1, mode:2) fps:55.954353,dur:1000.82,max:20.65,min:15.74
+10-23 00:07:50.812  1007  1136 D AALService: [CRTC_114] 10-23 12:07:50.508 BL= 250,ESS= 256, 10-23 12:07:50.633 BL= 251,ESS= 256, 10-23 12:07:50.740 BL= 252,ESS= 256, 10-23 12:07:50.794 BL= 253,ESS= 256, 10-23 12:07:50.812 BL= 254,ESS= 256,
+10-23 00:07:50.937   509  2541 D StNfcHal: (#04803) Rx 6f 02 27 (hidden)
+10-23 00:07:50.938   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:50.939  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:50.939  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:50.948  1353  1477 D WindowManager: setParent old=ActivityRecord{e3857ee u0 com.pda.hcw/.SplashLoginActivity t164},new=null,this window=Window{807aab u0 Splash Screen com.pda.hcw},callers=com.android.server.wm.WindowContainer.removeChild:833 com.android.server.wm.ActivityRecord.removeChild:4674 com.android.server.wm.ActivityRecord.removeChild:427 com.android.server.wm.WindowContainer.removeImmediately:891 com.android.server.wm.WindowState.removeImmediately:2378 com.android.server.wm.WindowState.destroySurface:3362
+10-23 00:07:50.955  1007  1136 D AALService: [CRTC_114] 10-23 12:07:50.847 BL= 255,ESS= 256, 10-23 12:07:50.865 BL= 256,ESS= 256, 10-23 12:07:50.902 BL= 257,ESS= 256, 10-23 12:07:50.937 BL= 258,ESS= 256, 10-23 12:07:50.954 BL= 259,ESS= 256,
+10-23 00:07:50.966   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.966   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.966   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:50.981   767   767 I SurfaceFlinger: onHandleDestroyed: name=Splash Screen com.pda.hcw#5198, layerId=5198, parentId=0
+10-23 00:07:50.981   767   767 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=807aab Splash Screen com.pda.hcw)/@0x532c262 - animation-leash of window_animation#5211, layerId=5211, parentId=0
+10-23 00:07:50.981   767   767 I SurfaceFlinger: onHandleDestroyed: name=807aab Splash Screen com.pda.hcw#5197, layerId=5197, parentId=0
+10-23 00:07:50.999   767   767 I BufferQueueDebug: [Splash Screen com.pda.hcw#5198](this:0xb40000749a02a350,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:51.000   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:51.000   767   767 I BufferQueueDebug: [807aab Splash Screen com.pda.hcw#5197](this:0xb40000749a077180,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:51.000   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:51.000   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:51.000   767   767 I BufferQueueDebug: [Surface(name=807aab Splash Screen com.pda.hcw)/@0x532c262 - animation-leash of window_animation#5211](this:0xb40000749a1057a0,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:51.037   993   993 I thermal_repeater: [recvMdThermalInfo] ret=29, strLen=127,  1, 32767,,, -28404, 32767, 0
+10-23 00:07:51.051 11777 11777 D SplashLoginActivity: 检查用户登录状态
+10-23 00:07:51.051 11777 11777 D SplashLoginActivity: 新架构：不支持会话恢复，跳转到登录界面
+10-23 00:07:51.056  1353  1529 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_ORIENTATION_OVERRIDE
+10-23 00:07:51.057  1353  1529 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@87221beb does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-23 00:07:51.058  1353  1529 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_RESIZEABLE_ACTIVITY_OVERRIDES
+10-23 00:07:51.058  1353  1529 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+10-23 00:07:51.063   767  1675 I BufferQueueDebug: [ActivityRecord{c963bba u0 com.pda.hcw/.LoginActivity#5212](this:0xb40000749a0fcef0,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:51.066   736   785 I mtkpower@impl: [setMode] type:5, enabled:1
+10-23 00:07:51.067  1353  1529 I PowerHalWrapper: amsBoostNotify pid:11777,activity:com.pda.hcw.SplashLoginActivity, package:com.pda.hcw, mProcessCreatePackcom.pda.hcw
+10-23 00:07:51.067  1353  1529 I PowerHalWrapper: state: 0
+10-23 00:07:51.068   736   825 I libPowerHal: [perfLockAcq] idx:2 hdl:2152 hint:77 pid:736 tid:736 duration:30000 lock_user:vendor.mediatek => ret_hdl:2152
+10-23 00:07:51.068   736   825 I libPowerHal: [perfLockAcq] Done for hdl : 2152
+10-23 00:07:51.068  1353  1529 I ScnModule: [GameDetection] packname: com.pda.hcw, apkSize: 17966558.
+10-23 00:07:51.069  1353  1529 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.pda.hcw/com.pda.hcw.SplashLoginActivity pid=11777 activityId:238573550 state:0
+10-23 00:07:51.069   733   733 I vendor.mediatek.hardware.mtkpower_applist-service.mediatek: packName: com.pda.hcw actName: com.pda.hcw.SplashLoginActivity pid: 11777 activityId: 238573550 uid: 10147 state: 0
+10-23 00:07:51.069   733   733 I MTK_APPList: [notifyAPPstate] com.pda.hcw/com.pda.hcw.SplashLoginActivity, pid=11777, activityId=238573550, uid=10147, state:PAUSED, fps:-1, win:0
+10-23 00:07:51.069   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_count: 0
+10-23 00:07:51.069   733   733 I MTK_APPList: [getForegroundAPPCount] 1
+10-23 00:07:51.069   733   733 I MTK_APPList: [notifyNetdUID] 10147
+10-23 00:07:51.070   733   733 I MTK_APPList: [notifyPID] 11777
+10-23 00:07:51.071   736   825 I libPowerHal: [perfSetSysInfo] pid type:24, 11777
+10-23 00:07:51.071  1353  1529 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:true
+10-23 00:07:51.072  1353  1353 E MBrainLocalService: notifyAppSwitch failed
+10-23 00:07:51.073  1353  1529 I PowerHalWrapper: <amsBoostResume> last:com.pda.hcw, next:com.pda.hcwhasATProcess:false
+10-23 00:07:51.074  1353  1529 I PowerHalWrapper:  mIsColdLaunch :true
+10-23 00:07:51.074   736   825 I libPowerHal: [perfLockRel] hdl:2151, idx:1
+10-23 00:07:51.075   736   825 I libPowerHal: [perfLockRel] Done for hdl : 2151
+10-23 00:07:51.076  1353  1529 I ActivityTaskManager: START u0 {flg=0x14000000 cmp=com.pda.hcw/.LoginActivity (has extras)} with LAUNCH_SINGLE_TASK from uid 10147 (BAL_ALLOW_VISIBLE_WINDOW) result code=0
+10-23 00:07:51.077  1691  1745 V WindowManagerShell: Transition requested (#471): android.os.BinderProxy@ac1063b TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=164 displayId=0 isRunning=true baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.pda.hcw/.SplashLoginActivity } baseActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.SplashLoginActivity} topActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.LoginActivity} origActivity=null realActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.SplashLoginActivity} numActivities=2 lastActiveTime=375322627 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@b7d158} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{21d22b1 com.pda.hcw.LoginActivity} launchCookies=[android.os.BinderProxy@d9367d1] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= falseisLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false topActivityEligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=720 topActivityLetterboxHeight=1440 isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false cameraCompatTaskInfo=CameraCompatTaskInfo { cameraCompatControlState=hidden freeformCameraCompatMode=inactive}}}, pipTask = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 471 }
+10-23 00:07:51.082 11777 11777 D SplashLoginActivity: 已跳转到NFC登录界面
+10-23 00:07:51.085 11777 11777 D MyApplication: Activity paused: SplashLoginActivity
+10-23 00:07:51.088   767   767 I BpBinder: onLastStrongRef automatically unlinking death recipients:
+10-23 00:07:51.097  1353 26525 W WindowManager: Changing focus from Window{5a7a781 u0 com.pda.hcw/com.pda.hcw.SplashLoginActivity} to null displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:468 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6587 com.android.server.wm.ActivityTaskManagerService.setLastResumedActivityUncheckLocked:5047 com.android.server.wm.ActivityTaskSupervisor.updateTopResumedActivityIfNeeded:2326
+10-23 00:07:51.098  1353 26525 I PowerHalWrapper: amsBoostNotify pid:11777,activity:com.pda.hcw.LoginActivity, package:com.pda.hcw, mProcessCreatePackcom.pda.hcw
+10-23 00:07:51.098  1353 26525 I PowerHalWrapper: state: 1
+10-23 00:07:51.099  1353 26525 I ScnModule: [GameDetection] packname: com.pda.hcw, apkSize: 17966558.
+10-23 00:07:51.099  1353 26525 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.pda.hcw/com.pda.hcw.LoginActivity pid=11777 activityId:211172282 state:1
+10-23 00:07:51.100   733   733 I vendor.mediatek.hardware.mtkpower_applist-service.mediatek: packName: com.pda.hcw actName: com.pda.hcw.LoginActivity pid: 11777 activityId: 211172282 uid: 10147 state: 1
+10-23 00:07:51.100   733   733 I MTK_APPList: [notifyAPPstate] com.pda.hcw/com.pda.hcw.LoginActivity, pid=11777, activityId=211172282, uid=10147, state:RESUMED, fps:-1, win:0
+10-23 00:07:51.100   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_count: 1
+10-23 00:07:51.100   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_info[0] com.pda.hcw/com.pda.hcw.LoginActivity, pid:11777, activityId:211172282, fps:-1, isMultiWindow:0
+10-23 00:07:51.100   733   733 I MTK_APPList: [getForegroundAPPCount] 1
+10-23 00:07:51.100   733   733 I MTK_APPList: [notifyAPPstate] foreground:com.pda.hcw, pid:11777, activityId:211172282, uid:10147
+10-23 00:07:51.100   733   733 I MTK_APPList: [notifyNetdUID] 10147
+10-23 00:07:51.101   733   733 I MTK_APPList: [notifyPID] 11777
+10-23 00:07:51.102  1353 26525 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:true
+10-23 00:07:51.102   736   825 I libPowerHal: [perfSetSysInfo] pid type:24, 11777
+10-23 00:07:51.107  1353  1477 D SurfaceComposerClient: Transaction::apply InputWindowCommands.focusRequests timestamp=58015050715611, windowName=<null>
+10-23 00:07:51.114 11777 11809 D libMEOW : meow new tls: 0xb4000077612480d0
+10-23 00:07:51.114 11777 11809 D libMEOW : applied 1 plugins for [com.pda.hcw]:
+10-23 00:07:51.114 11777 11809 D libMEOW :   plugin 1: [libMEOW_gift.so]:
+10-23 00:07:51.115 11777 11809 D libMEOW : meow delete tls: 0xb4000077612480d0
+10-23 00:07:51.115  1007  1136 D AALService: [CRTC_114] 10-23 12:07:50.990 BL= 260,ESS= 256, 10-23 12:07:51.008 BL= 261,ESS= 256, 10-23 12:07:51.044 BL= 262,ESS= 256, 10-23 12:07:51.079 BL= 263,ESS= 256, 10-23 12:07:51.115 BL= 264,ESS= 256,
+10-23 00:07:51.123   767   767 D SurfaceFlinger: Focus addInputWindowCommands timestamp=58015050715611, windowName=<null>
+10-23 00:07:51.126   767  1205 D SurfaceFlinger: updateWinowInfo=1, setFocusedWindow timestamp=58015050715611, windowName=<null>
+10-23 00:07:51.142 11777 11777 D MyApplication: Activity created: LoginActivity
+10-23 00:07:51.197 14658 11798 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:51.197 14658 11798 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:51.198 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:51.198 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:51.198 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:51.246   509  2541 D StNfcHal: (#04804) Rx 6f 02 0f (hidden)
+10-23 00:07:51.247   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:51.247  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:51.247  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:51.252 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:51.254 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:51.255 14658 11810 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:51.347  1007  1136 D AALService: [CRTC_114] 10-23 12:07:51.169 BL= 265,ESS= 256, 10-23 12:07:51.204 BL= 266,ESS= 256, 10-23 12:07:51.258 BL= 267,ESS= 256, 10-23 12:07:51.294 BL= 268,ESS= 256, 10-23 12:07:51.347 BL= 269,ESS= 256,
+10-23 00:07:51.426   767   767 I BufferQueueProducer: [com.pda.hcw/com.pda.hcw.SplashLoginActivity#5206](this:0xb40000749a10b2c0,id:-1,api:0,p:-1,c:767) queueBuffer: fps=56.08 dur=1016.41 max=18.64 min=17.03
+10-23 00:07:51.472   509  2541 D StNfcHal: (#04805) Rx 6f 02 27 (hidden)
+10-23 00:07:51.472   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:51.473  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:51.473  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:51.482  1353  1688 I mtkpower_client: perf_lock_acq, hdl:2144, dur:3000, num:2, pid:1353, tid:1688
+10-23 00:07:51.484  1353  1688 I mtkpower_client: ret_hdl:2153
+10-23 00:07:51.485  1353  1688 I PowerHalMgrImpl: hdl:2153, pid:1353
+10-23 00:07:51.485  1353  1688 I mtkpower_client: perf_lock_rel, hdl:2153, tid:1688
+10-23 00:07:51.486   736   825 I libPowerHal: [perfLockAcq] idx:1 hdl:2153 hint:-1 pid:1353 tid:1688 duration:3000 lock_user:system_server => ret_hdl:2153
+10-23 00:07:51.486   736   825 I libPowerHal: end_default_hold_time HindID : 21
+10-23 00:07:51.486   736   825 I libPowerHal: [disableScenarioByHintId] Disable HindID : 21
+10-23 00:07:51.486   736   825 I libPowerHal: [disableScenarioByHintId] disableScenarioByHintId: HindID : 21
+10-23 00:07:51.486   736   825 I libPowerHal: [PD] MTKPOWER_HINT_PROCESS_CREATE update cmd:2024000 param:5, pr:6
+10-23 00:07:51.487   736   825 I libPowerHal: [disableScenarioByHintId] Disable HindID : 57
+10-23 00:07:51.487   736   825 I libPowerHal: [PE] system_server update ONESHOT(set) cmd:3410300 param:21 pr:3
+10-23 00:07:51.487   736   825 I libPowerHal: [perfLockAcq] Done for hdl : 2153
+10-23 00:07:51.489   736   825 I libPowerHal: [perfLockRel] hdl:2153, idx:1
+10-23 00:07:51.490   736   825 I libPowerHal: end_default_hold_time HindID : 21
+10-23 00:07:51.490   736   825 I libPowerHal: [disableScenarioByHintId] Disable HindID : 21
+10-23 00:07:51.490   736   825 I libPowerHal: [disableScenarioByHintId] Disable HindID : 57
+10-23 00:07:51.490   736   825 I libPowerHal: [PD] system_server update ONESHOT(unset) cmd:3410300 param:21 pr:3
+10-23 00:07:51.490   736   825 I libPowerHal: [perfLockRel] Done for hdl : 2153
+10-23 00:07:51.561  1007  1136 D AALService: [CRTC_114] 10-23 12:07:51.383 BL= 270,ESS= 256, 10-23 12:07:51.436 BL= 271,ESS= 256, 10-23 12:07:51.472 BL= 272,ESS= 256, 10-23 12:07:51.526 BL= 273,ESS= 256, 10-23 12:07:51.561 BL= 274,ESS= 256,
+10-23 00:07:51.665   767  1195 D SurfaceFlinger: calculateTimeoutTime, triggerInterval = 2 sec + 120329538 nsec
+10-23 00:07:51.781   509  2541 D StNfcHal: (#04806) Rx 6f 02 0f (hidden)
+10-23 00:07:51.781   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:51.782  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:51.782  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:51.792   733   816 I libPerfCtl: xgfGetFPS pid:1691 fps:-1
+10-23 00:07:51.792   733   816 I libPerfCtl: xgfGetFPS pid:11777 fps:-1
+10-23 00:07:51.794  1007  1136 D AALService: [CRTC_114] 10-23 12:07:51.614 BL= 275,ESS= 256, 10-23 12:07:51.651 BL= 276,ESS= 256, 10-23 12:07:51.704 BL= 277,ESS= 256, 10-23 12:07:51.740 BL= 278,ESS= 256, 10-23 12:07:51.794 BL= 279,ESS= 256,
+10-23 00:07:51.820   713   713 I hwcomposer: [HWCDisplay] (0 updateFps():3663), (type:1, mode:2) fps:56.117729,dur:1015.72,max:18.96,min:14.94
+10-23 00:07:52.006   509  2541 D StNfcHal: (#04807) Rx 6f 02 27 (hidden)
+10-23 00:07:52.006   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:52.007  1007  1136 D AALService: [CRTC_114] 10-23 12:07:51.829 BL= 280,ESS= 256, 10-23 12:07:51.883 BL= 281,ESS= 256, 10-23 12:07:51.918 BL= 282,ESS= 256, 10-23 12:07:51.972 BL= 283,ESS= 256, 10-23 12:07:52.007 BL= 284,ESS= 256,
+10-23 00:07:52.008  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:52.008  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:52.078 11777 11777 E TransactionExecutor: Failed to execute the transaction: tId:604027079 ClientTransaction{
+10-23 00:07:52.078 11777 11777 E TransactionExecutor: tId:604027079   transactionItems=[
+10-23 00:07:52.078 11777 11777 E TransactionExecutor: tId:604027079     LaunchActivityItem{activityToken=android.os.BinderProxy@e1419ae,intent=Intent { flg=0x14000000 cmp=com.pda.hcw/.LoginActivity (has extras) },ident=211172282,info=ActivityInfo{cd1a5a2 com.pda.hcw.LoginActivity},curConfig={1.0 ?mcc0mnc [zh_CN] ldltr sw360dp w360dp h672dp 320dpi nrml long port night finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 720, 1440) mAppBounds=Rect(0, 0 - 720, 1344) mMaxBounds=Rect(0, 0 - 720, 1440) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.3085 fontWeightAdjustment=0},overrideConfig={1.0 ?mcc0mnc [zh_CN] ldltr sw360dp w360dp h672dp 320dpi nrml long port night finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 720, 1440) mAppBounds=Rect(0, 0 - 720, 1344) mMaxBounds=Rect(0, 0 - 720, 1440) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} s.2 fontWeightAdjustment=0},deviceId=0,referrer=com.pda.hcw,procState=2,state=null,persistentState=null,pendingResults=null,pendingNewIntents=null,sceneTransitionInfo=null,profilerInfo=null,assistToken=android.os.BinderProxy@ef2d397,shareableActivityToken=android.os.BinderProxy@7a64984,activityWindowInfo=ActivityWindowInfo{isEmbedded=false, taskBounds=Rect(0, 0 - 720, 1440), taskFragmentBounds=Rect(0, 0 - 720, 1440)}}
+10-23 00:07:52.078 11777 11777 E TransactionExecutor: tId:604027079     ResumeActivityItem{mActivityToken=android.os.BinderProxy@e1419ae,procState=-1,updateProcState=false,isForward=true,shouldSendCompatFakeFocus=false}
+10-23 00:07:52.078 11777 11777 E TransactionExecutor: tId:604027079     Target activity: com.pda.hcw.LoginActivity
+10-23 00:07:52.078 11777 11777 E TransactionExecutor: tId:604027079   ]
+10-23 00:07:52.078 11777 11777 E TransactionExecutor: tId:604027079 }
+10-23 00:07:52.079 11777 11777 D AndroidRuntime: Shutting down VM
+10-23 00:07:52.088 11777 11777 E AndroidRuntime: FATAL EXCEPTION: main
+10-23 00:07:52.088 11777 11777 E AndroidRuntime: Process: com.pda.hcw, PID: 11777
+10-23 00:07:52.088 11777 11777 E AndroidRuntime: java.lang.RuntimeException: Unable to start activity ComponentInfo{com.pda.hcw/com.pda.hcw.LoginActivity}: java.lang.IllegalStateException: This Activity already has an action bar supplied by the window decor. Do not request Window.FEATURE_SUPPORT_ACTION_BAR and set windowActionBar to false in your theme to use a Toolbar instead.
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4090)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4277)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:112)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.servertransaction.TransactionExecutor.executeNonLifecycleItem(TransactionExecutor.java:174)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:109)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:81)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2678)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.os.Handler.dispatchMessage(Handler.java:107)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.os.Looper.loopOnce(Looper.java:232)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.os.Looper.loop(Looper.java:317)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.ActivityThread.main(ActivityThread.java:8758)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at java.lang.reflect.Method.invoke(Native Method)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:601)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:962)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime: Caused by: java.lang.IllegalStateException: This Activity already has an action bar supplied by the window decor. Do not request Window.FEATURE_SUPPORT_ACTION_BAR and set windowActionBar to false in your theme to use a Toolbar instead.
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at androidx.appcompat.app.AppCompatDelegateImpl.setSupportActionBar(AppCompatDelegateImpl.java:630)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at androidx.appcompat.app.AppCompatActivity.setSupportActionBar(AppCompatActivity.java:185)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at com.pda.hcw.LoginActivity.initViews(LoginActivity.java:131)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at com.pda.hcw.LoginActivity.onCreate(LoginActivity.java:99)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.Activity.performCreate(Activity.java:9002)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.Activity.performCreate(Activity.java:8980)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1526)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4072)
+10-23 00:07:52.088 11777 11777 E AndroidRuntime:        ... 13 more
+10-23 00:07:52.100  1353 26219 I ScnModule: [GameDetection] packname: com.pda.hcw, apkSize: 17966558.
+10-23 00:07:52.100  1353 26219 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.pda.hcw/com.pda.hcw pid=11777 activityId:11777 state:3
+10-23 00:07:52.100   733   733 I vendor.mediatek.hardware.mtkpower_applist-service.mediatek: packName: com.pda.hcw actName: com.pda.hcw pid: 11777 activityId: 11777 uid: 10147 state: 3
+10-23 00:07:52.100   733   733 I MTK_APPList: [notifyAPPstate] com.pda.hcw/com.pda.hcw, pid=11777, activityId=11777, uid=10147, state:DEAD, fps:-1, win:0
+10-23 00:07:52.100   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_count: 0
+10-23 00:07:52.100   733   733 I MTK_APPList: [getForegroundAPPCount] 1
+10-23 00:07:52.100   733   733 I MTK_APPList: [notifyAPPstate] pack:com.pda.hcw, pid:11777, STATE_DEAD
+10-23 00:07:52.100   733   733 I MTK_APPList: [notifyNetdUID] 10147
+10-23 00:07:52.101   733   733 I MTK_APPList: [notifyPID] 11777
+10-23 00:07:52.102   736   825 I libPowerHal: [perfSetSysInfo] pid type:24, 11777
+10-23 00:07:52.104  1353 26219 W ActivityTaskManager:   Force finishing activity com.pda.hcw/.LoginActivity
+10-23 00:07:52.107  1353 26219 I PowerHalWrapper: amsBoostNotify pid:11777,activity:com.pda.hcw.LoginActivity, package:com.pda.hcw, mProcessCreatePackcom.pda.hcw
+10-23 00:07:52.107  1353 26219 I PowerHalWrapper: state: 0
+10-23 00:07:52.108  1353 26219 I ScnModule: [GameDetection] packname: com.pda.hcw, apkSize: 17966558.
+10-23 00:07:52.108  1353 26219 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.pda.hcw/com.pda.hcw.LoginActivity pid=11777 activityId:211172282 state:0
+10-23 00:07:52.109   733   733 I vendor.mediatek.hardware.mtkpower_applist-service.mediatek: packName: com.pda.hcw actName: com.pda.hcw.LoginActivity pid: 11777 activityId: 211172282 uid: 10147 state: 0
+10-23 00:07:52.109   733   733 I MTK_APPList: [notifyAPPstate] com.pda.hcw/com.pda.hcw.LoginActivity, pid=11777, activityId=211172282, uid=10147, state:PAUSED, fps:-1, win:0
+10-23 00:07:52.109   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_count: 0
+10-23 00:07:52.109   733   733 I MTK_APPList: [getForegroundAPPCount] 1
+10-23 00:07:52.109   733   733 I MTK_APPList: [notifyNetdUID] 10147
+10-23 00:07:52.110   733   733 I MTK_APPList: [notifyPID] 11777
+10-23 00:07:52.111   736   825 I libPowerHal: [perfSetSysInfo] pid type:24, 11777
+10-23 00:07:52.111  1353 26219 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:true
+10-23 00:07:52.118 11777 11777 I Process : Sending signal. PID: 11777 SIG: 9
+10-23 00:07:52.119  2009  2009 I TopTaskTracker: onTaskMovedToFront: (moved taskInfo to front) taskId=107, baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.HOME] flg=0x10000100 cmp=com.android.launcher3/.uioverrides.QuickstepLauncher }
+10-23 00:07:52.160  1353 26525 V ActivityManager: Death received in com.android.server.am.ActivityManagerService$AppDeathRecipient@a419811 for thread android.os.BinderProxy@8691d76
+10-23 00:07:52.160   767  2049 D SurfaceFlinger: [SF client] REMOVE (0xb400007469f34e90) for (11777:com.pda.hcw)
+10-23 00:07:52.160   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.160   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.160   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.160 14658 14658 I adbd    : Remote process closed the socket (on MSG_PEEK)
+10-23 00:07:52.161  1353  2354 I ImeTracker: com.pda.hcw:91ac5ac3: onRequestHide at ORIGIN_SERVER reason HIDE_REMOVE_CLIENT fromUser false
+10-23 00:07:52.161  1353 26525 I ActivityManager: Process com.pda.hcw (pid 11777) has died: fg  TOP
+10-23 00:07:52.161  1353  1844 I WindowManager: WIN DEATH: Window{5a7a781 u0 com.pda.hcw/com.pda.hcw.SplashLoginActivity}
+10-23 00:07:52.161  1353  2354 I ImeTracker: com.pda.hcw:91ac5ac3: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-23 00:07:52.162  1353  1844 W InputManager-JNI: Input channel object '5a7a781 com.pda.hcw/com.pda.hcw.SplashLoginActivity (client)' was disposed without first being removed with the input manager!
+10-23 00:07:52.163  1353  1489 I libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_10147/pid_11777
+10-23 00:07:52.164   690   690 I Zygote  : Process 11777 exited due to signal 9 (Killed)
+10-23 00:07:52.164  2985  2985 I ImeTracker: com.iflytek.inputmethod.google:9f1bdec4: onRequestHide at ORIGIN_IME reason HIDE_WINDOW_LEGACY_DIRECT fromUser false
+10-23 00:07:52.165  1353  4888 I ImeTracker: com.iflytek.inputmethod.google:9f1bdec4: onFailed at PHASE_SERVER_APPLY_IME_VISIBILITY
+10-23 00:07:52.167  1353 26525 I ScnModule: [GameDetection] packname: com.pda.hcw, apkSize: 17966558.
+10-23 00:07:52.167  1353 26525 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.pda.hcw/com.pda.hcw pid=11777 activityId:11777 state:3
+10-23 00:07:52.167  1353  1474 D DisplayManagerService: Drop pending events for gone uid 10147
+10-23 00:07:52.167  2323  6618 D ForegroundUtils: UID: 10147 deleted.
+10-23 00:07:52.168   733   733 I vendor.mediatek.hardware.mtkpower_applist-service.mediatek: packName: com.pda.hcw actName: com.pda.hcw pid: 11777 activityId: 11777 uid: 10147 state: 3
+10-23 00:07:52.168   733   733 I MTK_APPList: [notifyAPPstate] com.pda.hcw/com.pda.hcw, pid=11777, activityId=11777, uid=10147, state:DEAD, fps:-1, win:0
+10-23 00:07:52.168   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_count: 0
+10-23 00:07:52.168   733   733 I MTK_APPList: [getForegroundAPPCount] 1
+10-23 00:07:52.168   733   733 I MTK_APPList: [notifyAPPstate] pack:com.pda.hcw, pid:11777, STATE_DEAD
+10-23 00:07:52.168   733   733 I MTK_APPList: [notifyNetdUID] 10147
+10-23 00:07:52.168  1353  1604 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-23 00:07:52.170  1353  1604 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-23 00:07:52.170  1353  1604 D InetDiagMessage: Destroyed live tcp sockets for uids={10147} in 3ms
+10-23 00:07:52.170   733   733 I MTK_APPList: [notifyPID] 11777
+10-23 00:07:52.170   736   825 I libPowerHal: [perfSetSysInfo] pid type:24, 11777
+10-23 00:07:52.171  1353  1604 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-23 00:07:52.172  1353 26525 D WindowManager: setParent old=Task{8dc248f #164 type=standard A=10147:com.pda.hcw},new=null,this window=ActivityRecord{c963bba u0 com.pda.hcw/.LoginActivity t164 f}},callers=com.android.server.wm.WindowContainer.removeChild:833 com.android.server.wm.TaskFragment.removeChild:3015 com.android.server.wm.Task.removeChild:1534 com.android.server.wm.Task.removeChild:1517 com.android.server.wm.WindowContainer.removeImmediately:891 com.android.server.wm.WindowToken.removeImmediately:359
+10-23 00:07:52.172  1353  1604 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-23 00:07:52.172  1353  1604 D InetDiagMessage: Destroyed live tcp sockets for uids={20147} in 3ms
+10-23 00:07:52.174  1353 26525 I PowerHalWrapper: <amsBoostResume> last:null, next:com.android.launcher3hasATProcess:true
+10-23 00:07:52.177   736   825 I libPowerHal: [perfLockAcq] idx:0 hdl:2154 hint:22 pid:736 tid:736 duration:10000 lock_user:vendor.mediatek => ret_hdl:2154
+10-23 00:07:52.177   736   825 I libPowerHal: [perfLockAcq] Done for hdl : 2154
+10-23 00:07:52.181  1353  1476 W ActivityManager: setHasOverlayUi called on unknown pid: 11777
+10-23 00:07:52.183  2009  2009 D ActivityThread: handleResumeActivity#3 r.window=com.android.internal.policy.PhoneWindow@54a4279a.mFinished = falsewillBeVisible = true
+10-23 00:07:52.183  2009  2009 D StatsLog: LAUNCHER_ONRESUME
+10-23 00:07:52.185  1353  1474 E ApplicationHelper: Fail to get PackageManager
+10-23 00:07:52.186  2323  6618 D ForegroundUtils: Foreground UID status:
+10-23 00:07:52.186  2323  6618 D ForegroundUtils: UID: 10038 is in foreground: false
+10-23 00:07:52.186  2323  6618 D ForegroundUtils: UID: 10085 is in foreground: true
+10-23 00:07:52.186  2323  6618 D ForegroundUtils: UID: 10088 is in foreground: true
+10-23 00:07:52.186  2323  6618 D ForegroundUtils: UID: 10116 is in foreground: true
+10-23 00:07:52.186  2323  6618 D ForegroundUtils: UID: 10119 is in foreground: false
+10-23 00:07:52.193   767   851 I BufferQueueDebug: [com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher#5213](this:0xb40000749a0882e0,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:52.196  1353 26525 W WindowManager: Changing focus from null to Window{e3b57f1 u0 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher} displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:468 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6587 com.android.server.wm.WindowManagerService.relayoutWindowInner:2678 com.android.server.wm.WindowManagerService.relayoutWindow:2348
+10-23 00:07:52.197   767   851 I BufferQueueDebug: [Surface(name=1d83571 StatusBar)/@0x5e5e76b - animation-leash of insets_animation#5214](this:0xb40000749a02a350,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:52.198   767   851 I BufferQueueDebug: [Surface(name=81a206d NavigationBar0)/@0x81d9975 - animation-leash of insets_animation#5215](this:0xb40000749a130310,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:52.200  1353 26525 I WindowManager: Relayout Window{e3b57f1 u0 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}: oldVis=8 newVis=0 focusMayChange = true requestedWidth = 720 requestedHeight = 1440 outFrames = ClientWindowFrames{frame=[0,0][720,1440] display=[0,0][720,1440] parentFrame=[0,0][0,0]} outSurfaceControl = Surface(name=com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher)/@0x2f058a4
+10-23 00:07:52.202  2009  2009 D BufferQueueConsumer: [](id:7d90000005c,api:0,p:-1,c:2009) connect: controlledByApp=false
+10-23 00:07:52.202  2009  2009 D BLASTBufferQueue: [VRI[QuickstepLauncher]#84](f:0,a:0) constructor()
+10-23 00:07:52.202  2009  2009 D BLASTBufferQueue: [VRI[QuickstepLauncher]#84](f:0,a:0) update width=720 height=1440 format=-2 mTransformHint=0
+10-23 00:07:52.205  2009  2009 D BaseDepthController: setSurface:
+10-23 00:07:52.205  2009  2009 D BaseDepthController:   mWaitingOnSurfaceValidity: false
+10-23 00:07:52.205  2009  2009 D BaseDepthController:   mSurface: Surface(name=com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher)/@0x4238d35
+10-23 00:07:52.209   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.209   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.209   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.213  1353  1477 D SurfaceComposerClient: Transaction::apply InputWindowCommands.focusRequests timestamp=58016144939226, windowName=e3b57f1 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher
+10-23 00:07:52.213   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.213   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.213   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.217   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.217   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.217   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.220  2009  2352 D BLASTBufferQueue: [VRI[QuickstepLauncher]#84](f:0,a:1) acquireNextBufferLocked size=720x1440 mFrameNumber=1 applyTransaction=true mTimestamp=58016163080226(auto) mPendingTransactions.size=0 graphicBufferId=8628589298253 transform=0
+10-23 00:07:52.221   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.221   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.221   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.226   767  2049 I BufferQueueDebug: [Transition Root: Task=1#5216](this:0xb40000749a14f840,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:52.229   767   767 D SurfaceFlinger: Focus addInputWindowCommands timestamp=58016144939226, windowName=e3b57f1 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher
+10-23 00:07:52.231   767   767 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=81a206d NavigationBar0)/@0x81d9975 - animation-leash of insets_animation#5208, layerId=5208, parentId=0
+10-23 00:07:52.231   767   767 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=1d83571 StatusBar)/@0x5e5e76b - animation-leash of insets_animation#5207, layerId=5207, parentId=0
+10-23 00:07:52.231  1691  1707 V WindowManagerShell: onTransitionReady(transaction=5811090775351)
+10-23 00:07:52.231  1691  1745 V WindowManagerShell: onTransitionReady (#471) android.os.BinderProxy@ac1063b: {id=471 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@a5c01b3} m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP leash=Surface(name=Task=1)/@0xeafcb17 sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0 taskParent=-1},{WCT{android.window.IWindowContainerToken$Stub$Proxy@5237370} m=CLOSE f=NONE leash=Surface(name=Task=164)/@0xb84ab04 sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0 taskParent=-1},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{f28cb21 token=android.os.Binder@2e01588})/@0xcb038ed sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0}]}
+10-23 00:07:52.232  1691  1745 V WindowManagerShell: Playing animation for (#471) android.os.BinderProxy@ac1063b@0
+10-23 00:07:52.232  1691  1745 V WindowManagerShell:  try handler com.android.wm.shell.transition.DefaultMixedHandler@4374c1e
+10-23 00:07:52.232  1691  1745 V WindowManagerShell:  try handler com.android.wm.shell.keyguard.KeyguardTransitionHandler@1f0bcff
+10-23 00:07:52.232  1691  1745 V WindowManagerShell:  try handler com.android.wm.shell.pip.PipTransition@e179d1f
+10-23 00:07:52.232  1691  1745 V WindowManagerShell:  try handler com.android.wm.shell.activityembedding.ActivityEmbeddingController@6e7886c
+10-23 00:07:52.232  1691  1745 V WindowManagerShell:  try handler com.android.wm.shell.recents.RecentsTransitionHandler@bae2e35
+10-23 00:07:52.232  1691  1745 V ShellRecents: RecentsTransitionHandler.startAnimation: no controller found
+10-23 00:07:52.233  1691  1745 V WindowManagerShell:  try handler com.android.wm.shell.splitscreen.StageCoordinator@d3c02ca
+10-23 00:07:52.233  1691  1745 V WindowManagerShell:  try handler com.android.wm.shell.transition.RemoteTransitionHandler@da2ec3b
+10-23 00:07:52.233  1691  1745 V WindowManagerShell: Transition doesn't have explicit remote, search filters for match for {id=471 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@a5c01b3} m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP leash=Surface(name=Task=1)/@0xeafcb17 sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0 taskParent=-1},{WCT{android.window.IWindowContainerToken$Stub$Proxy@5237370} m=CLOSE f=NONE leash=Surface(name=Task=164)/@0xb84ab04 sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0 taskParent=-1},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{f28cb21 token=android.os.Binder@2e01588})/@0xcb038ed sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0}]}
+10-23 00:07:52.233  1691  1745 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher} launchCookie=null},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@fc83b57, appThread = android.app.IApplicationThread$Stub$Proxy@69ff644, debugName = QuickstepLaunchHome }}
+10-23 00:07:52.233  1691  1745 D RemoteTransitionHandler: Found filterPair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher} launchCookie=null},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@fc83b57, appThread = android.app.IApplicationThread$Stub$Proxy@69ff644, debugName = QuickstepLaunchHome }}
+10-23 00:07:52.233  1691  1745 V WindowManagerShell:  Delegate animation for (#471) to RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@fc83b57, appThread = android.app.IApplicationThread$Stub$Proxy@69ff644, debugName = QuickstepLaunchHome }
+10-23 00:07:52.233   767  1205 D SurfaceFlinger: updateWinowInfo=1, setFocusedWindow timestamp=58016144939226, windowName=e3b57f1 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher
+10-23 00:07:52.236   767  1675 I BufferQueueDebug: [Surface(name=Task=1)/@0xd70e27c_transition-leash#5217](this:0xb40000749a108530,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:52.237   767  1675 I BufferQueueDebug: [Surface(name=Task=164)/@0x9df935a_transition-leash#5218](this:0xb40000749a102a10,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:52.238   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.238   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.238   711   765 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.239   767  1675 I BufferQueueDebug: [Surface(name=WallpaperWindowToken{f28cb21 token=android.os.Binder@2e01588})/@0x227aa68_transition-leash#5219](this:0xb40000749a155360,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:52.239  1007  1136 D AALService: [CRTC_114] 10-23 12:07:52.061 BL= 285,ESS= 256, 10-23 12:07:52.096 BL= 286,ESS= 256, 10-23 12:07:52.150 BL= 287,ESS= 256, 10-23 12:07:52.186 BL= 288,ESS= 256, 10-23 12:07:52.239 BL= 289,ESS= 256,
+10-23 00:07:52.248  1353  1473 V WindowManager: Sent Transition (#471) createdAt=10-23 00:07:51.059 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=164 displayId=0 isRunning=true baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.pda.hcw/.SplashLoginActivity } baseActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.SplashLoginActivity} topActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.LoginActivity} origActivity=null realActivity=ComponentInfo{com.pda.hcw/com.pda.hcw.SplashLoginActivity} numActivities=2 lastActiveTime=375322627 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{d0eed20 Task{8dc248f #164 type=standard A=10147:com.pda.hcw}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{d8b19c2 com.pda.hcw.LoginActivity} launchCookies=[android.os.BinderProxy@7e0989e] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= falseisLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false topActivityEligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=720 topActivityLetterboxHeight=1440 isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false cameraCompatTaskInfo=CameraCompatTaskInfo { cameraCompatControlState=hidden freeformCameraCompatMode=inactive}}}, pipTask = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 471 }
+10-23 00:07:52.248   767   767 I BufferQueueDebug: [Surface(name=81a206d NavigationBar0)/@0x81d9975 - animation-leash of insets_animation#5208](this:0xb40000749a116900,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:52.248  1353  1473 V WindowManager:     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+10-23 00:07:52.248   767   767 I BufferQueueDebug: [Surface(name=1d83571 StatusBar)/@0x5e5e76b - animation-leash of insets_animation#5207](this:0xb40000749a11f1b0,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:52.248  1353  1473 V WindowManager:     info={id=471 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+10-23 00:07:52.248  1353  1473 V WindowManager:         {WCT{RemoteToken{e1ebe75 Task{3e97d6b #1 type=home}}} m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP leash=Surface(name=Task=1)/@0x8c3a352 sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0 taskParent=-1},
+10-23 00:07:52.248  1353  1473 V WindowManager:         {WCT{RemoteToken{d0eed20 Task{8dc248f #164 type=standard A=10147:com.pda.hcw}}} m=CLOSE f=NONE leash=Surface(name=Task=164)/@0x75c3952 sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0 taskParent=-1},
+10-23 00:07:52.248  1353  1473 V WindowManager:         {null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{f28cb21 token=android.os.Binder@2e01588})/@0x6adc3b4 sb=Rect(0, 0 - 720, 1440) eb=Rect(0, 0 - 720, 1440) d=0}
+10-23 00:07:52.248  1353  1473 V WindowManager:     ]}
+10-23 00:07:52.250   736   785 I mtkpower@impl: [setMode] type:5, enabled:0
+10-23 00:07:52.251  1353 26525 I PowerHalWrapper: amsBoostStop AMS_BOOST_PACK_SWITCH:true, AMS_BOOST_ACT_SWITCH:false, AMS_BOOST_PROCESS_CREATE:false, AMS_BOOST_PROCESS_CREATE_FOR_GAME:false, AMS_BOOST_HOT_LAUNCH:false
+10-23 00:07:52.251   736   785 I libPowerHal: [mtkPowerHint] hint:22, hold:0, ext:30, ext_hold:2000
+10-23 00:07:52.252   736   825 I libPowerHal: [perfLockRel] hdl:2152, idx:2
+10-23 00:07:52.253  1691  1745 V WindowManagerShell:  animated by com.android.wm.shell.transition.RemoteTransitionHandler@da2ec3b
+10-23 00:07:52.253   736   825 I libPowerHal: [perfLockRel] Done for hdl : 2152
+10-23 00:07:52.254   736   825 I libPowerHal: [perfLockRel] hdl:2154, idx:0
+10-23 00:07:52.254   736   825 I libPowerHal: [PD] MTKPOWER_HINT_PACK_SWITCH update cmd:1408300 param:0, pr:6
+10-23 00:07:52.255   767  2049 I BufferQueueDebug: [19d0fe5 ActivityRecordInputSink com.android.launcher3/.uioverrides.QuickstepLauncher#5220](this:0xb40000749a1525d0,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:52.255   736   825 I libPowerHal: [PD] MTKPOWER_HINT_PACK_SWITCH update cmd:400000 param:-1 pr:6
+10-23 00:07:52.256   736   825 I libPowerHal: [PD] MTKPOWER_HINT_PACK_SWITCH update cmd:400100 param:-1 pr:6
+10-23 00:07:52.256 14658 11810 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:52.256 14658 11810 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:52.257   736   825 I libPowerHal: [PD] MTKPOWER_HINT_PACK_SWITCH update cmd:1000000 param:-1 pr:6
+10-23 00:07:52.257   736   825 I libPowerHal: [recordCPUFreqInfo] set cluster[0] min(-1): -1 max(-1): -1 cluster[1] min(-1): -1 max(-1): -1
+10-23 00:07:52.257   736   825 I libPowerHal: [perfLockRel] Done for hdl : 2154
+10-23 00:07:52.258 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:52.258 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:52.258 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:52.259  1353  4888 W UserManagerService: Requested status bar icon for non-badged user 0
+10-23 00:07:52.259   736   825 I libPowerHal: [perfLockAcq] idx:1 hdl:2155 hint:30 pid:736 tid:736 duration:2000 lock_user:vendor.mediatek => ret_hdl:2155
+10-23 00:07:52.260   736   825 I libPowerHal: [PE] MTKPOWER_HINT_EXT_LAUNCH update cmd:2024000, param:100, pr:3
+10-23 00:07:52.260   736   825 I libPowerHal: [PE] MTKPOWER_HINT_EXT_LAUNCH update cmd:1408300, param:40, pr:3
+10-23 00:07:52.261   736   825 I libPowerHal: [setDvfsrcDevFreqOpp] opp:1, freq:2400000000
+10-23 00:07:52.261   736   825 I libPowerHal: [PE] MTKPOWER_HINT_EXT_LAUNCH update cmd:1000000 param:1 pr:3
+10-23 00:07:52.261   736   825 I libPowerHal: [perfLockAcq] Done for hdl : 2155
+10-23 00:07:52.262   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.262   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.262   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.264  1691  1691 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.264  1691  1691 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.264  1691  1691 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.265  1691  1708 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.265  1691  1708 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.265  1691  1708 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.266   767   767 I BufferQueueProducer: [NavigationBar0#4754](this:0xb40000749a0e34e0,id:-1,api:0,p:-1,c:767) queueBuffer: fps=16.41 dur=1766.72 max=1267.66 min=17.44
+10-23 00:07:52.266  1691  1745 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.266  1691  1745 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.266  1691  1745 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.276  1353  1568 I ImeTracker: com.android.launcher3:c04218d0: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-23 00:07:52.278  1353  1568 I ImeTracker: com.android.launcher3:c04218d0: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-23 00:07:52.285   767  2049 I BufferQueueDebug: [Surface(name=606ea40 InputMethod)/@0x21caabe - animation-leash of insets_animation#5221](this:0xb40000749a1580f0,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:52.290   767   767 I BufferQueueProducer: [FramebufferSurface](this:0xb4000075c9f06540,id:-1,api:1,p:767,c:767) queueBuffer: fps=8.39 dur=3337.56 max=2856.80 min=16.07
+10-23 00:07:52.315   509  2541 D StNfcHal: (#04808) Rx 6f 02 0f (hidden)
+10-23 00:07:52.315   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:52.316  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:52.316  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:52.320 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:52.323 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:52.325 14658 11813 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:52.436  1007  1136 D AALService: [CRTC_114] 10-23 12:07:52.275 BL= 290,ESS= 256, 10-23 12:07:52.328 BL= 291,ESS= 256, 10-23 12:07:52.364 BL= 292,ESS= 256, 10-23 12:07:52.418 BL= 293,ESS= 256, 10-23 12:07:52.435 BL= 292,ESS= 256,
+10-23 00:07:52.464   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.464   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.464   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.464   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.464   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.464   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.465   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.465   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.465   767   767 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.466   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.466   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.466   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.466   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.466   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.466   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.466   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.466   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.467   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.467   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.467   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.467   713   713 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.540   509  2541 D StNfcHal: (#04809) Rx 6f 02 27 (hidden)
+10-23 00:07:52.540   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:52.541  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:52.541  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:52.552  1691  1745 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#471) android.os.BinderProxy@ac1063b@0
+10-23 00:07:52.555   767  1675 I SurfaceFlinger: onHandleDestroyed: name=ActivityRecord{c963bba u0 com.pda.hcw/.LoginActivity#5212, layerId=5212, parentId=0
+10-23 00:07:52.556  1353  1844 W ActivityManager: pid 1353 system sent binder code 7 with flags 1 to frozen apps and got error -32
+10-23 00:07:52.557  1353  1844 W WindowManager: Exception thrown during dispatchAppVisibility Window{5a7a781 u0 com.pda.hcw/com.pda.hcw.SplashLoginActivity EXITING}
+10-23 00:07:52.557  1353  1844 W WindowManager: android.os.DeadObjectException
+10-23 00:07:52.557  1353  1844 W WindowManager:         at android.os.BinderProxy.transactNative(Native Method)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at android.os.BinderProxy.transact(BinderProxy.java:586)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at android.view.IWindow$Stub$Proxy.dispatchAppVisibility(IWindow.java:553)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at com.android.server.wm.WindowState.sendAppVisibilityToClients(WindowState.java:3292)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at com.android.server.wm.WindowContainer.sendAppVisibilityToClients(WindowContainer.java:1293)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at com.android.server.wm.WindowToken.setClientVisible(WindowToken.java:403)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at com.android.server.wm.ActivityRecord.setClientVisible(ActivityRecord.java:7213)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at com.android.server.wm.ActivityRecord.postApplyAnimation(ActivityRecord.java:5920)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at com.android.server.wm.ActivityRecord.commitVisibility(ActivityRecord.java:5862)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at com.android.server.wm.Transition.finishTransition(Transition.java:1286)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at com.android.server.wm.TransitionController.finishTransition(TransitionController.java:941)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at com.android.server.wm.WindowOrganizerController.finishTransition(WindowOrganizerController.java:494)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at android.window.IWindowOrganizerController$Stub.onTransact(IWindowOrganizerController.java:289)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at com.android.server.wm.WindowOrganizerController.onTransact(WindowOrganizerController.java:204)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at android.os.Binder.execTransactInternal(Binder.java:1500)
+10-23 00:07:52.557  1353  1844 W WindowManager:         at android.os.Binder.execTransact(Binder.java:1444)
+10-23 00:07:52.557  1353  1844 W Process : Unable to open /proc/11777/status
+10-23 00:07:52.558  1353  1473 V WindowManager: Finish Transition (#471): created at 10-23 00:07:51.059 collect-started=0.09ms request-sent=15.916ms started=20.93ms ready=1119.369ms sent=1169.504ms finished=1495.071ms
+10-23 00:07:52.563   767  2049 I SurfaceFlinger: onHandleDestroyed: name=67d169 ActivityRecordInputSink com.pda.hcw/.SplashLoginActivity#5204, layerId=5204, parentId=0
+10-23 00:07:52.564  1353  1844 D WindowManager: setParent old=ActivityRecord{e3857ee u0 com.pda.hcw/.SplashLoginActivity t164 f}},new=null,this window=Window{5a7a781 u0 com.pda.hcw/com.pda.hcw.SplashLoginActivity EXITING},callers=com.android.server.wm.WindowContainer.removeChild:833 com.android.server.wm.ActivityRecord.removeChild:4674 com.android.server.wm.ActivityRecord.removeChild:427 com.android.server.wm.WindowContainer.removeImmediately:891 com.android.server.wm.WindowState.removeImmediately:2378 com.android.server.wm.WindowContainer.removeImmediately:867
+10-23 00:07:52.567  1353  1844 D WindowManager: setParent old=Task{8dc248f #164 type=standard A=10147:com.pda.hcw},new=null,this window=ActivityRecord{e3857ee u0 com.pda.hcw/.SplashLoginActivity t164 f}},callers=com.android.server.wm.WindowContainer.removeChild:833 com.android.server.wm.TaskFragment.removeChild:3015 com.android.server.wm.Task.removeChild:1534 com.android.server.wm.Task.removeChild:1517 com.android.server.wm.WindowContainer.removeImmediately:891 com.android.server.wm.WindowToken.removeImmediately:359
+10-23 00:07:52.570   767  2049 I BufferQueueDebug: [Task=164#5222](this:0xb40000749a077180,id:-1,api:0,p:-1,c:-1) BufferQueue core=(767:/system/bin/surfaceflinger)
+10-23 00:07:52.571   767   767 I BufferQueueDebug: [ActivityRecord{c963bba u0 com.pda.hcw/.LoginActivity#5212](this:0xb40000749a0fcef0,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:52.571   767   767 I SurfaceFlinger: onHandleDestroyed: name=Transition Root: Task=1#5216, layerId=5216, parentId=0
+10-23 00:07:52.571  1353  1844 D WindowManager: setParent old=DefaultTaskDisplayArea@155425712,new=null,this window=Task{8dc248f #164 type=standard A=10147:com.pda.hcw},callers=com.android.server.wm.WindowContainer.removeChild:833 com.android.server.wm.TaskDisplayArea.removeChildTask:351 com.android.server.wm.TaskDisplayArea.removeChild:342 com.android.server.wm.WindowContainer.removeImmediately:891 com.android.server.wm.TaskFragment.removeImmediately:3095 com.android.server.wm.Task.removeImmediately:2699
+10-23 00:07:52.574  1691  1745 V WindowManagerShell: Track 0 became idle
+10-23 00:07:52.574  1691  1745 V WindowManagerShell: All active transition animations finished
+10-23 00:07:52.579  1007  1136 D AALService: [CRTC_114] 10-23 12:07:52.471 BL= 291,ESS= 256, 10-23 12:07:52.489 BL= 290,ESS= 256, 10-23 12:07:52.525 BL= 289,ESS= 256, 10-23 12:07:52.543 BL= 288,ESS= 256, 10-23 12:07:52.579 BL= 287,ESS= 256,
+10-23 00:07:52.582  1353  4888 W UserManagerService: Requested status bar icon for non-badged user 0
+10-23 00:07:52.584  1353  2354 W UserManagerService: Requested status bar icon for non-badged user 0
+10-23 00:07:52.586  1353  2354 W UserManagerService: Requested status bar icon for non-badged user 0
+10-23 00:07:52.586  2009  2009 I TopTaskTracker: onTaskRemoved: taskId=164
+10-23 00:07:52.587  2009  2009 I TopTaskTracker: onTaskRemoved: taskId=164
+10-23 00:07:52.589   767   767 I BufferQueueDebug: [Transition Root: Task=1#5216](this:0xb40000749a14f840,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:52.589   767   767 I SurfaceFlinger: onHandleDestroyed: name=Task=164#5222, layerId=5222, parentId=0
+10-23 00:07:52.589   767   767 I SurfaceFlinger: onHandleDestroyed: name=5a7a781 com.pda.hcw/com.pda.hcw.SplashLoginActivity#5205, layerId=5205, parentId=0
+10-23 00:07:52.589   767   767 I SurfaceFlinger: onHandleDestroyed: name=com.pda.hcw/com.pda.hcw.SplashLoginActivity#5206, layerId=5206, parentId=0
+10-23 00:07:52.589   767   767 I SurfaceFlinger: onHandleDestroyed: name=ActivityRecord{e3857ee u0 com.pda.hcw/.SplashLoginActivity#5196, layerId=5196, parentId=0
+10-23 00:07:52.605  1353  1476 W ActivityTaskManager: Activity top resumed state loss timeout for ActivityRecord{c963bba u0 com.pda.hcw/.LoginActivity t-1 f}}
+10-23 00:07:52.606   767   767 I BufferQueueDebug: [67d169 ActivityRecordInputSink com.pda.hcw/.SplashLoginActivity#5204](this:0xb40000749a10e050,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:52.606  1353  1476 I PowerHalWrapper: amsBoostNotify pid:2009,activity:com.android.launcher3.uioverrides.QuickstepLauncher, package:com.android.launcher3, mProcessCreatePackcom.pda.hcw
+10-23 00:07:52.606  1353  1476 I PowerHalWrapper: state: 1
+10-23 00:07:52.606   767   767 I BufferQueueDebug: [Task=164#5222](this:0xb40000749a077180,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:52.606   767   767 I BufferQueueDebug: [ActivityRecord{e3857ee u0 com.pda.hcw/.SplashLoginActivity#5196](this:0xb40000749a0b2e50,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:52.606   767   767 E BpTransactionCompletedListener: Failed to transact (-32)
+10-23 00:07:52.607   767   767 I BufferQueueDebug: [com.pda.hcw/com.pda.hcw.SplashLoginActivity#5206](this:0xb40000749a10b2c0,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:52.607  1353  1476 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher pid=2009 activityId:181779130 state:1
+10-23 00:07:52.608   767   767 I BufferQueueDebug: [5a7a781 com.pda.hcw/com.pda.hcw.SplashLoginActivity#5205](this:0xb40000749a13e6e0,id:-1,api:0,p:-1,c:767) onDestructor()
+10-23 00:07:52.608   733   733 I vendor.mediatek.hardware.mtkpower_applist-service.mediatek: packName: com.android.launcher3 actName: com.android.launcher3.uioverrides.QuickstepLauncher pid: 2009 activityId: 181779130 uid: 10085 state: 1
+10-23 00:07:52.608   733   733 I MTK_APPList: [notifyAPPstate] com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher, pid=2009, activityId=181779130, uid=10085, state:RESUMED, fps:-1, win:0
+10-23 00:07:52.608   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_count: 1
+10-23 00:07:52.608   733   733 I MTK_APPList: [notifyAPPstate] multi_resumed_app_info[0] com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher, pid:2009, activityId:181779130, fps:-1, isMultiWindow:0
+10-23 00:07:52.608   733   733 I MTK_APPList: [getForegroundAPPCount] 1
+10-23 00:07:52.608   733   733 I MTK_APPList: [notifyAPPstate] foreground:com.android.launcher3, pid:2009, activityId:181779130, uid:10085
+10-23 00:07:52.608   733   733 I MTK_APPList: [notifyNetdUID] 10085
+10-23 00:07:52.610   733   733 I MTK_APPList: [notifyPID] 2009
+10-23 00:07:52.611   736   825 I libPowerHal: [perfSetSysInfo] pid type:24, 2009
+10-23 00:07:52.611   733   733 I MTK_APPList: [notifyAPPstate] pc:1, com.pda.hcw => com.android.launcher3
+10-23 00:07:52.611  1353  1476 I PowerHalWrapper: amsBoostNotify AMS_BOOST_PROCESS_CREATE_BOOST:true
+10-23 00:07:52.612  1353  1353 E MBrainLocalService: notifyAppSwitch failed
+10-23 00:07:52.745  1353  1476 W AccessibilityWindowsPopulator: Windows change within in 2 frames continuously over 500 ms and notify windows changed immediately
+10-23 00:07:52.792   733   816 I libPerfCtl: xgfGetFPS pid:767 fps:-1
+10-23 00:07:52.792   733   816 I libPerfCtl: xgfGetFPS pid:1691 fps:-1
+10-23 00:07:52.792   733   816 I libPerfCtl: xgfGetFPS pid:2009 fps:-1
+10-23 00:07:52.792   733   816 I libPerfCtl: xgfGetFPS pid:11777 fps:-1
+10-23 00:07:52.821   713   713 I hwcomposer: [HWCDisplay] (0 updateFps():3663), (type:1, mode:2) fps:51.944954,dur:1001.06,max:89.78,min:13.18
+10-23 00:07:52.849   509  2541 D StNfcHal: (#0480A) Rx 6f 02 0f (hidden)
+10-23 00:07:52.849   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:52.851  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:52.852  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:52.918  1007  1136 D AALService: [CRTC_114] 10-23 12:07:52.739 BL= 286,ESS= 256, 10-23 12:07:52.775 BL= 285,ESS= 256, 10-23 12:07:52.828 BL= 284,ESS= 256, 10-23 12:07:52.864 BL= 283,ESS= 256, 10-23 12:07:52.918 BL= 282,ESS= 256,
+10-23 00:07:52.924   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.924   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:52.924   767   858 E ion     : ioctl c0044901 failed with code -1: Bad file descriptor
+10-23 00:07:53.075   509  2541 D StNfcHal: (#0480B) Rx 6f 02 27 (hidden)
+10-23 00:07:53.076   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:53.078  1007  1136 D AALService: [CRTC_114] 10-23 12:07:52.954 BL= 281,ESS= 256, 10-23 12:07:53.007 BL= 280,ESS= 256, 10-23 12:07:53.043 BL= 279,ESS= 256,
+10-23 00:07:53.078  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:53.079  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:53.113   713  1149 I hwcomposer: [HWC] (0)fire a callback of refresh to SF[4]
+10-23 00:07:53.327 14658 11813 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:53.327 14658 11813 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:53.327 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:53.328 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:53.328 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:53.341  1353  2318 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+10-23 00:07:53.383   509  2541 D StNfcHal: (#0480C) Rx 6f 02 0f (hidden)
+10-23 00:07:53.383   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:53.384  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:53.384  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:53.392 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:53.395 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:53.397 14658 11814 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:53.609   509  2541 D StNfcHal: (#0480D) Rx 6f 02 27 (hidden)
+10-23 00:07:53.610   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:53.612  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:53.612  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:53.793   733   816 I libPerfCtl: xgfGetFPS pid:767 fps:-1
+10-23 00:07:53.793   733   816 I libPerfCtl: xgfGetFPS pid:1691 fps:-1
+10-23 00:07:53.794   733   816 I libPerfCtl: xgfGetFPS pid:2009 fps:-1
+10-23 00:07:53.794   733   816 I libPerfCtl: xgfGetFPS pid:11777 fps:-1
+10-23 00:07:53.918   509  2541 D StNfcHal: (#0480E) Rx 6f 02 0f (hidden)
+10-23 00:07:53.919   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:53.920  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:53.921  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:54.144   509  2541 D StNfcHal: (#0480F) Rx 6f 02 27 (hidden)
+10-23 00:07:54.145   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:54.146  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:54.146  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:54.263   736   825 I mtkpower@impl: [powerd_req] TIMER_MSG_PERF_LOCK_TIMEOUT hdl:2155
+10-23 00:07:54.264   736   825 I libPowerHal: [perfLockRel] hdl:2155, idx:1
+10-23 00:07:54.264   736   825 I libPowerHal: [PD] MTKPOWER_HINT_EXT_LAUNCH update cmd:2024000 param:5, pr:6
+10-23 00:07:54.264   736   825 I libPowerHal: [PD] MTKPOWER_HINT_EXT_LAUNCH update cmd:1408300 param:0, pr:6
+10-23 00:07:54.266   736   825 I libPowerHal: [PD] MTKPOWER_HINT_EXT_LAUNCH update cmd:1000000 param:-1 pr:6
+10-23 00:07:54.266   736   825 I libPowerHal: [perfLockRel] Done for hdl : 2155
+10-23 00:07:54.400 14658 11814 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:54.400 14658 11814 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:54.401 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:54.402 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:54.402 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:54.434 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0
+10-23 00:07:54.438 14658 14665 I adbd    : UsbFfsConnection constructed
+10-23 00:07:54.440 14658 11815 I adbd    : UsbFfs-monitor thread spawned
+10-23 00:07:54.452   509  2541 D StNfcHal: (#04810) Rx 6f 02 0f (hidden)
+10-23 00:07:54.452   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:54.454  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:54.455  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:54.599  1691  1761 D WifiSignalController: isWifi6: false,wifiVisible: true
+10-23 00:07:54.599  1691  1761 D WifiSignalController: iconId: 17302987
+10-23 00:07:54.678   509  2541 D StNfcHal: (#04811) Rx 6f 02 27 (hidden)
+10-23 00:07:54.678   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:54.680  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:54.680  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:54.794   733   816 I libPerfCtl: xgfGetFPS pid:1691 fps:-1
+10-23 00:07:54.795   733   816 I libPerfCtl: xgfGetFPS pid:2009 fps:-1
+10-23 00:07:54.987   509  2541 D StNfcHal: (#04812) Rx 6f 02 0f (hidden)
+10-23 00:07:54.988   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:54.989  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:54.989  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x0012
+10-23 00:07:55.212   509  2541 D StNfcHal: (#04813) Rx 6f 02 27 (hidden)
+10-23 00:07:55.213   509  2540 D StNfcHal: HalStopTimer
+10-23 00:07:55.215  2323  2523 D libnfc_nci: nfc_ncif_process_event; NFC received ntf gid:15
+10-23 00:07:55.215  2323  2523 I libnfc_nci: StFwNtfManager::handleVsLogData; data_len: 0x002A
+10-23 00:07:55.443 14658 11815 W adbd    : timed out while waiting for FUNCTIONFS_BIND, trying again
+10-23 00:07:55.443 14658 11815 I adbd    : UsbFfs: connection terminated: monitor thread finished
+10-23 00:07:55.444 14658 14658 I adbd    : UsbFfs: already offline
+10-23 00:07:55.444 14658 14658 I adbd    : destroying transport UsbFfs
+10-23 00:07:55.445 14658 14658 I adbd    : UsbFfsConnection being destroyed
+10-23 00:07:55.481 14658 14665 I adbd    : opening control endpoint /dev/usb-ffs/adb/ep0

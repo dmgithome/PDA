@@ -53,7 +53,17 @@ public class OperatingRoomManagementActivity extends BaseActivity {
         btnAdd = findViewById(R.id.btn_add);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new OperatingRoomAdapter(data);
+        adapter = new OperatingRoomAdapter(data, new OperatingRoomAdapter.OnRoomActionListener() {
+            @Override
+            public void onEdit(OperatingRoom room) {
+                showEditDialog(room);
+            }
+
+            @Override
+            public void onDelete(OperatingRoom room) {
+                confirmDelete(room);
+            }
+        });
         recyclerView.setAdapter(adapter);
 
         btnRefresh.setOnClickListener(v -> refreshFromServer());
@@ -121,6 +131,64 @@ public class OperatingRoomManagementActivity extends BaseActivity {
                 @Override
                 public void onFailure(Exception e) {
                     runOnUiThread(() -> UIUtils.showError(OperatingRoomManagementActivity.this, UIUtils.friendlyErrorMessage("新增失败", e)));
+                }
+            });
+        });
+        builder.setNegativeButton("取消", null);
+        builder.show();
+    }
+
+    private void showEditDialog(OperatingRoom room) {
+        if (room == null) return;
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("编辑术间");
+        final EditText input = new EditText(this);
+        input.setText(room.name);
+        input.setSelection(input.getText().length());
+        builder.setView(input);
+        builder.setPositiveButton("确定", (dialog, which) -> {
+            String name = input.getText().toString().trim();
+            if (name.isEmpty()) {
+                UIUtils.showError(this, "术间名称不能为空");
+                return;
+            }
+            manager.updateRoom(room, name, new ConsumableApiService.ApiCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean result) {
+                    runOnUiThread(() -> {
+                        UIUtils.showSuccess(OperatingRoomManagementActivity.this, "更新成功");
+                        loadLocal();
+                    });
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    runOnUiThread(() -> UIUtils.showError(OperatingRoomManagementActivity.this, UIUtils.friendlyErrorMessage("更新失败", e)));
+                }
+            });
+        });
+        builder.setNegativeButton("取消", null);
+        builder.show();
+    }
+
+    private void confirmDelete(OperatingRoom room) {
+        if (room == null) return;
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("删除确认");
+        builder.setMessage("确定要删除该术间吗？（软删除）");
+        builder.setPositiveButton("删除", (dialog, which) -> {
+            manager.deleteRoom(room, new ConsumableApiService.ApiCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean result) {
+                    runOnUiThread(() -> {
+                        UIUtils.showSuccess(OperatingRoomManagementActivity.this, "删除成功");
+                        loadLocal();
+                    });
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    runOnUiThread(() -> UIUtils.showError(OperatingRoomManagementActivity.this, UIUtils.friendlyErrorMessage("删除失败", e)));
                 }
             });
         });

@@ -543,7 +543,36 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                 if (cursor != null) cursor.close();
             }
         }
+        // 二次排序：使用中文+数字的自然排序，避免“术间10”排在“术间2”之前
+        // 使用“中文+数字”自然排序：优先比较名称中的数字（若存在），否则按中文排序
+        java.text.Collator zhCollator = java.text.Collator.getInstance(java.util.Locale.CHINA);
+        java.util.Collections.sort(list, (a, b) -> {
+            String sa = (a != null && a.name != null) ? a.name : "";
+            String sb = (b != null && b.name != null) ? b.name : "";
+            int na = extractFirstInt(sa);
+            int nb = extractFirstInt(sb);
+            if (na >= 0 && nb >= 0 && na != nb) {
+                return Integer.compare(na, nb);
+            }
+            return zhCollator.compare(sa, sb);
+        });
         return list;
+    }
+
+    private static int extractFirstInt(String s) {
+        if (s == null) return -1;
+        int n = s.length();
+        int i = 0;
+        while (i < n && !Character.isDigit(s.charAt(i))) i++;
+        if (i >= n) return -1;
+        int j = i;
+        long val = 0;
+        while (j < n && Character.isDigit(s.charAt(j))) {
+            val = val * 10 + (s.charAt(j) - '0');
+            if (val > Integer.MAX_VALUE) return Integer.MAX_VALUE; // 防溢出
+            j++;
+        }
+        return (int) val;
     }
 
     /**
@@ -593,6 +622,58 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                 return false;
             } finally {
                 if (cursor != null) cursor.close();
+            }
+        }
+    }
+
+    /**
+     * 更新本地术间名称（依据serverId，若无则按旧名称匹配）
+     */
+    public boolean updateOperatingRoomName(Integer serverId, String oldName, String newName) {
+        synchronized (databaseLock) {
+            SQLiteDatabase db = null;
+            try {
+                db = getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put(COLUMN_OR_NAME, newName);
+                int rows;
+                if (serverId != null) {
+                    rows = db.update(TABLE_OPERATING_ROOMS, values, COLUMN_OR_SERVER_ID + "=?", new String[]{String.valueOf(serverId)});
+                    if (rows == 0 && oldName != null) {
+                        rows = db.update(TABLE_OPERATING_ROOMS, values, COLUMN_OR_NAME + "=?", new String[]{oldName});
+                    }
+                } else {
+                    rows = db.update(TABLE_OPERATING_ROOMS, values, COLUMN_OR_NAME + "=?", new String[]{oldName});
+                }
+                return rows > 0;
+            } catch (Exception e) {
+                Log.e(TAG, "Error updating operating room name", e);
+                return false;
+            }
+        }
+    }
+
+    /**
+     * 删除本地术间（依据serverId优先，否则按名称）
+     */
+    public boolean deleteOperatingRoom(Integer serverId, String name) {
+        synchronized (databaseLock) {
+            SQLiteDatabase db = null;
+            try {
+                db = getWritableDatabase();
+                int rows;
+                if (serverId != null) {
+                    rows = db.delete(TABLE_OPERATING_ROOMS, COLUMN_OR_SERVER_ID + "=?", new String[]{String.valueOf(serverId)});
+                    if (rows == 0 && name != null) {
+                        rows = db.delete(TABLE_OPERATING_ROOMS, COLUMN_OR_NAME + "=?", new String[]{name});
+                    }
+                } else {
+                    rows = db.delete(TABLE_OPERATING_ROOMS, COLUMN_OR_NAME + "=?", new String[]{name});
+                }
+                return rows > 0;
+            } catch (Exception e) {
+                Log.e(TAG, "Error deleting operating room", e);
+                return false;
             }
         }
     }
@@ -1381,13 +1462,7 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                 int rows = db.update(TABLE_INVENTORY_TASK_DETAILS, v, COLUMN_TASK_ID_REF + "=? AND (" + COLUMN_EPC_CODE + "=? OR rfid=?)", new String[]{taskId, rfid, rfid});
 
                 if (rows == 0) {
-                    // 兜底：计划中不存在该RFID，则按“盈余扫描”插入一条明细
-                    // 同时尝试将20位(末尾00)裁剪为18位再匹配一次
-                    String trimmed = tryTrim20To18(rfid);
-                    if (trimmed != null) {
-                        rows = db.update(TABLE_INVENTORY_TASK_DETAILS, v, COLUMN_TASK_ID_REF + "=? AND (" + COLUMN_EPC_CODE + "=? OR rfid=?)", new String[]{taskId, trimmed, trimmed});
-                        if (rows > 0) return true;
-                    }
+                    // 兜底：计划中不存在该RFID，则按“盈余扫描”插入一条明细（不再二次格式化）
                     try {
                         ContentValues nv = new ContentValues();
                         String detailId = "detail_" + taskId + "_" + rfid;

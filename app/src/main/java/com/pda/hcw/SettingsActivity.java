@@ -51,6 +51,12 @@ public class SettingsActivity extends BaseActivity {
     private SwitchMaterial rfidMultiSwitch;
     private Spinner rfidBeepModeSpinner;
     private TextInputEditText uhfTriggerDelayInput;
+    // 会话豁免 UI
+    private SwitchMaterial idleExemptSwitch;
+    private android.widget.CheckBox cbExemptInventory;
+    private android.widget.CheckBox cbExemptCheckout;
+    private android.widget.CheckBox cbExemptInbound;
+    private android.widget.CheckBox cbExemptHistory;
     
     // 管理器
     private SharedPreferences prefs;
@@ -159,6 +165,13 @@ public class SettingsActivity extends BaseActivity {
             rfidMultiSwitch = findViewById(R.id.rfid_multi_switch);
             rfidBeepModeSpinner = findViewById(R.id.rfid_beep_mode_spinner);
             uhfTriggerDelayInput = findViewById(R.id.uhf_trigger_delay_input);
+
+            // 会话豁免视图
+            idleExemptSwitch = findViewById(R.id.idle_exempt_switch);
+            cbExemptInventory = findViewById(R.id.cb_exempt_inventory);
+            cbExemptCheckout = findViewById(R.id.cb_exempt_checkout);
+            cbExemptInbound = findViewById(R.id.cb_exempt_inbound);
+            cbExemptHistory = findViewById(R.id.cb_exempt_history);
             
             // 设置超时时间选项
             ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -246,6 +259,21 @@ public class SettingsActivity extends BaseActivity {
 
             // 加载RFID设置
             loadRfidSettings();
+
+            // 加载会话豁免设置
+            boolean exemptEnabled = prefs.getBoolean("idle_exempt_enabled", false);
+            if (idleExemptSwitch != null) idleExemptSwitch.setChecked(exemptEnabled);
+            String modulesCsv = prefs.getString("idle_exempt_modules", "");
+            java.util.Set<String> set = new java.util.HashSet<>();
+            if (modulesCsv != null && !modulesCsv.trim().isEmpty()) {
+                for (String s : modulesCsv.split(",")) {
+                    if (s != null && !s.trim().isEmpty()) set.add(s.trim());
+                }
+            }
+            if (cbExemptInventory != null) cbExemptInventory.setChecked(set.contains("InventoryActivity"));
+            if (cbExemptCheckout != null) cbExemptCheckout.setChecked(set.contains("ConsumableCheckoutNewActivity"));
+            if (cbExemptInbound != null) cbExemptInbound.setChecked(set.contains("InboundAcceptanceActivity"));
+            if (cbExemptHistory != null) cbExemptHistory.setChecked(set.contains("CheckoutHistoryActivity"));
             
             Log.d(TAG, "加载当前设置成功: " + timeoutMinutes + "分钟");
         } catch (Exception e) {
@@ -441,6 +469,17 @@ public class SettingsActivity extends BaseActivity {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("session_timeout_minutes", timeoutMinutes);
             editor.putLong("session_timeout_ms", timeoutMs);
+
+            // 保存会话豁免设置
+            boolean exemptEnabled = idleExemptSwitch != null && idleExemptSwitch.isChecked();
+            java.util.List<String> selected = new java.util.ArrayList<>();
+            if (cbExemptInventory != null && cbExemptInventory.isChecked()) selected.add("InventoryActivity");
+            if (cbExemptCheckout != null && cbExemptCheckout.isChecked()) selected.add("ConsumableCheckoutNewActivity");
+            if (cbExemptInbound != null && cbExemptInbound.isChecked()) selected.add("InboundAcceptanceActivity");
+            if (cbExemptHistory != null && cbExemptHistory.isChecked()) selected.add("CheckoutHistoryActivity");
+            String modulesCsv = android.text.TextUtils.join(",", selected);
+            editor.putBoolean("idle_exempt_enabled", exemptEnabled);
+            editor.putString("idle_exempt_modules", modulesCsv);
             
             // 保存条码设置
             saveBarcodeSettings(editor);
@@ -461,6 +500,13 @@ public class SettingsActivity extends BaseActivity {
                     "会话超时时间",
                     sessionManager.getTimeoutDuration() + "ms",
                     timeoutMs + "ms"
+                );
+                // 记录豁免设置变更（不含具体用户隐私）
+                AuditLogger.logSystemSetting(
+                    currentUser.getUserId(),
+                    "会话超时豁免",
+                    String.valueOf(prefs.getBoolean("idle_exempt_enabled", false)) + ":" + prefs.getString("idle_exempt_modules", ""),
+                    String.valueOf(exemptEnabled) + ":" + modulesCsv
                 );
             }
             

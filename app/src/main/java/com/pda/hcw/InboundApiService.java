@@ -90,7 +90,7 @@ public class InboundApiService {
                         io.total = o.optInt("number", 0);
                         io.accepted = o.optInt("shelfedNumber", 0);
 
-                        // 提取未上架的RFID集合
+                        // 提取未上架的RFID集合（不修改业务系统原始数据）
                         Set<String> plan = new HashSet<>();
                         JSONArray level1 = o.optJSONArray("children");
                         if (level1 != null) {
