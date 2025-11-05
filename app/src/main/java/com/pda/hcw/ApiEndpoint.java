@@ -20,6 +20,8 @@ public enum ApiEndpoint {
     // 手术/术间
     GET_OPERATING_ROOM_LIST("/api/surgery/getOperatingRoomList", "获取术间列表"),
     ADD_OPERATING_ROOM("/api/surgery/addOperatingRoom", "新增术间"),
+    UPDATE_OPERATING_ROOM("/api/surgery/updateOperatingRoom", "更新术间"),
+    DELETE_OPERATING_ROOM("/api/surgery/deleteOperatingRoom", "删除术间(软删除)"),
 
     // 预警/统计
     OVERTIME_UNRETURN_NUMBER("/api/unreturn/getOverTimeUnreturnNumberByID", "超时未归还数量");

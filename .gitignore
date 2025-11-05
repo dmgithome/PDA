@@ -31,3 +31,6 @@ key.properties
 # Project-local data
 /checkout_records.db
 *.Zone.Identifier
+
+# Tool cache
+.serena/

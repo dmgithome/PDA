@@ -48,6 +48,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class InventoryActivity extends BaseActivity {
     private static final String TAG = "InventoryActivity";
+    private static final String PREFS_NAME = "inventory_prefs";
+    private static final String PREF_RFID_FILTER_MODE = "rfid_filter_mode"; // 0:仅未盘 1:全部
 
     // UI 状态机
     private enum TaskUIState { NO_TASK, PENDING, EXECUTING, FINISHED }
@@ -477,22 +479,56 @@ public class InventoryActivity extends BaseActivity {
             if (inventorySession == null) return;
             int roomId = summary.getRoomId() != null ? summary.getRoomId() : 0;
             String loc = summary.getLocation();
+
             List<String> rfids = inventorySession.getRoomRfidList(roomId, true);
             Map<String, Boolean> state = inventorySession.getRoomRfidStateMap(roomId);
-            List<String> display = new ArrayList<>();
-            for (String r : rfids) display.add((state.getOrDefault(r, false) ? "[已盘] " : "[未盘] ") + r);
-            final String[] items = display.toArray(new String[0]);
+            List<RfidItem> data = new ArrayList<>();
+            for (String r : rfids) data.add(new RfidItem(r, state.getOrDefault(r, false)));
+
+            View view = getLayoutInflater().inflate(R.layout.dialog_room_rfid_list, null);
+            androidx.recyclerview.widget.RecyclerView rv = view.findViewById(R.id.rv_rfid_list);
+            android.widget.RadioGroup rg = view.findViewById(R.id.rg_filter);
+            android.widget.RadioButton rbOnly = view.findViewById(R.id.rb_only_uncounted);
+            android.widget.RadioButton rbAll = view.findViewById(R.id.rb_all);
+            android.widget.TextView tv = view.findViewById(R.id.tv_summary);
+
+            // 记忆上次过滤状态
+            android.content.SharedPreferences sp = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            int filterMode = sp.getInt(PREF_RFID_FILTER_MODE, 0); // 默认仅未盘
+            boolean showCounted = (filterMode == 1);
+
+            rv.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
+            RfidListAdapter adapter = new RfidListAdapter(data, showCounted, item -> showRfidDetailDialog(item.rfid));
+            rv.setAdapter(adapter);
+            updateRfidSummary(tv, adapter);
+
+            // 初始化单选
+            if (showCounted) rbAll.setChecked(true); else rbOnly.setChecked(true);
+            rg.setOnCheckedChangeListener((group, checkedId) -> {
+                boolean show = checkedId == R.id.rb_all;
+                adapter.applyFilter(show);
+                updateRfidSummary(tv, adapter);
+                sp.edit().putInt(PREF_RFID_FILTER_MODE, show ? 1 : 0).apply();
+            });
+
             new AlertDialog.Builder(this)
                     .setTitle(loc + " - RFID明细")
-                    .setItems(items, (dialog, which) -> {
-                        if (which >= 0 && which < rfids.size()) showRfidDetailDialog(rfids.get(which));
-                    })
+                    .setView(view)
                     .setNegativeButton("关闭", null)
                     .show();
         } catch (Exception e) {
             Log.e(TAG, "openRoomDetail failed", e);
             showError("加载明细失败");
         }
+    }
+
+    private void updateRfidSummary(TextView tv, RfidListAdapter adapter) {
+        try {
+            int total = adapter.getTotal();
+            int counted = adapter.getCounted();
+            int uncounted = Math.max(0, total - counted);
+            tv.setText("共:" + total + "  已盘:" + counted + "  未盘:" + uncounted);
+        } catch (Exception ignore) {}
     }
 
     private void showRfidDetailDialog(String rfid) {

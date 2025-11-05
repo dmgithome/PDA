@@ -186,6 +186,75 @@ public class ConsumableApiService {
             }
         });
     }
+
+    /**
+     * 更新术间名称（POST /api/surgery/updateOperatingRoom）
+     */
+    public void updateOperatingRoom(int id, String newName, ApiCallback<Boolean> callback) {
+        executorService.execute(() -> {
+            try {
+                if (SessionManager.getInstance(context).getCurrentUser() == null) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
+                    return;
+                }
+                if (!networkConfig.isValidConfig()) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
+                    return;
+                }
+
+                String apiUrl = networkConfig.getFullUrl(ApiEndpoint.UPDATE_OPERATING_ROOM);
+                org.json.JSONObject body = new org.json.JSONObject();
+                body.put("id", id);
+                body.put("name", newName);
+                String response = sendHttpRequest(apiUrl, "POST", body.toString());
+
+                org.json.JSONObject json = new org.json.JSONObject(response);
+                int status = json.optInt("status", 0);
+                if (status != 200) {
+                    String msg = json.optString("message", "更新失败");
+                    throw new Exception(msg);
+                }
+                mainHandler.post(() -> callback.onSuccess(true));
+            } catch (Exception e) {
+                Log.e(TAG, "updateOperatingRoom failed", e);
+                mainHandler.post(() -> callback.onFailure(e));
+            }
+        });
+    }
+
+    /**
+     * 删除术间（软删除）（POST /api/surgery/deleteOperatingRoom）
+     */
+    public void deleteOperatingRoom(int id, ApiCallback<Boolean> callback) {
+        executorService.execute(() -> {
+            try {
+                if (SessionManager.getInstance(context).getCurrentUser() == null) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
+                    return;
+                }
+                if (!networkConfig.isValidConfig()) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
+                    return;
+                }
+
+                String apiUrl = networkConfig.getFullUrl(ApiEndpoint.DELETE_OPERATING_ROOM);
+                org.json.JSONObject body = new org.json.JSONObject();
+                body.put("id", id);
+                String response = sendHttpRequest(apiUrl, "POST", body.toString());
+
+                org.json.JSONObject json = new org.json.JSONObject(response);
+                int status = json.optInt("status", 0);
+                if (status != 200) {
+                    String msg = json.optString("message", "删除失败");
+                    throw new Exception(msg);
+                }
+                mainHandler.post(() -> callback.onSuccess(true));
+            } catch (Exception e) {
+                Log.e(TAG, "deleteOperatingRoom failed", e);
+                mainHandler.post(() -> callback.onFailure(e));
+            }
+        });
+    }
     private ConsumableApiService(Context context) {
         this.context = context;
         this.executorService = Executors.newFixedThreadPool(3);

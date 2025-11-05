@@ -197,6 +197,13 @@ public class SessionManager {
 
         long remaining = getRemainingTime();
         if (remaining <= 0) {
+            // 到点先判断是否命中前台白名单：命中则续期并重启计时
+            if (isIdleExemptForeground()) {
+                lastActivityTime = System.currentTimeMillis();
+                Log.d(TAG, "会话超时命中白名单，已自动续期(立即)");
+                startTimeoutTimer();
+                return;
+            }
             Log.d(TAG, "会话超时，自动登出");
             endSession("会话超时");
             if (listener != null) listener.onSessionTimeout();
@@ -219,6 +226,13 @@ public class SessionManager {
         timeoutRunnable = new Runnable() {
             @Override public void run() {
                 if (!isActive) return;
+                // 到点先判断是否命中前台白名单：命中则续期并重启计时
+                if (isIdleExemptForeground()) {
+                    lastActivityTime = System.currentTimeMillis();
+                    Log.d(TAG, "会话超时命中白名单，已自动续期");
+                    startTimeoutTimer();
+                    return;
+                }
                 Log.d(TAG, "会话超时，自动登出");
                 endSession("会话超时");
                 if (listener != null) listener.onSessionTimeout();
@@ -226,6 +240,37 @@ public class SessionManager {
         };
         timeoutHandler.postDelayed(timeoutRunnable, remaining);
         Log.d(TAG, "启动/重置会话超时检测，remaining=" + remaining + "ms");
+    }
+
+    /**
+     * 是否当前处于前台且命中会话空闲豁免白名单
+     */
+    private boolean isIdleExemptForeground() {
+        try {
+            Context appCtx = context.getApplicationContext();
+            if (!(appCtx instanceof MyApplication)) return false;
+            MyApplication app = (MyApplication) appCtx;
+            android.app.Activity a = app.getCurrentActivity();
+            if (a == null) return false;
+
+            android.content.SharedPreferences sp = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE);
+            boolean enabled = sp.getBoolean("idle_exempt_enabled", false);
+            if (!enabled) return false;
+
+            String csv = sp.getString("idle_exempt_modules", "");
+            if (csv == null || csv.trim().isEmpty()) return false;
+
+            String simple = a.getClass().getSimpleName();
+            for (String s : csv.split(",")) {
+                if (s != null && simple.equals(s.trim())) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (Throwable t) {
+            Log.w(TAG, "isIdleExemptForeground check failed", t);
+            return false;
+        }
     }
 
     /**

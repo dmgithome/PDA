@@ -272,6 +272,8 @@
 
                     </LinearLayout>
 
+                    
+
                     <!-- sdCode 设置 -->
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -561,6 +563,81 @@
 
                         </com.google.android.material.textfield.TextInputLayout>
 
+                    </LinearLayout>
+
+                    <!-- 会话超时豁免（白名单） -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="会话超时豁免"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_primary"
+                            android:layout_marginBottom="8dp"/>
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/idle_exempt_switch"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="启用会话超时豁免"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_primary"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="在以下功能界面停留时，到达会话超时时自动续期，不跳转登录（仅当前台生效）"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginBottom="8dp"/>
+
+                        <!-- 模块多选：使用勾选框简化实现 -->
+                        <LinearLayout
+                            android:id="@+id/idle_exempt_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingLeft="4dp">
+
+                            <CheckBox
+                                android:id="@+id/cb_exempt_inventory"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="库存盘点"
+                                android:textSize="14sp"
+                                android:textColor="@color/text_primary"/>
+
+                            <CheckBox
+                                android:id="@+id/cb_exempt_checkout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="耗材取用"
+                                android:textSize="14sp"
+                                android:textColor="@color/text_primary"/>
+
+                            <CheckBox
+                                android:id="@+id/cb_exempt_inbound"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="入库验收"
+                                android:textSize="14sp"
+                                android:textColor="@color/text_primary"/>
+
+                            <CheckBox
+                                android:id="@+id/cb_exempt_history"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="库存查看"
+                                android:textSize="14sp"
+                                android:textColor="@color/text_primary"/>
+
+                        </LinearLayout>
                     </LinearLayout>
 
                 </LinearLayout>

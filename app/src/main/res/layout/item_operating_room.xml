@@ -30,6 +30,36 @@
             android:textColor="@color/text_tertiary"
             android:layout_marginTop="4dp"/>
 
+        <LinearLayout
+            android:id="@+id/layout_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_edit"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="编辑"
+                android:textSize="12sp"
+                android:minHeight="32dp"
+                android:layout_marginEnd="8dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_delete"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="删除"
+                android:textColor="@color/design_default_color_error"
+                android:strokeColor="@color/design_default_color_error"
+                android:textSize="12sp"
+                android:minHeight="32dp"/>
+        </LinearLayout>
+
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
