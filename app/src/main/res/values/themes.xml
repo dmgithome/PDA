@@ -117,7 +117,7 @@
     
     <!-- 启动画面主题 -->
     <style name="Theme.PDA.Splash" parent="Theme.PDA">
-        <item name="android:windowBackground">@drawable/shape_gradient_background</item>
+        <item name="android:windowBackground">@color/background</item>
         <item name="android:statusBarColor">@color/primary_dark</item>
         <item name="android:navigationBarColor">@color/primary_dark</item>
         <item name="android:windowLightStatusBar">false</item>
