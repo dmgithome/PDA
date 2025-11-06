@@ -121,6 +121,24 @@ public class InboundAcceptanceActivity extends BaseActivity {
                 }
                 return false;
             });
+            // 吞掉TAB/DPAD，避免键盘导航将焦点移出条码框
+            try {
+                barcodeInput.setOnKeyListener((v, keyCode, ev) -> {
+                    if (ev != null && ev.getAction() == KeyEvent.ACTION_DOWN) {
+                        switch (keyCode) {
+                            case KeyEvent.KEYCODE_TAB:
+                            case KeyEvent.KEYCODE_DPAD_DOWN:
+                            case KeyEvent.KEYCODE_DPAD_UP:
+                            case KeyEvent.KEYCODE_DPAD_LEFT:
+                            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                                lastBarcodeEventAt = System.currentTimeMillis();
+                                refocusBarcode();
+                                return true;
+                        }
+                    }
+                    return false;
+                });
+            } catch (Throwable ignore) {}
             // 监听输入变化，记录最后条码事件时间（仲裁UHF切换）
             try {
                 barcodeInput.addTextChangedListener(new android.text.TextWatcher() {
@@ -140,12 +158,9 @@ public class InboundAcceptanceActivity extends BaseActivity {
                 try { barcodeInput.requestFocus(); } catch (Throwable ignore) {}
             });
 
-            // 屏内按钮控制UHF扫描
+            // 屏内按钮已移除；仍保留物理键切换能力
             rfidToggleButton = findViewById(R.id.rfid_toggle_button);
-            if (rfidToggleButton != null) {
-                rfidToggleButton.setOnClickListener(v -> toggleRFIDScanning());
-                updateRfidToggleButton();
-            }
+            updateRfidToggleButton();
 
             // 配置自检：缺失sdCode或货柜ID时，顶部横幅提示
             if (!isInboundConfigReady()) {
@@ -235,6 +250,10 @@ public class InboundAcceptanceActivity extends BaseActivity {
             if (orderList != null) orderList.setVisibility(View.VISIBLE);
         }
         // 统一将焦点回到条码输入框，避免空态或容器获得焦点后出现按压高亮
+        refocusBarcode();
+    }
+
+    private void refocusBarcode() {
         try {
             if (barcodeInput != null) {
                 barcodeInput.requestFocus();
@@ -521,6 +540,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
         // 清空增量后不回退 accepted 计数（计数仅展示即时验收进度，实际落库以后会刷新）
         showSuccess("已清空本次增量");
         adapter.notifyDataSetChanged();
+        refocusBarcode();
     }
 
     private void submitAcceptance(InboundOrder order) {
@@ -540,9 +560,11 @@ public class InboundAcceptanceActivity extends BaseActivity {
                 showSuccess("验收提交成功");
                 // 提交成功后刷新待上架清单，保持与服务端一致
                 loadPendingOrders();
+                refocusBarcode();
             }
             @Override public void onFailure(Exception e) {
                 showError(UIUtils.friendlyErrorMessage("验收提交失败", e));
+                refocusBarcode();
             }
         });
     }

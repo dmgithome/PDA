@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:descendantFocusability="blocksDescendants"
         android:padding="12dp">
 
         <LinearLayout
@@ -67,7 +68,9 @@
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/border"
                 app:backgroundTint="@android:color/transparent"
-                android:textColor="@color/text_primary"/>
+                android:textColor="@color/text_primary"
+                android:focusable="false"
+                android:focusableInTouchMode="false"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/accept_button"
@@ -78,10 +81,11 @@
                 app:cornerRadius="8dp"
                 app:backgroundTint="@color/primary"
                 android:textColor="@color/surface"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp"
+                android:focusable="false"
+                android:focusableInTouchMode="false"/>
         </LinearLayout>
 
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
-
