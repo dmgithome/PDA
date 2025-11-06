@@ -90,7 +90,7 @@ public class InboundApiService {
                         io.total = o.optInt("number", 0);
                         io.accepted = o.optInt("shelfedNumber", 0);
 
-                        // 提取未上架的RFID集合（不修改业务系统原始数据）
+                        // 提取未上架的RFID集合（按库存盘点归一化规则归一化）
                         Set<String> plan = new HashSet<>();
                         JSONArray level1 = o.optJSONArray("children");
                         if (level1 != null) {
@@ -105,7 +105,15 @@ public class InboundApiService {
                                     boolean isShelfed = item.optBoolean("isShelfed", false);
                                     String rfid = item.optString("rfid", null);
                                     if (!isShelfed && rfid != null && !rfid.trim().isEmpty()) {
-                                        plan.add(rfid.trim());
+                                        String raw = rfid.trim();
+                                        // 与库存盘点一致：接收即格式化（18位十进制优先），未命中规则则保留原样
+                                        String canon = null;
+                                        try { canon = com.pda.hcw.rfid.EpcFormatter.normalizeOnReceive(raw); } catch (Throwable ignore) {}
+                                        if (canon != null && !canon.isEmpty()) {
+                                            plan.add(canon);
+                                        } else {
+                                            plan.add(raw);
+                                        }
                                     }
                                 }
                             }

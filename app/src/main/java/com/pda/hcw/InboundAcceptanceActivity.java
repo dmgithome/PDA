@@ -66,10 +66,22 @@ public class InboundAcceptanceActivity extends BaseActivity {
     // 条码/按键仲裁
     private long lastBarcodeEventAt = 0L;
     private Runnable pendingUhfToggle;
+    private long funKeyDownAt = 0L;
+    private int funKeyDownCode = 0;
     private long getUhfTriggerDelayMs() {
         try {
             return getSharedPreferences("settings_prefs", MODE_PRIVATE).getLong("uhf_trigger_delay_ms", 250L);
         } catch (Throwable ignore) { return 250L; }
+    }
+
+    private long getUhfLongPressThresholdMs() {
+        try {
+            return getSharedPreferences("settings_prefs", MODE_PRIVATE).getLong("uhf_long_press_ms", 2000L);
+        } catch (Throwable ignore) { return 2000L; }
+    }
+
+    private boolean isRecentBarcodeEvent(long now, long windowMs) {
+        return (now - lastBarcodeEventAt) <= windowMs;
     }
 
     @Override
@@ -84,7 +96,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         try {
             // 关闭系统默认焦点高亮，避免出现整块蓝色高亮（功能由回焦与拦截保证）
-            try { if (android.os.Build.VERSION.SDK_INT >= 26) android.view.View.setDefaultFocusHighlightEnabled(false); } catch (Throwable ignore) {}
+            try { if (android.os.Build.VERSION.SDK_INT >= 26) getWindow().getDecorView().setDefaultFocusHighlightEnabled(false); } catch (Throwable ignore) {}
             barcodeInput = findViewById(R.id.barcode_input);
             orderList = findViewById(R.id.inbound_order_list);
             loading = findViewById(R.id.loading);
@@ -341,6 +353,24 @@ public class InboundAcceptanceActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        try {
+            int code = event.getKeyCode();
+            if (code == KeyEvent.KEYCODE_TAB ||
+                code == KeyEvent.KEYCODE_DPAD_UP ||
+                code == KeyEvent.KEYCODE_DPAD_DOWN ||
+                code == KeyEvent.KEYCODE_DPAD_LEFT ||
+                code == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                // 拦截TAB/DPAD，防止系统进行焦点搜索导致RecyclerView获焦
+                lastBarcodeEventAt = System.currentTimeMillis();
+                refocusBarcode();
+                return true;
+            }
+        } catch (Throwable ignore) {}
+        return super.dispatchKeyEvent(event);
+    }
+
     // ===== RFID（UHF）批量验收集成 =====
     private void initRFID() {
         if (uhfManager == null) uhfManager = com.pda.hcw.rfid.UHFManager.getInstance();
@@ -357,10 +387,10 @@ public class InboundAcceptanceActivity extends BaseActivity {
         if (!isInboundConfigReady()) return;
         if (isRFIDActive) {
             stopRFIDScanning();
-            showSuccess("RFID扫描已停止");
+            showSuccess("已退出RFID盘点，回到条码验收");
         } else {
             startRFIDScanning();
-            showSuccess("RFID扫描已启动");
+            showSuccess("RFID盘点已启动（长按2秒可退出）");
         }
         updateRfidToggleButton();
     }
@@ -461,17 +491,28 @@ public class InboundAcceptanceActivity extends BaseActivity {
             int keyCode = intent.getIntExtra("keyCode", 0);
             if (keyCode == 0) keyCode = intent.getIntExtra("keycode", 0);
             boolean keyDown = intent.getBooleanExtra("keydown", false);
-            if (!keyDown) {
-                switch (keyCode) {
-                    case KeyEvent.KEYCODE_F1:
-                    case KeyEvent.KEYCODE_F2:
-                    case KeyEvent.KEYCODE_F3:
-                    case KeyEvent.KEYCODE_F4:
-                    case KeyEvent.KEYCODE_F7:
-                    case KeyEvent.KEYCODE_F8:
-                        scheduleUhfToggleWithDebounce();
-                        break;
-                }
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_F1:
+                case KeyEvent.KEYCODE_F2:
+                case KeyEvent.KEYCODE_F3:
+                case KeyEvent.KEYCODE_F4:
+                case KeyEvent.KEYCODE_F7:
+                case KeyEvent.KEYCODE_F8:
+                    long now = System.currentTimeMillis();
+                    if (keyDown) {
+                        funKeyDownAt = now;
+                        funKeyDownCode = keyCode;
+                    } else {
+                        long press = now - funKeyDownAt;
+                        long threshold = getUhfLongPressThresholdMs();
+                        if (press >= threshold && !isRecentBarcodeEvent(now, 300L)) {
+                            toggleRFIDScanning();
+                        } else {
+                            Log.d(TAG, "短按功能键，保持条码验收模式 press=" + press);
+                        }
+                        funKeyDownAt = 0L; funKeyDownCode = 0;
+                    }
+                    break;
             }
         }
     }
@@ -692,7 +733,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
         }
         @Override public int getItemCount() { return data == null ? 0 : data.size(); }
     }
-
+    
     private static class InboundOrderViewHolder extends RecyclerView.ViewHolder {
         TextView code, time, progress;
         MaterialButton acceptBtn, clearBtn;
@@ -706,20 +747,3 @@ public class InboundAcceptanceActivity extends BaseActivity {
         }
     }
 }
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        try {
-            int code = event.getKeyCode();
-            if (code == KeyEvent.KEYCODE_TAB ||
-                code == KeyEvent.KEYCODE_DPAD_UP ||
-                code == KeyEvent.KEYCODE_DPAD_DOWN ||
-                code == KeyEvent.KEYCODE_DPAD_LEFT ||
-                code == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                // 拦截TAB/DPAD，防止系统进行焦点搜索导致RecyclerView获焦
-                lastBarcodeEventAt = System.currentTimeMillis();
-                refocusBarcode();
-                return true;
-            }
-        } catch (Throwable ignore) {}
-        return super.dispatchKeyEvent(event);
-    }
