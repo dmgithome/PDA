@@ -68,6 +68,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
     private Runnable pendingUhfToggle;
     private long funKeyDownAt = 0L;
     private int funKeyDownCode = 0;
+    private boolean funKeyLongPressFired = false;
     private long getUhfTriggerDelayMs() {
         try {
             return getSharedPreferences("settings_prefs", MODE_PRIVATE).getLong("uhf_trigger_delay_ms", 250L);
@@ -500,17 +501,27 @@ public class InboundAcceptanceActivity extends BaseActivity {
                 case KeyEvent.KEYCODE_F8:
                     long now = System.currentTimeMillis();
                     if (keyDown) {
-                        funKeyDownAt = now;
-                        funKeyDownCode = keyCode;
+                        if (funKeyDownAt == 0L) {
+                            funKeyDownAt = now;
+                            funKeyDownCode = keyCode;
+                            funKeyLongPressFired = false;
+                        } else {
+                            long press = now - funKeyDownAt;
+                            long threshold = getUhfLongPressThresholdMs();
+                            if (!funKeyLongPressFired && press >= threshold && !isRecentBarcodeEvent(now, 300L)) {
+                                toggleRFIDScanning();
+                                funKeyLongPressFired = true;
+                            }
+                        }
                     } else {
                         long press = now - funKeyDownAt;
                         long threshold = getUhfLongPressThresholdMs();
-                        if (press >= threshold && !isRecentBarcodeEvent(now, 300L)) {
+                        if (!funKeyLongPressFired && press >= threshold && !isRecentBarcodeEvent(now, 300L)) {
                             toggleRFIDScanning();
                         } else {
                             Log.d(TAG, "短按功能键，保持条码验收模式 press=" + press);
                         }
-                        funKeyDownAt = 0L; funKeyDownCode = 0;
+                        funKeyDownAt = 0L; funKeyDownCode = 0; funKeyLongPressFired = false;
                     }
                     break;
             }
@@ -606,8 +617,10 @@ public class InboundAcceptanceActivity extends BaseActivity {
 
     private void clearDelta(InboundOrder order) {
         Set<String> set = deltaByOrder.get(order.code);
-        if (set != null) set.clear();
-        // 清空增量后不回退 accepted 计数（计数仅展示即时验收进度，实际落库以后会刷新）
+        int ded = 0;
+        if (set != null) { ded = set.size(); set.clear(); }
+        // 回退已验收进度到清空前的基线（以当前订单accepted减去本次delta的数量为准）
+        try { order.accepted = Math.max(0, order.accepted - ded); } catch (Throwable ignore) {}
         showSuccess("已清空本次增量");
         adapter.notifyDataSetChanged();
         refocusBarcode();
