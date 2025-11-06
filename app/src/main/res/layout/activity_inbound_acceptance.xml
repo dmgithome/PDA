@@ -50,7 +50,12 @@
                 android:importantForAutofill="no"
                 android:autoText="false"
                 android:ellipsize="end"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:nextFocusUp="@id/barcode_input"
+                android:nextFocusDown="@id/barcode_input"
+                android:nextFocusLeft="@id/barcode_input"
+                android:nextFocusRight="@id/barcode_input"
+                android:nextFocusForward="@id/barcode_input" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- 移除屏内RFID控制按钮，统一使用物理键切换 -->

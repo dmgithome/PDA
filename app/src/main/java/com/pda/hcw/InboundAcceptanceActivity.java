@@ -83,6 +83,8 @@ public class InboundAcceptanceActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
+            // 关闭系统默认焦点高亮，避免出现整块蓝色高亮（功能由回焦与拦截保证）
+            try { if (android.os.Build.VERSION.SDK_INT >= 26) android.view.View.setDefaultFocusHighlightEnabled(false); } catch (Throwable ignore) {}
             barcodeInput = findViewById(R.id.barcode_input);
             orderList = findViewById(R.id.inbound_order_list);
             loading = findViewById(R.id.loading);
@@ -98,6 +100,12 @@ public class InboundAcceptanceActivity extends BaseActivity {
             } catch (Throwable ignore) {}
 
             orderList.setLayoutManager(new LinearLayoutManager(this));
+            try {
+                orderList.setFocusable(false);
+                orderList.setFocusableInTouchMode(false);
+                orderList.setDescendantFocusability(android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+                orderList.setOnFocusChangeListener((v, hasFocus) -> { if (hasFocus) refocusBarcode(); });
+            } catch (Throwable ignore) {}
             adapter = new InboundOrderAdapter(orders, new InboundOrderAdapter.Listener() {
                 @Override public void onAccept(InboundOrder order) { submitAcceptance(order); }
                 @Override public void onClearDelta(InboundOrder order) { clearDelta(order); }
@@ -155,11 +163,18 @@ public class InboundAcceptanceActivity extends BaseActivity {
                 barcodeInput.setShowSoftInputOnFocus(false);
             } catch (Throwable ignore) {}
             barcodeInput.post(() -> {
-                try { barcodeInput.requestFocus(); } catch (Throwable ignore) {}
+                try {
+                    barcodeInput.setFocusable(true);
+                    barcodeInput.setFocusableInTouchMode(true);
+                    barcodeInput.setActivated(true);
+                    barcodeInput.setSelected(true);
+                    barcodeInput.requestFocus();
+                    barcodeInput.requestFocusFromTouch();
+                } catch (Throwable ignore) {}
             });
 
-            // 屏内按钮已移除；仍保留物理键切换能力
-            rfidToggleButton = findViewById(R.id.rfid_toggle_button);
+            // 屏内按钮已移除；仍保留物理键切换能力（此处不再引用已删除的按钮ID）
+            rfidToggleButton = null;
             updateRfidToggleButton();
 
             // 配置自检：缺失sdCode或货柜ID时，顶部横幅提示
@@ -256,7 +271,13 @@ public class InboundAcceptanceActivity extends BaseActivity {
     private void refocusBarcode() {
         try {
             if (barcodeInput != null) {
+                if (orderList != null) orderList.clearFocus();
+                barcodeInput.setFocusable(true);
+                barcodeInput.setFocusableInTouchMode(true);
+                barcodeInput.setActivated(true);
+                barcodeInput.setSelected(true);
                 barcodeInput.requestFocus();
+                try { barcodeInput.requestFocusFromTouch(); } catch (Throwable ignore) {}
                 android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) imm.hideSoftInputFromWindow(barcodeInput.getWindowToken(), 0);
             }
@@ -301,7 +322,15 @@ public class InboundAcceptanceActivity extends BaseActivity {
             try {
                 if (barcodeInput != null) {
                     barcodeInput.post(() -> {
-                        try { barcodeInput.requestFocus(); } catch (Throwable ignore) {}
+                        try {
+                            if (orderList != null) orderList.clearFocus();
+                            barcodeInput.setFocusable(true);
+                            barcodeInput.setFocusableInTouchMode(true);
+                            barcodeInput.setActivated(true);
+                            barcodeInput.setSelected(true);
+                            barcodeInput.requestFocus();
+                            barcodeInput.requestFocusFromTouch();
+                        } catch (Throwable ignore) {}
                         try {
                             android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                             if (imm != null) imm.hideSoftInputFromWindow(barcodeInput.getWindowToken(), 0);
@@ -677,3 +706,20 @@ public class InboundAcceptanceActivity extends BaseActivity {
         }
     }
 }
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        try {
+            int code = event.getKeyCode();
+            if (code == KeyEvent.KEYCODE_TAB ||
+                code == KeyEvent.KEYCODE_DPAD_UP ||
+                code == KeyEvent.KEYCODE_DPAD_DOWN ||
+                code == KeyEvent.KEYCODE_DPAD_LEFT ||
+                code == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                // 拦截TAB/DPAD，防止系统进行焦点搜索导致RecyclerView获焦
+                lastBarcodeEventAt = System.currentTimeMillis();
+                refocusBarcode();
+                return true;
+            }
+        } catch (Throwable ignore) {}
+        return super.dispatchKeyEvent(event);
+    }
