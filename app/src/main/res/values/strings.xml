@@ -188,8 +188,16 @@
     <string name="inbound_accept">验收</string>
     <string name="inbound_clear_delta">清空本次增量</string>
     <string name="inbound_no_orders">暂时没有待入库验收的订单</string>
+    <string name="rfid_power_hint">RFID 功耗较高，请使用完毕后及时停止。</string>
     <string name="inbound_start_rfid">开始RFID扫描</string>
     <string name="inbound_stop_rfid">停止RFID扫描</string>
+    <string name="inbound_rfid_list_title">RFID明细</string>
+    <string name="inbound_rfid_filter_unmatched">仅未匹配</string>
+    <string name="inbound_rfid_filter_all">全部</string>
+    <string name="inbound_rfid_summary">共:%1$d  已匹配:%2$d  未匹配:%3$d</string>
+    <string name="inbound_rfid_status_matched">[已匹配]</string>
+    <string name="inbound_rfid_status_unmatched">[未匹配]</string>
+    <string name="inbound_rfid_detail_title">耗材信息</string>
     
     <!-- 菜单项 -->
     <string name="menu_settings">设置</string>

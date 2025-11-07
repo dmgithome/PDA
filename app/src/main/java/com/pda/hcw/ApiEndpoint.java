@@ -15,7 +15,7 @@ public enum ApiEndpoint {
     CREATE_TAKE_RETURN_LOG("/api/stock/createTakeAndReturnLog", "创建取用/归还记录"),
     // 入库验收
     GET_WAREHOUSING_ORDER("/api/stock/getWarehousingOrder", "获取待上架入库单据"),
-    DEVICE_INBOUND_ORDER("/device/inboundOrder", "有单入库上架记录"),
+    DEVICE_INBOUND_ORDER("/api/stock/hasOrderInbound", "提交有单入库"),
 
     // 手术/术间
     GET_OPERATING_ROOM_LIST("/api/surgery/getOperatingRoomList", "获取术间列表"),

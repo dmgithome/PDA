@@ -91,6 +91,44 @@
             android:clipToPadding="false"
             android:paddingBottom="12dp"/>
 
+        <!-- 水平滚动展示本轮读取到的 EPC（与条码框等高） -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_rfid_epc_scroller"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/rfid_section_height"
+            android:visibility="gone"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:layout_marginTop="8dp"/>
+
+        <!-- 底部启动/停止 RFID 盘点按钮（禁用时显示原因） -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_toggle_rfid"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/rfid_section_height"
+            android:text="启动RFID盘点"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/rfid_toggle_text_idle"
+            app:backgroundTint="@color/rfid_toggle_idle"
+            app:cornerRadius="8dp"
+            app:strokeWidth="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"/>
+
+        <TextView
+            android:id="@+id/rfid_power_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="@string/rfid_power_hint"
+            android:textColor="@color/rfid_toggle_text_idle"
+            android:textSize="12sp"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

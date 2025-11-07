@@ -20,6 +20,12 @@
     <color name="error_bg">#FEE2E2</color>
     <color name="warning_bg">#FEF3C7</color>
     <color name="info_bg">#DBEAFE</color>
+    <!-- RFID 提示色 -->
+    <color name="rfid_toggle_idle">#FEF3C7</color>
+    <color name="rfid_toggle_active">#F59E0B</color>
+    <color name="rfid_toggle_disabled">#E2E8F0</color>
+    <color name="rfid_toggle_text_idle">#B45309</color>
+    <color name="rfid_toggle_text_active">#FFFFFF</color>
     
     <!-- 中性色 -->
     <color name="background">#F8FAFC</color>

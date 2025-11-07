@@ -16,8 +16,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -90,8 +92,10 @@ public class InboundApiService {
                         io.total = o.optInt("number", 0);
                         io.accepted = o.optInt("shelfedNumber", 0);
 
-                        // 提取未上架的RFID集合（按库存盘点归一化规则归一化）
+                        // 提取未上架的RFID集合（按库存盘点归一化规则归一化），并收集明细
                         Set<String> plan = new HashSet<>();
+                        List<InboundOrderDetail> details = new ArrayList<>();
+                        Map<String, InboundOrderDetail> detailMap = new HashMap<>();
                         JSONArray level1 = o.optJSONArray("children");
                         if (level1 != null) {
                             for (int j = 0; j < level1.length(); j++) {
@@ -104,21 +108,52 @@ public class InboundApiService {
                                     if (item == null) continue;
                                     boolean isShelfed = item.optBoolean("isShelfed", false);
                                     String rfid = item.optString("rfid", null);
-                                    if (!isShelfed && rfid != null && !rfid.trim().isEmpty()) {
-                                        String raw = rfid.trim();
-                                        // 与库存盘点一致：接收即格式化（18位十进制优先），未命中规则则保留原样
-                                        String canon = null;
-                                        try { canon = com.pda.hcw.rfid.EpcFormatter.normalizeOnReceive(raw); } catch (Throwable ignore) {}
-                                        if (canon != null && !canon.isEmpty()) {
-                                            plan.add(canon);
-                                        } else {
-                                            plan.add(raw);
-                                        }
+                                    if (rfid == null || rfid.trim().isEmpty()) continue;
+                                    String raw = rfid.trim();
+                                    // 与库存盘点一致：接收即格式化（18位十进制优先），未命中规则则保留原样
+                                    String canon = null;
+                                    try { canon = com.pda.hcw.rfid.EpcFormatter.normalizeOnReceive(raw); } catch (Throwable ignore) {}
+                                    String finalRfid = (canon != null && !canon.isEmpty()) ? canon : raw;
+
+                                    InboundOrderDetail detail = detailMap.get(finalRfid);
+                                    if (detail == null) {
+                                        detail = new InboundOrderDetail();
+                                        detail.rfid = finalRfid;
+                                        details.add(detail);
+                                        detailMap.put(finalRfid, detail);
+                                    }
+                                    String name = item.optString("name", null);
+                                    if (name != null && !name.isEmpty()) detail.name = name;
+                                    String spec = item.optString("spec", null);
+                                    if (spec != null && !spec.isEmpty()) detail.spec = spec;
+                                    String manufacturer = item.optString("manufacturer", null);
+                                    if (manufacturer != null && !manufacturer.isEmpty()) detail.manufacturer = manufacturer;
+                                    String code = item.optString("code", null);
+                                    if (code != null && !code.isEmpty()) detail.code = code;
+                                    String unit = item.optString("unit", null);
+                                    if (unit != null && !unit.isEmpty()) detail.unit = unit;
+                                    String batch = item.optString("batch", null);
+                                    if (batch != null && !batch.isEmpty()) detail.batch = batch;
+                                    String brand = item.optString("brand", null);
+                                    if (brand != null && !brand.isEmpty()) detail.brand = brand;
+                                    String productionDate = item.optString("productionDate", null);
+                                    if (productionDate != null && !productionDate.isEmpty()) detail.productionDate = productionDate;
+                                    String expiryDate = item.optString("expiryDate", null);
+                                    if (expiryDate != null && !expiryDate.isEmpty()) detail.expiryDate = expiryDate;
+                                    int number = item.optInt("number", 0);
+                                    if (number <= 0) number = item.optInt("quantity", 0);
+                                    if (number > 0) detail.quantity = number;
+                                    detail.baseMatched = isShelfed || detail.baseMatched;
+
+                                    if (!isShelfed) {
+                                        plan.add(finalRfid);
                                     }
                                 }
                             }
                         }
                         io.plannedRfids = plan;
+                        io.details = details;
+                        io.detailByRfid = detailMap;
                         result.add(io);
                     }
                 }
@@ -130,11 +165,12 @@ public class InboundApiService {
         });
     }
 
-    /** 提交有单入库上架记录 (/device/inboundOrder) */
-    public void submitInboundOrder(String orderNo, java.util.Set<String> rfids,
+    /** 提交有单入库上架记录 (/api/stock/hasOrderInbound) */
+    public void submitInboundOrder(InboundOrder order, java.util.Set<String> rfids,
                                    ConsumableApiService.ApiCallback<Boolean> callback) {
         executor.execute(() -> {
             try {
+                if (order == null) { postFailure(callback, new Exception("未找到入库单信息")); return; }
                 // 校验登录
                 UserInfo currentUser = SessionManager.getInstance(context).getCurrentUser();
                 if (currentUser == null) { postFailure(callback, new Exception("用户未登录")); return; }
@@ -145,29 +181,92 @@ public class InboundApiService {
                 if (sdCode == null || sdCode.trim().isEmpty()) { postFailure(callback, new Exception("请先在设置中配置sdCode")); return; }
                 if (cabinetId <= 0) { postFailure(callback, new Exception("请先在设置中配置货柜ID")); return; }
                 if (rfids == null || rfids.isEmpty()) { postFailure(callback, new Exception("无新增可提交")); return; }
+                String userId = currentUser.getUserId();
+                if (userId == null || userId.trim().isEmpty()) { postFailure(callback, new Exception("用户信息缺少ID")); return; }
 
-                // 构造请求体
+                java.util.List<String> rfidList = new java.util.ArrayList<>(rfids);
+                org.json.JSONArray itemsArray = new org.json.JSONArray();
+                java.util.Map<String, InboundOrderDetail> detailMap = order.detailByRfid;
+                for (String rfid : rfidList) {
+                    org.json.JSONObject itemJson = new org.json.JSONObject();
+                    itemJson.put("rfid", rfid);
+                    itemJson.put("cabinetID", cabinetId);
+                    if (detailMap != null) {
+                        InboundOrderDetail detail = detailMap.get(rfid);
+                        if (detail != null) {
+                            putStringIfNotEmpty(itemJson, "code", detail.code);
+                            putStringIfNotEmpty(itemJson, "name", detail.name);
+                            putStringIfNotEmpty(itemJson, "spec", detail.spec);
+                            putStringIfNotEmpty(itemJson, "manufacturer", detail.manufacturer);
+                            putStringIfNotEmpty(itemJson, "brand", detail.brand);
+                            putStringIfNotEmpty(itemJson, "unit", detail.unit);
+                            putStringIfNotEmpty(itemJson, "batch", detail.batch);
+                            putStringIfNotEmpty(itemJson, "productionDate", detail.productionDate);
+                            putStringIfNotEmpty(itemJson, "expiryDate", detail.expiryDate);
+                            int quantity = detail.quantity > 0 ? detail.quantity : 1;
+                            itemJson.put("quantity", quantity);
+                        } else {
+                            itemJson.put("quantity", 1);
+                        }
+                    } else {
+                        itemJson.put("quantity", 1);
+                    }
+                    itemJson.put("orderNo", order.code != null ? order.code : "");
+                    itemsArray.put(itemJson);
+                }
+
+                if (itemsArray.length() == 0) { postFailure(callback, new Exception("无新增可提交")); return; }
+
                 org.json.JSONObject body = new org.json.JSONObject();
-                String rfidsCsv = String.join(",", rfids);
-                body.put("rfids", rfidsCsv);
-                body.put("sdCode", sdCode);
-                body.put("cabinetCode", String.valueOf(cabinetId));
-                body.put("userName", currentUser.getUsername());
+                body.put("userID", userId.trim());
+                putStringIfNotEmpty(body, "userName", currentUser.getUsername());
+                putStringIfNotEmpty(body, "sdCode", sdCode);
+                body.put("orderNo", order.code != null ? order.code : "");
+                body.put("type", "hasOrder");
+                body.put("cabinetID", cabinetId);
                 String now = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
                         .format(new java.util.Date());
                 body.put("createDate", now);
-                body.put("orderNo", orderNo != null ? orderNo : "");
+                body.put("items", itemsArray);
 
                 String url = networkConfig.getFullUrl(ApiEndpoint.DEVICE_INBOUND_ORDER);
+                Log.d(TAG, "submitInboundOrder url=" + url);
                 String resp = sendHttpRequest(url, "POST", body.toString());
+                Log.d(TAG, "submitInboundOrder resp=" + resp);
 
-                // 响应：{ code, msg, data:[{ cabinetCode, rfids }] }
+                // 响应：{ status/code/msg/data }
                 org.json.JSONObject root = new org.json.JSONObject(resp);
-                int code = root.optInt("code", 0);
-                if (code != 200) {
-                    String msg = root.optString("msg", "提交失败");
+                int status = root.optInt("status", root.optInt("code", -1));
+                int code = root.has("code") ? root.optInt("code", status) : status;
+                boolean success = (status == 200 || status == 0 || code == 200 || code == 0);
+                Object dataNode = root.opt("data");
+                boolean hasData = !(dataNode == null || org.json.JSONObject.NULL.equals(dataNode));
+                if (dataNode instanceof org.json.JSONArray) {
+                    hasData = ((org.json.JSONArray) dataNode).length() > 0;
+                } else if (dataNode instanceof org.json.JSONObject) {
+                    hasData = ((org.json.JSONObject) dataNode).length() > 0;
+                } else if (dataNode instanceof String) {
+                    hasData = !((String) dataNode).isEmpty();
+                }
+                if (!hasData && root.optBoolean("success", false)) {
+                    hasData = true;
+                }
+                if (success && !hasData) {
+                    success = false;
+                }
+                if (!success) {
+                    String msg = root.optString("msg", root.optString("message", "提交失败"));
+                    if (dataNode instanceof org.json.JSONArray && ((org.json.JSONArray) dataNode).length() > 0) {
+                        msg = msg + " - " + dataNode.toString();
+                    } else if (dataNode instanceof org.json.JSONObject && ((org.json.JSONObject) dataNode).length() > 0) {
+                        msg = msg + " - " + dataNode.toString();
+                    } else if (dataNode instanceof String && !((String) dataNode).isEmpty()) {
+                        msg = msg + " - " + dataNode;
+                    }
+                    Log.e(TAG, "submitInboundOrder error status=" + status + ", code=" + code + ", resp=" + resp);
                     throw new Exception(msg);
                 }
+                Log.i(TAG, "submitInboundOrder success status=" + status + ", code=" + code + ", message=" + root.optString("message"));
                 postSuccess(callback, Boolean.TRUE);
             } catch (Exception e) {
                 Log.e(TAG, "submitInboundOrder failed", e);
@@ -181,6 +280,14 @@ public class InboundApiService {
             @SuppressWarnings("unchecked") ConsumableApiService.ApiCallback<Object> c = (ConsumableApiService.ApiCallback<Object>) cb;
             c.onSuccess(data);
         });
+    }
+
+    private static void putStringIfNotEmpty(JSONObject target, String key, String value) throws org.json.JSONException {
+        if (value == null) return;
+        String trimmed = value.trim();
+        if (!trimmed.isEmpty()) {
+            target.put(key, trimmed);
+        }
     }
 
     private void postFailure(ConsumableApiService.ApiCallback<?> cb, Exception e) {
@@ -263,4 +370,21 @@ class InboundOrder {
     public int total;
     public int accepted;
     public java.util.Set<String> plannedRfids = new java.util.HashSet<>();
+    public java.util.List<InboundOrderDetail> details = new java.util.ArrayList<>();
+    public java.util.Map<String, InboundOrderDetail> detailByRfid = new java.util.HashMap<>();
+}
+
+class InboundOrderDetail {
+    public String rfid;
+    public boolean baseMatched;
+    public String name;
+    public String spec;
+    public String manufacturer;
+    public String code;
+    public String unit;
+    public String batch;
+    public String brand;
+    public String productionDate;
+    public String expiryDate;
+    public int quantity = 1;
 }
