@@ -13,6 +13,8 @@ public enum ApiEndpoint {
     CONSUME_BY_BARCODE("/api/stock/getConsumeOrReturnConsumablesByBarcode", "扫码查询耗材"),
     GET_ALL_CONSUMABLES("/api/stock/getAllConsumables", "库存拉取"),
     CREATE_TAKE_RETURN_LOG("/api/stock/createTakeAndReturnLog", "创建取用/归还记录"),
+    // 地点（替代术间，仅查询）
+    LOCATIONS_LIST("/api/locations/list", "地点列表"),
     // 入库验收
     GET_WAREHOUSING_ORDER("/api/stock/getWarehousingOrder", "获取待上架入库单据"),
     DEVICE_INBOUND_ORDER("/api/stock/hasOrderInbound", "提交有单入库"),

@@ -482,21 +482,29 @@ public class ConsumableApiService {
                 org.json.JSONObject dataObj = root.optJSONObject("data");
                 org.json.JSONArray arr = dataObj != null ? dataObj.optJSONArray("data") : null; // 注意是 data.data（数组）
                 if (arr == null) arr = new org.json.JSONArray();
+                // 读取地点字典用于名称映射
+                java.util.Map<Integer, String> locationMap = loadLocationsMapSafe();
 
                 for (int i = 0; i < arr.length(); i++) {
                     org.json.JSONObject obj = arr.optJSONObject(i);
                     if (obj == null) continue;
-                    // operatingRoom 对象严格解析
+                    // 改为以 current_location_id 聚合；名称优先用 current_location_name，其次用地点字典映射
                     int roomId = 0;
                     String roomName = null;
-                    org.json.JSONObject op = obj.optJSONObject("operatingRoom");
-                    if (op != null && !op.isNull("id") && !op.isNull("name")) {
-                        roomId = op.optInt("id", 0);
-                        roomName = op.optString("name", null);
+                    if (!obj.isNull("current_location_id")) {
+                        try { roomId = obj.optInt("current_location_id", 0); } catch (Exception ignore) {}
                     }
-                    if (roomId <= 0 || roomName == null || roomName.isEmpty()) {
-                        roomId = 0; roomName = "耗材屋";
+                    // 兼容旧结构
+                    if (roomId <= 0) {
+                        org.json.JSONObject op = obj.optJSONObject("operatingRoom");
+                        if (op != null && !op.isNull("id")) roomId = op.optInt("id", 0);
                     }
+                    roomName = obj.optString("current_location_name", null);
+                    if ((roomName == null || roomName.isEmpty()) && roomId > 0 && locationMap != null) {
+                        String m = locationMap.get(roomId);
+                        if (m != null && !m.isEmpty()) roomName = m;
+                    }
+                    if (roomId <= 0 || roomName == null || roomName.isEmpty()) { roomId = 0; roomName = "耗材屋"; }
 
                     String rfid = obj.optString("rfid", null);
                     if (rfid == null || rfid.trim().isEmpty()) continue; // 严格按定义，无rfid则跳过
@@ -517,6 +525,42 @@ public class ConsumableApiService {
                 mainHandler.post(() -> callback.onFailure(e));
             }
         });
+    }
+
+    /**
+     * 同步加载地点字典，失败返回 null。
+     */
+    private java.util.Map<Integer, String> loadLocationsMapSafe() {
+        try {
+            String url = networkConfig.getFullUrl(ApiEndpoint.LOCATIONS_LIST);
+            String resp = sendHttpRequest(url, "GET", null);
+            java.util.Map<Integer, String> map = new java.util.HashMap<>();
+            try {
+                org.json.JSONObject root = new org.json.JSONObject(resp);
+                org.json.JSONArray arr = null;
+                if (root.has("items")) arr = root.optJSONArray("items");
+                if (arr == null && root.has("data")) {
+                    Object data = root.get("data");
+                    if (data instanceof org.json.JSONArray) arr = (org.json.JSONArray) data;
+                    if (data instanceof org.json.JSONObject) arr = ((org.json.JSONObject) data).optJSONArray("items");
+                }
+                if (arr != null) {
+                    for (int i = 0; i < arr.length(); i++) {
+                        org.json.JSONObject o = arr.optJSONObject(i);
+                        if (o == null) continue;
+                        Integer sid = safeToInt(o.opt("id"));
+                        String name = o.optString("name", null);
+                        if (sid != null && sid > 0 && name != null && !name.trim().isEmpty()) {
+                            map.put(sid, name.trim());
+                        }
+                    }
+                }
+            } catch (Exception ignore) {}
+            return map;
+        } catch (Exception e) {
+            Log.w(TAG, "loadLocationsMapSafe failed: " + e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -652,6 +696,13 @@ public class ConsumableApiService {
         // 设置默认单位和数量
         item.setUnit("个");
         item.setQuantity(1);
+        // 当前所在地点ID（若后端返回）
+        try {
+            if (!itemJson.isNull("current_location_id")) {
+                int cid = itemJson.optInt("current_location_id", 0);
+                if (cid > 0) item.setCurrentLocationId(cid);
+            }
+        } catch (Exception ignore) {}
         return item;
     }
     
@@ -688,6 +739,8 @@ public class ConsumableApiService {
     public void createTakeAndReturnLog(Integer operationRoomId,
                                        java.util.List<ConsumableItem> takeItems,
                                        java.util.List<ConsumableItem> returnItems,
+                                       @androidx.annotation.Nullable String fromLocationId,
+                                       @androidx.annotation.Nullable String toLocationId,
                                        ApiCallback<CreateTakeAndReturnResult> callback) {
         executorService.execute(() -> {
             try {
@@ -732,6 +785,17 @@ public class ConsumableApiService {
                     body.put("operationroomId", operationRoomId);
                 }
                 body.put("cabinetID", cabinetId);
+                // from 优先使用调用方传入的 current_location_id；缺失时回退柜ID
+                if (fromLocationId != null && !fromLocationId.trim().isEmpty()) {
+                    body.put("from_location_id", fromLocationId.trim());
+                } else {
+                    body.put("from_location_id", String.valueOf(cabinetId));
+                }
+                if (toLocationId != null && !toLocationId.trim().isEmpty()) {
+                    body.put("to_location_id", toLocationId.trim());
+                } else {
+                    body.put("to_location_id", org.json.JSONObject.NULL);
+                }
 
                 org.json.JSONArray takeArr = new org.json.JSONArray();
                 int lineId = 1;
@@ -803,6 +867,65 @@ public class ConsumableApiService {
                 mainHandler.post(() -> callback.onFailure(e));
             }
         });
+    }
+
+    /**
+     * 列出地点列表（仅查询，不维护）。兼容多种返回结构：
+     * {items:[{id,name}]}, {data:{items:[...]}} 或 {data:[...]}
+     */
+    public void fetchLocations(ApiCallback<java.util.List<OperatingRoom>> callback) {
+        executorService.execute(() -> {
+            try {
+                if (!networkConfig.isValidConfig()) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
+                    return;
+                }
+                String url = networkConfig.getFullUrl(ApiEndpoint.LOCATIONS_LIST);
+                String resp = sendHttpRequest(url, "GET", null);
+                java.util.List<OperatingRoom> list = new java.util.ArrayList<>();
+                try {
+                    org.json.JSONObject root = new org.json.JSONObject(resp);
+                    org.json.JSONArray arr = null;
+                    if (root.has("items")) {
+                        arr = root.optJSONArray("items");
+                    }
+                    if (arr == null && root.has("data")) {
+                        Object data = root.get("data");
+                        if (data instanceof org.json.JSONArray) arr = (org.json.JSONArray) data;
+                        if (data instanceof org.json.JSONObject) arr = ((org.json.JSONObject) data).optJSONArray("items");
+                    }
+                    if (arr == null) arr = new org.json.JSONArray();
+                    for (int i = 0; i < arr.length(); i++) {
+                        org.json.JSONObject o = arr.optJSONObject(i);
+                        if (o == null) continue;
+                        Integer sid = null;
+                        if (!o.isNull("id")) sid = safeToInt(o.opt("id"));
+                        String name = o.optString("name", null);
+                        if (name == null || name.trim().isEmpty()) continue;
+                        list.add(new OperatingRoom(0, sid, name.trim(), System.currentTimeMillis()));
+                    }
+                } catch (Exception ignore) {
+                    // 非标准结构，忽略
+                }
+                final java.util.List<OperatingRoom> finalList = list;
+                mainHandler.post(() -> callback.onSuccess(finalList));
+            } catch (Exception e) {
+                Log.e(TAG, "fetchLocations failed", e);
+                mainHandler.post(() -> callback.onFailure(e));
+            }
+        });
+    }
+
+    private Integer safeToInt(Object v) {
+        try {
+            if (v == null) return null;
+            if (v instanceof Number) return ((Number) v).intValue();
+            String s = String.valueOf(v);
+            if (s.trim().isEmpty()) return null;
+            return Integer.parseInt(s.trim());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     

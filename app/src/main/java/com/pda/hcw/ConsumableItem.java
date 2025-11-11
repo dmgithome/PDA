@@ -20,6 +20,8 @@ public class ConsumableItem {
     private String expiryDate;
     private String productionDate;
     private String brand;
+    // 新增：当前所在地点ID（来自扫码/库存接口的 current_location_id）
+    private Integer currentLocationId;
     // 新增：最后一次操作信息（仅 takeList/returnList 返回）
     private String lastOperatorName;
     private String lastOperationTime; // 服务器返回格式：yyyy-MM-dd HH:mm:ss
@@ -147,6 +149,9 @@ public class ConsumableItem {
     public void setBrand(String brand) {
         this.brand = brand;
     }
+
+    public Integer getCurrentLocationId() { return currentLocationId; }
+    public void setCurrentLocationId(Integer currentLocationId) { this.currentLocationId = currentLocationId; }
     
     public String getLastOperatorName() {
         return lastOperatorName;

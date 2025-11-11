@@ -1474,86 +1474,111 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                 }
             }
 
-            // 解析术间ID（归还无需）
-            Integer operationRoomId = null;
-            if (operationMode == OperationMode.TAKE) {
-                try {
-                    OperatingRoomManager orm = OperatingRoomManager.getInstance(this);
-                    List<OperatingRoom> rooms = orm.getAllRooms();
-                    if (rooms != null) {
-                        for (OperatingRoom r : rooms) {
-                            if (r != null && r.name != null && r.name.equals(selectedRoom)) {
-                                operationRoomId = r.serverId;
-                                break;
-                            }
+            // 解析地点ID
+            Integer operationRoomId = null; // 此处复用字段名，实际含义为地点ID
+            try {
+                OperatingRoomManager orm = OperatingRoomManager.getInstance(this);
+                List<OperatingRoom> rooms = orm.getAllRooms();
+                if (rooms != null) {
+                    for (OperatingRoom r : rooms) {
+                        if (r != null && r.name != null && r.name.equals(selectedRoom)) {
+                            operationRoomId = r.serverId; // 选择的去向地点ID
+                            break;
                         }
                     }
-                } catch (Exception ignore) {}
-            }
+                }
+            } catch (Exception ignore) {}
+
+            // 归还模式的默认去向地点（本地首选项）
+            String defaultReturnTo = null;
+            try {
+                android.content.SharedPreferences sp = getSharedPreferences("locations_prefs", MODE_PRIVATE);
+                int defId = sp.getInt("default_return_location_id", -1);
+                if (defId > 0) defaultReturnTo = String.valueOf(defId);
+            } catch (Exception ignore) {}
 
             showInfo(operationMode == OperationMode.TAKE ? "正在提交取用数据..." : "正在提交归还数据...");
 
-            apiService.createTakeAndReturnLog(operationRoomId,
-                    operationMode == OperationMode.TAKE ? takeItems : new ArrayList<>(),
-                    operationMode == OperationMode.TAKE ? new ArrayList<>() : returnItems,
-                    new ConsumableApiService.ApiCallback<ConsumableApiService.CreateTakeAndReturnResult>() {
-                @Override
-                public void onSuccess(ConsumableApiService.CreateTakeAndReturnResult result) {
-                    runOnUiThread(() -> {
-                        showSuccess("提交成功");
-                        Long remoteId = (result != null ? result.recordId : null);
-                        Integer tCount = (result != null ? result.takeCount : null);
-                        Integer rCount = (result != null ? result.returnCount : null);
-                        Log.d(TAG, "API提交成功: recordId=" + remoteId + ", takeCount=" + tCount + ", returnCount=" + rCount);
-                        if (remoteId != null) {
-                            showSuccess("提交成功，记录ID:" + remoteId);
-                        }
-                        String operator = null;
-                        try {
-                            UserInfo u = sessionManager.getCurrentUser();
-                            if (u != null) {
-                                operator = u.getDisplayName();
-                            }
-                        } catch (Exception ignore) {}
-                        if (operator == null || operator.isEmpty()) {
-                            operator = recordManager.getCurrentUser(); // 兜底
-                        }
-                        boolean ok;
-                        if (operationMode == OperationMode.TAKE) {
-                            ok = recordManager.generateCheckoutRecord(selectedRoom, totalCount, takeItems, operator, remoteId);
-                        } else {
-                            ok = recordManager.generateReturnRecord(totalCount, returnItems, operator, remoteId);
-                        }
-
-                        if (ok) {
-                            UserInfo currentUserInfo = sessionManager.getCurrentUser();
-                            if (currentUserInfo != null) {
-                                // 归还审计暂不细分事件类型（保持最小改动）
-                            }
-
-                            showSuccess((operationMode == OperationMode.TAKE ? "取用成功！共 " : "归还成功！共 ") + totalCount + " 项");
-                            clearAllItems();
-                            if (operationMode == OperationMode.TAKE) roomSpinner.setText("");
-                            loadHistoryRecords(TimeFilter.TODAY);
-                            // 提交完成，回到新建取用状态
-                            applyUiState(CheckoutUiState.NEW_CHECKOUT);
-                        } else {
-                            Log.e(TAG, "本地记录保存失败: room=" + selectedRoom + ", totalCount=" + totalCount + ", items=" + takeItems.size() + ", remoteRecordId=" + remoteId);
-                            showError("本地记录保存失败");
-                        }
-                    });
+            // 按 from(current_location_id) 分组逐个提交
+            java.util.Map<Integer, java.util.List<ConsumableItem>> groups = new java.util.HashMap<>();
+            if (operationMode == OperationMode.TAKE) {
+                for (ConsumableItem it : takeItems) {
+                    Integer fid = it.getCurrentLocationId();
+                    int key = (fid != null && fid > 0) ? fid : 0;
+                    groups.computeIfAbsent(key, k -> new java.util.ArrayList<>()).add(it);
                 }
-
-                @Override
-                public void onFailure(Exception e) {
-                    runOnUiThread(() -> {
-                    String msg = UIUtils.friendlyErrorMessage("提交失败", e);
-                    showError(msg);
-                    // 提交失败，恢复交互（保留当前明细供重试）
-                    applyUiState(CheckoutUiState.NEW_CHECKOUT);
-                });
+            } else {
+                for (ConsumableItem it : returnItems) {
+                    Integer fid = it.getCurrentLocationId();
+                    int key = (fid != null && fid > 0) ? fid : 0;
+                    groups.computeIfAbsent(key, k -> new java.util.ArrayList<>()).add(it);
+                }
             }
-        });
+
+            final java.util.concurrent.atomic.AtomicInteger pending = new java.util.concurrent.atomic.AtomicInteger(groups.size());
+            final boolean[] failed = new boolean[]{false};
+            final Long[] lastServerRecordId = new Long[]{null};
+
+            if (groups.isEmpty()) {
+                showError("没有可提交的数据");
+                applyUiState(CheckoutUiState.NEW_CHECKOUT);
+                return;
+            }
+
+            for (java.util.Map.Entry<Integer, java.util.List<ConsumableItem>> entry : groups.entrySet()) {
+                final String fromIdStr = entry.getKey() > 0 ? String.valueOf(entry.getKey()) : null;
+                java.util.List<ConsumableItem> thisTake = (operationMode == OperationMode.TAKE) ? entry.getValue() : new java.util.ArrayList<>();
+                java.util.List<ConsumableItem> thisReturn = (operationMode == OperationMode.RETURN) ? entry.getValue() : new java.util.ArrayList<>();
+
+                apiService.createTakeAndReturnLog(
+                        operationMode == OperationMode.TAKE ? operationRoomId : null,
+                        thisTake,
+                        thisReturn,
+                        fromIdStr,
+                        operationMode == OperationMode.TAKE ? (operationRoomId == null ? null : String.valueOf(operationRoomId)) : defaultReturnTo,
+                        new ConsumableApiService.ApiCallback<ConsumableApiService.CreateTakeAndReturnResult>() {
+                            @Override
+                            public void onSuccess(ConsumableApiService.CreateTakeAndReturnResult result) {
+                                if (result != null && result.recordId != null) lastServerRecordId[0] = result.recordId;
+                                int left = pending.decrementAndGet();
+                                if (left == 0 && !failed[0]) {
+                                    runOnUiThread(() -> {
+                                        String operator = null;
+                                        try { UserInfo u = sessionManager.getCurrentUser(); if (u != null) operator = u.getDisplayName(); } catch (Exception ignore) {}
+                                        if (operator == null || operator.isEmpty()) operator = recordManager.getCurrentUser();
+                                        boolean ok;
+                                        if (operationMode == OperationMode.TAKE) {
+                                            ok = recordManager.generateCheckoutRecord(selectedRoom, totalCount, takeItems, operator, lastServerRecordId[0]);
+                                        } else {
+                                            ok = recordManager.generateReturnRecord(totalCount, returnItems, operator, lastServerRecordId[0]);
+                                        }
+                                        if (ok) {
+                                            showSuccess((operationMode == OperationMode.TAKE ? "取用成功！共 " : "归还成功！共 ") + totalCount + " 项");
+                                            clearAllItems();
+                                            if (operationMode == OperationMode.TAKE && roomSpinner != null) roomSpinner.setText("");
+                                            loadHistoryRecords(TimeFilter.TODAY);
+                                            applyUiState(CheckoutUiState.NEW_CHECKOUT);
+                                        } else {
+                                            Log.e(TAG, "本地记录保存失败: room=" + selectedRoom + ", totalCount=" + totalCount);
+                                            showError("本地记录保存失败");
+                                            applyUiState(CheckoutUiState.NEW_CHECKOUT);
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                failed[0] = true;
+                                runOnUiThread(() -> {
+                                    String msg = UIUtils.friendlyErrorMessage("提交失败", e);
+                                    showError(msg);
+                                    applyUiState(CheckoutUiState.NEW_CHECKOUT);
+                                });
+                            }
+                        }
+                );
+            }
 
         } catch (Exception e) {
             Log.e(TAG, "Error in confirmCheckout", e);

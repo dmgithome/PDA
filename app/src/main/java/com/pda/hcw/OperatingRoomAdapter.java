@@ -38,17 +38,46 @@ public class OperatingRoomAdapter extends RecyclerView.Adapter<OperatingRoomAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         OperatingRoom room = data.get(position);
-        holder.name.setText(room.name);
+        // 默认归还标识
+        boolean isDefault = false;
+        try {
+            android.content.SharedPreferences sp = holder.itemView.getContext()
+                    .getSharedPreferences("locations_prefs", android.content.Context.MODE_PRIVATE);
+            int defId = sp.getInt("default_return_location_id", -1);
+            isDefault = (room.serverId != null && room.serverId == defId);
+        } catch (Exception ignore) {}
+
+        holder.name.setText(isDefault ? (room.name + "（默认归还）") : room.name);
         String meta = "ID: " + (room.serverId != null && room.serverId > 0 ? room.serverId : "本地");
         holder.meta.setText(meta);
 
-        // 事件
+        // 事件 / 只读模式处理
+        android.view.View actions = holder.itemView.findViewById(R.id.layout_actions);
         if (actionListener != null) {
+            if (actions != null) actions.setVisibility(android.view.View.VISIBLE);
             holder.btnEdit.setOnClickListener(v -> actionListener.onEdit(room));
             holder.btnDelete.setOnClickListener(v -> actionListener.onDelete(room));
         } else {
-            holder.btnEdit.setOnClickListener(null);
-            holder.btnDelete.setOnClickListener(null);
+            // 只读：隐藏删除按钮，将“编辑”改为“设为默认归还”，用于本地默认目的地设置
+            if (actions != null) actions.setVisibility(android.view.View.VISIBLE);
+            holder.btnDelete.setVisibility(android.view.View.GONE);
+            if (holder.btnEdit instanceof com.google.android.material.button.MaterialButton) {
+                ((com.google.android.material.button.MaterialButton) holder.btnEdit).setText("设为默认归还");
+            }
+            holder.btnEdit.setOnClickListener(v -> {
+                try {
+                    android.content.Context ctx = holder.itemView.getContext();
+                    android.content.SharedPreferences sp = ctx.getSharedPreferences("locations_prefs", android.content.Context.MODE_PRIVATE);
+                    android.content.SharedPreferences.Editor editor = sp.edit();
+                    int sid = room.serverId != null ? room.serverId : -1;
+                    editor.putInt("default_return_location_id", sid);
+                    editor.putString("default_return_location_name", room.name == null ? "" : room.name);
+                    editor.apply();
+                    if (ctx != null) android.widget.Toast.makeText(ctx, "已设为默认归还目的地", android.widget.Toast.LENGTH_SHORT).show();
+                    // 刷新高亮
+                    try { notifyDataSetChanged(); } catch (Exception ignore) {}
+                } catch (Exception ignore) {}
+            });
         }
     }
 

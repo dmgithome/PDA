@@ -40,9 +40,9 @@ public class OperatingRoomManager {
         return db.getOperatingRoomNames();
     }
 
-    // 从接口手动更新并落库
+    // 从接口手动更新并落库（改为地点列表，只读）
     public void refreshFromServer(ConsumableApiService.ApiCallback<List<OperatingRoom>> callback) {
-        api.fetchOperatingRooms(new ConsumableApiService.ApiCallback<List<OperatingRoom>>() {
+        api.fetchLocations(new ConsumableApiService.ApiCallback<List<OperatingRoom>>() {
             @Override
             public void onSuccess(List<OperatingRoom> result) {
                 // 兼容空返回
