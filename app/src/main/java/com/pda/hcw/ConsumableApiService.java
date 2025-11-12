@@ -916,6 +916,39 @@ public class ConsumableApiService {
         });
     }
 
+    /**
+     * 获取默认地点（GET /api/locations/default）
+     * 返回 { id, name } 或 null
+     */
+    public void fetchDefaultLocation(ApiCallback<org.json.JSONObject> callback) {
+        executorService.execute(() -> {
+            try {
+                if (!networkConfig.isValidConfig()) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
+                    return;
+                }
+                String url = networkConfig.getFullUrl(ApiEndpoint.DEFAULT_LOCATION);
+                String resp = sendHttpRequest(url, "GET", null);
+                org.json.JSONObject root = new org.json.JSONObject(resp);
+                int status = root.optInt("status", root.optInt("code", 0));
+                if (status != 200) {
+                    String msg = root.optString("msg", root.optString("message", "查询失败"));
+                    throw new Exception(msg);
+                }
+                Object data = root.opt("data");
+                org.json.JSONObject obj = null;
+                if (data instanceof org.json.JSONObject) obj = (org.json.JSONObject) data;
+                // 部分实现可能直接返回对象而非包在 data 中
+                if (obj == null && root.has("id")) obj = root;
+                final org.json.JSONObject result = obj; // 可能为 null
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                Log.e(TAG, "fetchDefaultLocation failed", e);
+                mainHandler.post(() -> callback.onFailure(e));
+            }
+        });
+    }
+
     private Integer safeToInt(Object v) {
         try {
             if (v == null) return null;

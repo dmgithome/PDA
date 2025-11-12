@@ -229,6 +229,20 @@ public class InboundApiService {
                 body.put("createDate", now);
                 body.put("items", itemsArray);
 
+                // 默认目标地点（入库验收要求顶层 target_location_id 必填）
+                try {
+                    SharedPreferences locSp = context.getSharedPreferences("locations_prefs", Context.MODE_PRIVATE);
+                    int targetId = locSp.getInt("default_return_location_id", -1);
+                    if (targetId <= 0) {
+                        postFailure(callback, new Exception("请先在地点维护中设置默认地点"));
+                        return;
+                    }
+                    body.put("target_location_id", targetId);
+                } catch (Exception e) {
+                    postFailure(callback, new Exception("读取默认地点失败，请重试"));
+                    return;
+                }
+
                 String url = networkConfig.getFullUrl(ApiEndpoint.DEVICE_INBOUND_ORDER);
                 Log.d(TAG, "submitInboundOrder url=" + url);
                 String resp = sendHttpRequest(url, "POST", body.toString());

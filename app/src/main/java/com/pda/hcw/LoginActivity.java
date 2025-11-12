@@ -330,9 +330,14 @@ public class LoginActivity extends AppCompatActivity {
         permissionManager.cacheUserPermissions(userInfo);
         
         UIUtils.showSuccess(this, successMessage);
-        
-        // 直接跳转到主界面
-        navigateToMainActivity();
+        // 登录后同步默认地点，再进入主界面（失败不阻塞）
+        UIUtils.showInfo(this, "正在同步默认地点...");
+        DefaultLocationManager.refreshFromServer(this, (ok, msg) -> {
+            runOnUiThread(() -> {
+                if (ok) UIUtils.showSuccess(this, msg); else UIUtils.showError(this, msg);
+                navigateToMainActivity();
+            });
+        });
     }
     
     /**
@@ -782,9 +787,14 @@ public class LoginActivity extends AppCompatActivity {
                     permissionManager.cacheUserPermissions(userInfo);
                     
                     UIUtils.showSuccess(LoginActivity.this, successMessage);
-                    
-                    // 跳转到主界面
-                    navigateToMainActivity();
+                    // 登录后同步默认地点，再进入主界面（失败不阻塞）
+                    UIUtils.showInfo(LoginActivity.this, "正在同步默认地点...");
+                    DefaultLocationManager.refreshFromServer(LoginActivity.this, (ok, msg) -> {
+                        runOnUiThread(() -> {
+                            if (ok) UIUtils.showSuccess(LoginActivity.this, msg); else UIUtils.showError(LoginActivity.this, msg);
+                            navigateToMainActivity();
+                        });
+                    });
                 });
             }
             

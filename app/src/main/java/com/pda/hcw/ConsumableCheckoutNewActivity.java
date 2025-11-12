@@ -327,13 +327,21 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
         
         // BaseActivity会自动处理会话更新和用户信息刷新
         
-        // 重新加载术间列表（避免管理页更新后不生效）
+        // 重新加载地点列表；取用模式下禁用“默认地点”选项
         try {
             OperatingRoomManager orm = OperatingRoomManager.getInstance(this);
-            List<String> latest = orm.getAllRoomNames();
-            if (latest != null && !latest.isEmpty()) {
+            Integer defId = DefaultLocationManager.getDefaultLocationId(this);
+            List<OperatingRoom> rooms = orm.getAllRooms();
+            if (rooms != null && !rooms.isEmpty()) {
                 roomOptions.clear();
-                roomOptions.addAll(latest);
+                for (OperatingRoom r : rooms) {
+                    if (r == null || r.name == null) continue;
+                    if (operationMode == OperationMode.TAKE && defId != null && r.serverId != null && r.serverId.equals(defId)) {
+                        // 跳过默认地点
+                        continue;
+                    }
+                    roomOptions.add(r.name);
+                }
                 ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this,
                         android.R.layout.simple_dropdown_item_1line, roomOptions);
                 roomSpinner.setAdapter(roomAdapter);
@@ -378,17 +386,27 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                 }
             } catch (Throwable ignore) {}
             
-            // 设置术间下拉选项（从本地术间表加载）
+            // 设置地点下拉选项（取用模式下禁用“默认地点”）
             try {
                 OperatingRoomManager orm = OperatingRoomManager.getInstance(this);
+                Integer defId = DefaultLocationManager.getDefaultLocationId(this);
                 roomOptions.clear();
-                roomOptions.addAll(orm.getAllRoomNames());
+                List<OperatingRoom> rooms = orm.getAllRooms();
+                if (rooms != null) {
+                    for (OperatingRoom r : rooms) {
+                        if (r == null || r.name == null) continue;
+                        if (operationMode == OperationMode.TAKE && defId != null && r.serverId != null && r.serverId.equals(defId)) {
+                            continue; // 禁用默认地点
+                        }
+                        roomOptions.add(r.name);
+                    }
+                }
                 if (roomOptions.isEmpty()) {
-                    roomOptions.add("未配置术间，请先在基础资料中更新");
+                    roomOptions.add("未配置地点，请在基础资料中更新");
                 }
             } catch (Exception e) {
                 roomOptions.clear();
-                roomOptions.add("读取术间失败");
+                roomOptions.add("读取地点失败");
             }
             ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this,
                     android.R.layout.simple_dropdown_item_1line, roomOptions);
