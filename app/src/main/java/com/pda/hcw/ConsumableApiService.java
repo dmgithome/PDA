@@ -594,9 +594,21 @@ public class ConsumableApiService {
     }
     
     /**
-     * 解析API响应
-     * @param response 响应数据
-     * @return 解析后的响应对象
+     * 解析耗材查询API响应（严格按新结构解析，不做兼容处理）。
+     *
+     * 响应结构：
+     * {
+     *   "status":200,
+     *   "message":"...",
+     *   "data":{
+     *     "cabinetID": number?,
+     *     "notInStockList": string[],
+     *     "inStockList": object[],
+     *     "takenList": object[],
+     *     "consumedList": object[],
+     *     "usedReturnList": object[]
+     *   }
+     * }
      */
     private ConsumableApiResponse parseApiResponse(String response) throws Exception {
         JSONObject jsonResponse = new JSONObject(response);
@@ -617,49 +629,58 @@ public class ConsumableApiService {
         ConsumableApiResponse apiResponse = new ConsumableApiResponse();
         apiResponse.cabinetID = data.optInt("cabinetID", 0);
         
-        // 解析未入库数据
-        JSONArray notInStockArray = data.optJSONArray("notInStockData");
+        // 未入库列表（纯 RFID 字符串）
+        JSONArray notInStockArray = data.optJSONArray("notInStockList");
         if (notInStockArray != null) {
             for (int i = 0; i < notInStockArray.length(); i++) {
-                apiResponse.notInStockData.add(notInStockArray.optString(i, ""));
+                apiResponse.notInStockList.add(notInStockArray.optString(i, ""));
             }
         }
         
-        // 解析异常数据
-        JSONArray errorArray = data.optJSONArray("errorData");
-        if (errorArray != null) {
-            for (int i = 0; i < errorArray.length(); i++) {
-                JSONObject item = errorArray.optJSONObject(i);
+        // 在库列表
+        JSONArray inStockArray = data.optJSONArray("inStockList");
+        if (inStockArray != null) {
+            for (int i = 0; i < inStockArray.length(); i++) {
+                JSONObject item = inStockArray.optJSONObject(i);
                 if (item != null) {
                     ConsumableItem ci = parseConsumableItem(item);
-                    ci.setStatus("异常条码");
-                    apiResponse.errorData.add(ci);
+                    apiResponse.inStockList.add(ci);
                 }
             }
         }
-        
-        // 解析可取用数据
-        JSONArray takeArray = data.optJSONArray("takeList");
-        if (takeArray != null) {
-            for (int i = 0; i < takeArray.length(); i++) {
-                JSONObject item = takeArray.optJSONObject(i);
+
+        // 取用未归还列表
+        JSONArray takenArray = data.optJSONArray("takenList");
+        if (takenArray != null) {
+            for (int i = 0; i < takenArray.length(); i++) {
+                JSONObject item = takenArray.optJSONObject(i);
                 if (item != null) {
                     ConsumableItem ci = parseConsumableItem(item);
-                    ci.setStatus("可领用");
-                    apiResponse.takeList.add(ci);
+                    apiResponse.takenList.add(ci);
                 }
             }
         }
-        
-        // 解析未归还数据
-        JSONArray returnArray = data.optJSONArray("returnList");
-        if (returnArray != null) {
-            for (int i = 0; i < returnArray.length(); i++) {
-                JSONObject item = returnArray.optJSONObject(i);
+
+        // 已消耗列表
+        JSONArray consumedArray = data.optJSONArray("consumedList");
+        if (consumedArray != null) {
+            for (int i = 0; i < consumedArray.length(); i++) {
+                JSONObject item = consumedArray.optJSONObject(i);
                 if (item != null) {
                     ConsumableItem ci = parseConsumableItem(item);
-                    ci.setStatus("未归还");
-                    apiResponse.returnList.add(ci);
+                    apiResponse.consumedList.add(ci);
+                }
+            }
+        }
+
+        // 消耗退回列表
+        JSONArray usedReturnArray = data.optJSONArray("usedReturnList");
+        if (usedReturnArray != null) {
+            for (int i = 0; i < usedReturnArray.length(); i++) {
+                JSONObject item = usedReturnArray.optJSONObject(i);
+                if (item != null) {
+                    ConsumableItem ci = parseConsumableItem(item);
+                    apiResponse.usedReturnList.add(ci);
                 }
             }
         }

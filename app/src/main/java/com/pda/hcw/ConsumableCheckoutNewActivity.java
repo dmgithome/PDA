@@ -728,21 +728,21 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
     
     
     /**
-     * 在API响应的4个数组中查找匹配的耗材项
+     * 在耗材查询响应的 5 个列表中查找匹配的耗材项，并根据业务模式给出对应提示。
      * @param response API响应
      * @param barcode 扫描的条码
-     * @return 匹配的耗材项，如果没有找到返回null
+     * @return 匹配的耗材项，如果没有找到返回 null
      */
     private ConsumableItem findConsumableInResponse(ConsumableApiResponse response, String barcode) {
         Log.d(TAG, "=== FIND_CONSUMABLE_IN_RESPONSE START ===");
         Log.d(TAG, "Looking for barcode: " + barcode);
         
-        // 1. 首先检查notInStockData（字符串数组）
-        if (response.hasNotInStockData()) {
-            Log.d(TAG, "Checking notInStockData: " + response.notInStockData);
-            for (String item : response.notInStockData) {
+        // 1. 首先检查未入库列表（字符串数组）
+        if (response.hasNotInStock()) {
+            Log.d(TAG, "Checking notInStockList: " + response.notInStockList);
+            for (String item : response.notInStockList) {
                 if (barcode.equals(item)) {
-                    Log.d(TAG, "Found barcode in notInStockData: " + item);
+                    Log.d(TAG, "Found barcode in notInStockList: " + item);
                     showErrorOptimized("[" + barcode + "]耗材未入库");
                     return null;
                 }
@@ -750,61 +750,105 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
         }
         
         if (operationMode == OperationMode.TAKE) {
-            // 取用模式：takeList 可添加；returnList 阻止
-            if (response.hasTakeList()) {
-                Log.d(TAG, "Checking takeList with " + response.takeList.size() + " items");
-                for (ConsumableItem item : response.takeList) {
+            // 取用模式：仅允许在库（inStockList）加入取用明细
+            if (response.hasInStock()) {
+                Log.d(TAG, "Checking inStockList with " + response.inStockList.size() + " items");
+                for (ConsumableItem item : response.inStockList) {
                     if (barcode.equals(item.getRfid())) {
                         item.setBarcode(barcode);
                         return item;
                     }
                 }
             }
-            if (response.hasReturnList()) {
-                Log.d(TAG, "Checking returnList with " + response.returnList.size() + " items");
-                for (ConsumableItem item : response.returnList) {
+
+            // 已取用未归还 → 需先归还
+            if (response.hasTaken()) {
+                Log.d(TAG, "Checking takenList with " + response.takenList.size() + " items");
+                for (ConsumableItem item : response.takenList) {
                     if (barcode.equals(item.getRfid())) {
-                        showErrorOptimized("[" + barcode + "]领用后未归还请先归还");
+                        showErrorOptimized("[" + barcode + "]领用后未归还，请先归还");
+                        return null;
+                    }
+                }
+            }
+            // 已消耗 → 不允许取用
+            if (response.hasConsumed()) {
+                Log.d(TAG, "Checking consumedList with " + response.consumedList.size() + " items");
+                for (ConsumableItem item : response.consumedList) {
+                    if (barcode.equals(item.getRfid())) {
+                        showErrorOptimized("[" + barcode + "]耗材已消耗，不能取用");
+                        return null;
+                    }
+                }
+            }
+            // 消耗退回 → 不作为取用对象
+            if (response.hasUsedReturn()) {
+                Log.d(TAG, "Checking usedReturnList with " + response.usedReturnList.size() + " items");
+                for (ConsumableItem item : response.usedReturnList) {
+                    if (barcode.equals(item.getRfid())) {
+                        showErrorOptimized("[" + barcode + "]为消耗退回记录，不作为取用对象");
                         return null;
                     }
                 }
             }
         } else {
-            // 归还模式：returnList 可添加；takeList 阻止
-            if (response.hasReturnList()) {
-                Log.d(TAG, "Checking returnList with " + response.returnList.size() + " items");
-                for (ConsumableItem item : response.returnList) {
+            // 归还模式：仅允许 takenList 中的标签归还
+            if (response.hasTaken()) {
+                Log.d(TAG, "Checking takenList with " + response.takenList.size() + " items");
+                for (ConsumableItem item : response.takenList) {
                     if (barcode.equals(item.getRfid())) {
                         item.setBarcode(barcode);
                         return item;
                     }
                 }
             }
-            if (response.hasTakeList()) {
-                Log.d(TAG, "Checking takeList with " + response.takeList.size() + " items");
-                for (ConsumableItem item : response.takeList) {
+
+            // 已在库 → 视为未领用，不可归还
+            if (response.hasInStock()) {
+                Log.d(TAG, "Checking inStockList with " + response.inStockList.size() + " items");
+                for (ConsumableItem item : response.inStockList) {
                     if (barcode.equals(item.getRfid())) {
                         showErrorOptimized("[" + barcode + "]未领用，不可归还");
                         return null;
                     }
                 }
             }
-        }
-        
-        // 4. 检查errorData（异常数据）
-        if (response.hasErrorData()) {
-            Log.d(TAG, "Checking errorData with " + response.errorData.size() + " items");
-            for (ConsumableItem item : response.errorData) {
-                Log.d(TAG, "Comparing with errorData item RFID: " + item.getRfid());
-                if (barcode.equals(item.getRfid())) {
-                    Log.d(TAG, "Found barcode in errorData: " + item.getRfid());
-                    showErrorOptimized("[" + barcode + "]耗材消耗后退回未归还");
-                    return null;
+            // 已消耗 → 不可归还
+            if (response.hasConsumed()) {
+                Log.d(TAG, "Checking consumedList with " + response.consumedList.size() + " items");
+                for (ConsumableItem item : response.consumedList) {
+                    if (barcode.equals(item.getRfid())) {
+                        showErrorOptimized("[" + barcode + "]已消耗，不可归还");
+                        return null;
+                    }
+                }
+            }
+            // 消耗退回 → 不可归还
+            if (response.hasUsedReturn()) {
+                Log.d(TAG, "Checking usedReturnList with " + response.usedReturnList.size() + " items");
+                for (ConsumableItem item : response.usedReturnList) {
+                    if (barcode.equals(item.getRfid())) {
+                        showErrorOptimized("[" + barcode + "]为消耗退回记录，不可归还");
+                        return null;
+                    }
                 }
             }
         }
+
+        // 如果到这里还没找到匹配项，根据是否完全空结果给出不同提示
+        boolean allEmpty = !response.hasNotInStock()
+                && !response.hasInStock()
+                && !response.hasTaken()
+                && !response.hasConsumed()
+                && !response.hasUsedReturn();
+
+        if (allEmpty) {
+            showErrorOptimized("未找到对应的耗材信息");
+        } else {
+            Log.d(TAG, "Barcode not found in any non-empty list: " + barcode);
+            showErrorOptimized("接口数据返回有误，未找到条码: " + barcode);
+        }
         
-        Log.d(TAG, "Barcode not found in any array: " + barcode);
         return null;
     }
     
@@ -818,10 +862,10 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
             Log.d(TAG, "handleApiResponseOptimized called with barcode: " + barcode);
             Log.d(TAG, "Response summary: " + response.getSummary());
             
-            // 1. 先检查4个列表是否都为空
-            if (!response.hasNotInStockData() && !response.hasTakeList() && 
-                !response.hasReturnList() && !response.hasErrorData()) {
-                Log.d(TAG, "All 4 lists are empty, barcode not in stock");
+            // 1. 先检查 5 个列表是否都为空
+            if (!response.hasNotInStock() && !response.hasInStock() && 
+                !response.hasTaken() && !response.hasConsumed() && !response.hasUsedReturn()) {
+                Log.d(TAG, "All 5 lists are empty, barcode not in stock");
                 showErrorOptimized("[" + barcode + "]未入库耗材");
                 return;
             }

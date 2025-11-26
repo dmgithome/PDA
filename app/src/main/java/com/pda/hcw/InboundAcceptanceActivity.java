@@ -59,7 +59,6 @@ public class InboundAcceptanceActivity extends BaseActivity {
 
     private final List<InboundOrder> orders = new ArrayList<>();
     private final Map<String, Set<String>> deltaByOrder = new HashMap<>(); // orderCode -> rfids in this run
-    private final Map<String, ConsumableItem> rfidInfoCache = new HashMap<>(); // rfid -> item (懒加载)
     private InboundOrderAdapter adapter;
     private EpcRollAdapter epcAdapter;
 
@@ -718,35 +717,107 @@ public class InboundAcceptanceActivity extends BaseActivity {
             runOnUiThread(() -> addDelta(o, r));
             return;
         }
-        Set<String> set = deltaByOrder.computeIfAbsent(order.code, k -> new HashSet<>());
-        if (set.add(rfid)) {
-            order.accepted = Math.min(order.total, order.accepted + 1);
-            adapter.notifyDataSetChanged();
-            loadRfidInfoIfNeeded(rfid);
-        }
-    }
+        if (order == null || TextUtils.isEmpty(order.code)) return;
 
-    private void loadRfidInfoIfNeeded(String rfid) {
-        if (TextUtils.isEmpty(rfid) || rfidInfoCache.containsKey(rfid)) return;
-        List<String> list = new ArrayList<>();
+        // 已在本次会话中添加过的 RFID 不再重复校验
+        Set<String> existing = deltaByOrder.get(order.code);
+        if (existing != null && existing.contains(rfid)) {
+            return;
+        }
+
+        // 调用库存状态接口：仅当标签处于“未入库(notInStock)”状态时才允许上架入库
+        java.util.List<String> list = new java.util.ArrayList<>();
         list.add(rfid);
         ConsumableApiService.getInstance(this).queryConsumableInfoList(list, new ConsumableApiService.ApiCallback<ConsumableApiResponse>() {
             @Override public void onSuccess(ConsumableApiResponse resp) {
-                try {
-                    if (resp != null && resp.takeList != null) {
-                        for (ConsumableItem it : resp.takeList) {
-                            if (it != null && rfid.equals(it.getRfid())) {
-                                rfidInfoCache.put(rfid, it);
-                                break;
-                            }
-                        }
-                    }
-                } catch (Exception ignore) {}
+                handleInboundInventoryCheck(order, rfid, resp);
             }
+
             @Override public void onFailure(Exception e) {
-                Log.w(TAG, "loadRfidInfoIfNeeded failed: " + rfid, e);
+                Log.w(TAG, "inbound inventory check failed for rfid=" + rfid, e);
+                showError(UIUtils.friendlyErrorMessage("获取耗材库存状态失败", e));
             }
         });
+    }
+
+    /**
+     * 入库验收前的库存状态校验：
+     * 仅当标签在 notInStockList 中（且不出现在其他状态列表）时，才允许加入本次验收增量。
+     */
+    private void handleInboundInventoryCheck(InboundOrder order, String rfid, ConsumableApiResponse resp) {
+        try {
+            if (isFinishing()) return;
+            if (order == null || TextUtils.isEmpty(order.code)) return;
+
+            // 确保订单仍然存在于当前列表中
+            InboundOrder target = null;
+            for (InboundOrder o : orders) {
+                if (o != null && order.code.equals(o.code)) {
+                    target = o;
+                    break;
+                }
+            }
+            if (target == null) {
+                showInfo("当前入库单已更新，忽略标签 " + rfid);
+                return;
+            }
+
+            boolean inNotInStock = resp != null && resp.notInStockList != null && resp.notInStockList.contains(rfid);
+            boolean inInStock = containsRfid(resp == null ? null : resp.inStockList, rfid);
+            boolean inTaken = containsRfid(resp == null ? null : resp.takenList, rfid);
+            boolean inConsumed = containsRfid(resp == null ? null : resp.consumedList, rfid);
+            boolean inUsedReturn = containsRfid(resp == null ? null : resp.usedReturnList, rfid);
+
+            if (inNotInStock && !inInStock && !inTaken && !inConsumed && !inUsedReturn) {
+                performAddDelta(target, rfid);
+                return;
+            }
+
+            // 与 Web 有单入库逻辑保持一致的错误提示
+            if (inInStock) {
+                showError("耗材 " + rfid + " 已在耗材屋库存中，无法重复入库");
+                return;
+            }
+            if (inTaken) {
+                showError("耗材 " + rfid + " 处于取用未归还状态，不能上架入库");
+                return;
+            }
+            if (inConsumed) {
+                showError("耗材 " + rfid + " 已消耗，不能上架入库");
+                return;
+            }
+            if (inUsedReturn) {
+                showError("耗材 " + rfid + " 为消耗退回记录，不走首次有单上架");
+                return;
+            }
+
+            // 未命中任何列表或响应为空：状态异常，暂不处理
+            showError("标签 " + rfid + " 状态未知，暂不处理");
+        } catch (Exception e) {
+            Log.e(TAG, "handleInboundInventoryCheck error, rfid=" + rfid, e);
+            showError("处理耗材库存状态时发生错误");
+        }
+    }
+
+    /**
+     * 实际执行本次验收增量累加（在通过库存状态校验之后调用）。
+     */
+    private void performAddDelta(InboundOrder order, String rfid) {
+        if (order == null || TextUtils.isEmpty(order.code)) return;
+        Set<String> set = deltaByOrder.computeIfAbsent(order.code, k -> new HashSet<>());
+        if (!set.add(rfid)) return;
+        try {
+            order.accepted = Math.min(order.total, order.accepted + 1);
+        } catch (Throwable ignore) {}
+        adapter.notifyDataSetChanged();
+    }
+
+    private boolean containsRfid(java.util.List<ConsumableItem> list, String rfid) {
+        if (list == null || rfid == null) return false;
+        for (ConsumableItem it : list) {
+            if (it != null && rfid.equals(it.getRfid())) return true;
+        }
+        return false;
     }
 
     private void clearDelta(InboundOrder order) {

@@ -256,7 +256,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- FINISHED：差异记录 + 导出 -->
+                <!-- FINISHED：差异记录明细 + 导出 -->
                 <LinearLayout
                     android:id="@+id/view_finished"
                     android:layout_width="match_parent"
@@ -264,6 +264,7 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
+                    <!-- 标题 -->
                     <TextView
                         android:id="@+id/tv_diff_header"
                         android:layout_width="match_parent"
@@ -273,42 +274,67 @@
                         android:textSize="16sp"
                         android:padding="16dp"/>
 
+                    <!-- 汇总统计 -->
                     <TextView
-                        android:id="@+id/tv_missing_title"
+                        android:id="@+id/tv_diff_summary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="缺失明细"
-                        android:textStyle="bold"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
-                        android:paddingTop="8dp"/>
-                    <TextView
-                        android:id="@+id/tv_missing_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
+                        android:paddingBottom="8dp"
                         android:textSize="13sp"
                         android:textColor="@color/text_secondary"
-                        tools:text="RFID1\nRFID2"/>
+                        tools:text="缺失：3 条   盈余：1 条"/>
 
-                    <TextView
-                        android:id="@+id/tv_surplus_title"
+                    <!-- 差异类型 Tab（缺失 / 盈余） -->
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/inventory_diff_tabs"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="盈余明细"
-                        android:textStyle="bold"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:paddingTop="8dp"/>
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="4dp"
+                        app:tabMode="fixed"
+                        app:tabGravity="fill"
+                        app:tabIndicatorColor="@color/primary"
+                        app:tabSelectedTextColor="@color/primary"
+                        app:tabTextColor="@color/text_tertiary"
+                        app:tabIndicatorHeight="3dp">
+
+                        <com.google.android.material.tabs.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="缺失"/>
+
+                        <com.google.android.material.tabs.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="盈余"/>
+
+                    </com.google.android.material.tabs.TabLayout>
+
+                    <!-- 空态提示 -->
                     <TextView
-                        android:id="@+id/tv_surplus_list"
+                        android:id="@+id/tv_diff_empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingTop="32dp"
+                        android:paddingBottom="32dp"
+                        android:text="当前类别暂无差异明细"
+                        android:textColor="@color/text_tertiary"
+                        android:textSize="13sp"
+                        android:visibility="gone"/>
+
+                    <!-- 差异明细列表 -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/diff_recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:padding="16dp"
-                        android:textSize="13sp"
-                        android:textColor="@color/text_secondary"
-                        tools:text="RFID3\nRFID4"/>
+                        android:clipToPadding="false"
+                        tools:listitem="@layout/item_inventory_diff"/>
 
                     <!-- 导出按钮 -->
                     <LinearLayout

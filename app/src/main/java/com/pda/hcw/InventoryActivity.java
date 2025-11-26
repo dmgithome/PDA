@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.tabs.TabLayout;
 import com.pda.hcw.inventory.InventoryPlanItem;
 import com.pda.hcw.inventory.InventoryRoomStatus;
 import com.pda.hcw.inventory.InventorySession;
@@ -79,8 +80,13 @@ public class InventoryActivity extends BaseActivity {
     private MaterialButton refreshTasksButton;
 
     private TextView tvPendingSummary;
-    private TextView tvMissingList;
-    private TextView tvSurplusList;
+
+    // 已完成视图：差异明细
+    private TextView tvDiffSummary;
+    private TextView tvDiffEmpty;
+    private TabLayout diffTabLayout;
+    private RecyclerView diffRecyclerView;
+    private InventoryDiffAdapter diffAdapter;
 
     private RecyclerView locationSummaryRecyclerView;
     private RecyclerView pendingGridRecyclerView;
@@ -103,6 +109,11 @@ public class InventoryActivity extends BaseActivity {
     private InventoryTaskAdapter taskListAdapter;
     private String pendingTaskId = null;
     private String pendingSummaryText = "尚未拉取库存";
+
+    // 差异明细数据
+    private final List<InventoryDiffAdapter.DiffItem> diffMissingItems = new ArrayList<>();
+    private final List<InventoryDiffAdapter.DiffItem> diffSurplusItems = new ArrayList<>();
+    private int currentDiffTabIndex = 0; // 0:缺失 1:盈余
 
     // RFID
     private UHFManager uhfManager;
@@ -184,8 +195,11 @@ public class InventoryActivity extends BaseActivity {
         refreshTasksButton = findViewById(R.id.refresh_tasks_button);
 
         tvPendingSummary = findViewById(R.id.tv_pending_summary);
-        tvMissingList = findViewById(R.id.tv_missing_list);
-        tvSurplusList = findViewById(R.id.tv_surplus_list);
+
+        tvDiffSummary = findViewById(R.id.tv_diff_summary);
+        tvDiffEmpty = findViewById(R.id.tv_diff_empty);
+        diffTabLayout = findViewById(R.id.inventory_diff_tabs);
+        diffRecyclerView = findViewById(R.id.diff_recycler_view);
 
         locationSummaryRecyclerView = findViewById(R.id.location_summary_recycler_view);
         pendingGridRecyclerView = findViewById(R.id.pending_grid_recycler_view);
@@ -198,6 +212,29 @@ public class InventoryActivity extends BaseActivity {
         taskListRecyclerView = findViewById(R.id.task_list_recycler_view);
         if (taskListRecyclerView != null) {
             taskListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }
+
+        if (diffRecyclerView != null) {
+            diffRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            diffAdapter = new InventoryDiffAdapter(item -> showRfidDetailDialog(item.rfid));
+            diffRecyclerView.setAdapter(diffAdapter);
+        }
+
+        if (diffTabLayout != null) {
+            diffTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    currentDiffTabIndex = tab.getPosition();
+                    updateDiffListForCurrentTab();
+                }
+
+                @Override public void onTabUnselected(TabLayout.Tab tab) { }
+                @Override public void onTabReselected(TabLayout.Tab tab) {
+                    // 重新点击同一Tab时也刷新一次，保证数据与空态一致
+                    currentDiffTabIndex = tab.getPosition();
+                    updateDiffListForCurrentTab();
+                }
+            });
         }
 
         rfidStatusLayout = findViewById(R.id.rfid_status_layout);
@@ -565,21 +602,34 @@ public class InventoryActivity extends BaseActivity {
                     .setPositiveButton("关闭", null)
                     .create();
             dlg.show();
-            // 总是调用懒加载接口以获取最新状态/操作人/时间
+            // 总是调用接口以获取最新库存状态/操作人/时间
             List<String> one = new ArrayList<>(); one.add(rfid);
             ConsumableApiService.getInstance(this).queryConsumableInfoList(one, new ConsumableApiService.ApiCallback<ConsumableApiResponse>() {
                 @Override public void onSuccess(ConsumableApiResponse resp) {
                     ConsumableItem info = null;
                     String status = null;
-                    // 先在可领用中找
-                    for (ConsumableItem it : resp.takeList) { if (rfid.equals(it.getRfid())) { info = it; status = "可领用"; break; } }
-                    // 再在未归还中找
-                    if (info == null) for (ConsumableItem it : resp.returnList) { if (rfid.equals(it.getRfid())) { info = it; status = "未归还"; break; } }
-                    // 再在异常条码中找
-                    if (info == null) for (ConsumableItem it : resp.errorData) { if (rfid.equals(it.getRfid())) { info = it; status = "异常条码"; break; } }
-                    // 若仍未找到但在不在库列表中，则标记为不在库
-                    if (info == null && resp.notInStockData != null) {
-                        for (String s : resp.notInStockData) { if (rfid.equals(s)) { status = "不在库"; break; } }
+                    // 依次在五个列表中查找
+                    for (ConsumableItem it : resp.inStockList) {
+                        if (rfid.equals(it.getRfid())) { info = it; status = "在库"; break; }
+                    }
+                    if (info == null) {
+                        for (ConsumableItem it : resp.takenList) {
+                            if (rfid.equals(it.getRfid())) { info = it; status = "取用未归还"; break; }
+                        }
+                    }
+                    if (info == null) {
+                        for (ConsumableItem it : resp.consumedList) {
+                            if (rfid.equals(it.getRfid())) { info = it; status = "已消耗"; break; }
+                        }
+                    }
+                    if (info == null) {
+                        for (ConsumableItem it : resp.usedReturnList) {
+                            if (rfid.equals(it.getRfid())) { info = it; status = "消耗退回"; break; }
+                        }
+                    }
+                    // 若仍未找到但在 notInStockList 中，则标记为不在库
+                    if (info == null && resp.notInStockList != null) {
+                        for (String s : resp.notInStockList) { if (rfid.equals(s)) { status = "不在库"; break; } }
                     }
 
                     final ConsumableItem finalInfo = info;
@@ -635,15 +685,92 @@ public class InventoryActivity extends BaseActivity {
         Set<String> planned = inventorySession.getAllPlannedRfids();
         Set<String> counted = inventorySession.getCountedRfids();
         Set<String> surplus = inventorySession.getSurplusRfids();
+
         List<String> missingList = new ArrayList<>();
-        for (String r : planned) if (!counted.contains(r)) missingList.add(r);
+        for (String r : planned) {
+            if (!counted.contains(r)) {
+                missingList.add(r);
+            }
+        }
         java.util.Collections.sort(missingList);
         List<String> surplusList = new ArrayList<>(surplus);
         java.util.Collections.sort(surplusList);
-        tvMissingList.setText(missingList.isEmpty() ? "—" : TextUtils.join("\n", missingList));
-        tvSurplusList.setText(surplusList.isEmpty() ? "—" : TextUtils.join("\n", surplusList));
+
+        // 构建差异明细数据（附带地点信息）
+        diffMissingItems.clear();
+        for (String r : missingList) {
+            InventoryPlanItem meta = inventorySession.getPlanMeta(r);
+            String name = meta != null ? meta.getName() : null;
+            String spec = meta != null ? meta.getSpec() : null;
+            String manu = meta != null ? meta.getManufacturer() : null;
+            String roomName = meta != null ? meta.getRoomName() : inventorySession.getRoomName(InventorySession.ROOM_ID_CONSUMABLE_HOUSE);
+            diffMissingItems.add(new InventoryDiffAdapter.DiffItem(
+                    InventoryDiffAdapter.DiffType.MISSING,
+                    r,
+                    name,
+                    spec,
+                    manu,
+                    roomName
+            ));
+        }
+
+        diffSurplusItems.clear();
+        for (String r : surplusList) {
+            // 盈余条目目前只能依赖RFID本身，其他信息通过详情弹窗查询
+            diffSurplusItems.add(new InventoryDiffAdapter.DiffItem(
+                    InventoryDiffAdapter.DiffType.SURPLUS,
+                    r,
+                    null,
+                    null,
+                    null,
+                    null
+            ));
+        }
+
+        int missingCount = diffMissingItems.size();
+        int surplusCount = diffSurplusItems.size();
+
+        // 顶部统计
+        if (tvDiffSummary != null) {
+            tvDiffSummary.setText("缺失：" + missingCount + " 条   盈余：" + surplusCount + " 条");
+        }
+
+        // 更新 Tab 文案上的数量
+        if (diffTabLayout != null) {
+            TabLayout.Tab missingTab = diffTabLayout.getTabAt(0);
+            if (missingTab != null) {
+                missingTab.setText("缺失 (" + missingCount + ")");
+            }
+            TabLayout.Tab surplusTab = diffTabLayout.getTabAt(1);
+            if (surplusTab != null) {
+                surplusTab.setText("盈余 (" + surplusCount + ")");
+            }
+        }
+
+        // 默认选中缺失Tab并刷新列表
+        currentDiffTabIndex = 0;
+        if (diffTabLayout != null) {
+            TabLayout.Tab t = diffTabLayout.getTabAt(currentDiffTabIndex);
+            if (t != null) t.select();
+        }
+        updateDiffListForCurrentTab();
+
         statsHeaderBar.setVisibility(View.VISIBLE);
         updateHeaderStats();
+    }
+
+    private void updateDiffListForCurrentTab() {
+        if (diffAdapter == null) return;
+        List<InventoryDiffAdapter.DiffItem> src =
+                currentDiffTabIndex == 0 ? diffMissingItems : diffSurplusItems;
+        diffAdapter.setItems(src);
+        boolean empty = src == null || src.isEmpty();
+        if (tvDiffEmpty != null) {
+            tvDiffEmpty.setVisibility(empty ? View.VISIBLE : View.GONE);
+        }
+        if (diffRecyclerView != null) {
+            diffRecyclerView.setVisibility(empty ? View.GONE : View.VISIBLE);
+        }
     }
 
     // ========== RFID ==========
@@ -1005,9 +1132,10 @@ public class InventoryActivity extends BaseActivity {
                     CountDownLatch latch = new CountDownLatch(1);
                     ConsumableApiService.getInstance(this).queryConsumableInfoList(surplusList, new ConsumableApiService.ApiCallback<ConsumableApiResponse>() {
                         @Override public void onSuccess(ConsumableApiResponse resp) {
-                            for (ConsumableItem item : resp.takeList) if (item.getRfid() != null) surplusInfo.put(item.getRfid(), item);
-                            for (ConsumableItem item : resp.returnList) if (item.getRfid() != null && !surplusInfo.containsKey(item.getRfid())) surplusInfo.put(item.getRfid(), item);
-                            for (ConsumableItem item : resp.errorData) if (item.getRfid() != null && !surplusInfo.containsKey(item.getRfid())) surplusInfo.put(item.getRfid(), item);
+                            for (ConsumableItem item : resp.inStockList) if (item.getRfid() != null) surplusInfo.put(item.getRfid(), item);
+                            for (ConsumableItem item : resp.takenList) if (item.getRfid() != null && !surplusInfo.containsKey(item.getRfid())) surplusInfo.put(item.getRfid(), item);
+                            for (ConsumableItem item : resp.consumedList) if (item.getRfid() != null && !surplusInfo.containsKey(item.getRfid())) surplusInfo.put(item.getRfid(), item);
+                            for (ConsumableItem item : resp.usedReturnList) if (item.getRfid() != null && !surplusInfo.containsKey(item.getRfid())) surplusInfo.put(item.getRfid(), item);
                             latch.countDown();
                         }
                         @Override public void onFailure(Exception e) { Log.w(TAG, "盈余补齐失败: " + e.getMessage()); latch.countDown(); }

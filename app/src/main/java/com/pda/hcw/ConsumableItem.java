@@ -22,7 +22,7 @@ public class ConsumableItem {
     private String brand;
     // 新增：当前所在地点ID（来自扫码/库存接口的 current_location_id）
     private Integer currentLocationId;
-    // 新增：最后一次操作信息（仅 takeList/returnList 返回）
+    // 新增：最后一次操作信息（由库存查询接口返回，适用于在库/取用/已消耗/退回等状态）
     private String lastOperatorName;
     private String lastOperationTime; // 服务器返回格式：yyyy-MM-dd HH:mm:ss
     // 新增：状态（不在库/可领用/未归还/异常条码），由解析阶段或UI层赋值
