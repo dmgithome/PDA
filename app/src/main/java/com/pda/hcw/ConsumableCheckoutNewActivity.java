@@ -56,7 +56,9 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
     // 数据
     private List<ConsumableGroupItem> consumableGroupList;
     private ConsumableDetailAdapter detailAdapter;
-    private List<String> roomOptions = new ArrayList<>();
+    // 地点下拉选项与对应的地点列表（统一使用 locations 接口数据）
+    private final List<String> roomOptions = new ArrayList<>();
+    private final List<OperatingRoom> roomList = new ArrayList<>();
     private int totalCount = 0;
     
     // 领用记录管理器
@@ -326,26 +328,10 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
         logActivityState("onResume");
         
         // BaseActivity会自动处理会话更新和用户信息刷新
-        
-        // 重新加载地点列表；取用模式下禁用“默认地点”选项
+
+        // 重新加载地点列表（始终从接口获取，只保留启用的 room 类型）
         try {
-            OperatingRoomManager orm = OperatingRoomManager.getInstance(this);
-            Integer defId = DefaultLocationManager.getDefaultLocationId(this);
-            List<OperatingRoom> rooms = orm.getAllRooms();
-            if (rooms != null && !rooms.isEmpty()) {
-                roomOptions.clear();
-                for (OperatingRoom r : rooms) {
-                    if (r == null || r.name == null) continue;
-                    if (operationMode == OperationMode.TAKE && defId != null && r.serverId != null && r.serverId.equals(defId)) {
-                        // 跳过默认地点
-                        continue;
-                    }
-                    roomOptions.add(r.name);
-                }
-                ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this,
-                        android.R.layout.simple_dropdown_item_1line, roomOptions);
-                roomSpinner.setAdapter(roomAdapter);
-            }
+            reloadLocationOptions();
         } catch (Exception e) {
             Log.w(TAG, "reload rooms failed", e);
         }
@@ -379,43 +365,25 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                 if (barcodeInput != null) {
                     barcodeInput.setShowSoftInputOnFocus(false);
                 }
-            } catch (Throwable ignore) {}
+            } catch (Throwable ignore) {
+            }
             try {
                 if (roomSpinner != null) {
                     roomSpinner.setShowSoftInputOnFocus(false);
                 }
-            } catch (Throwable ignore) {}
-            
-            // 设置地点下拉选项（取用模式下禁用“默认地点”）
-            try {
-                OperatingRoomManager orm = OperatingRoomManager.getInstance(this);
-                Integer defId = DefaultLocationManager.getDefaultLocationId(this);
-                roomOptions.clear();
-                List<OperatingRoom> rooms = orm.getAllRooms();
-                if (rooms != null) {
-                    for (OperatingRoom r : rooms) {
-                        if (r == null || r.name == null) continue;
-                        if (operationMode == OperationMode.TAKE && defId != null && r.serverId != null && r.serverId.equals(defId)) {
-                            continue; // 禁用默认地点
-                        }
-                        roomOptions.add(r.name);
-                    }
-                }
-                if (roomOptions.isEmpty()) {
-                    roomOptions.add("未配置地点，请在基础资料中更新");
-                }
-            } catch (Exception e) {
-                roomOptions.clear();
-                roomOptions.add("读取地点失败");
+            } catch (Throwable ignore) {
             }
+
+            // 初始化地点下拉适配器（数据稍后通过接口异步填充）
             ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this,
                     android.R.layout.simple_dropdown_item_1line, roomOptions);
             roomSpinner.setAdapter(roomAdapter);
-            
-              
-                        
+
             // 历史记录的加载推迟到 onCreate（recordManager 初始化之后）
-            
+
+            // 首次进入时加载地点列表
+            reloadLocationOptions();
+
             Log.d(TAG, "initViews completed");
         } catch (Exception e) {
             Log.e(TAG, "Error in initViews", e);
@@ -432,6 +400,70 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
             Log.d(TAG, "setupRecyclerView completed");
         } catch (Exception e) {
             Log.e(TAG, "Error in setupRecyclerView", e);
+        }
+    }
+
+    /**
+     * 从地点接口重新加载下拉选项（仅保留启用的 room 类型地点）。
+     * 结果写入 roomList 与 roomOptions，并刷新 roomSpinner 的适配器。
+     */
+    private void reloadLocationOptions() {
+        try {
+            if (apiService == null) {
+                apiService = ConsumableApiService.getInstance(this);
+            }
+            // 异步从服务端加载地点列表
+            apiService.fetchLocations(new ConsumableApiService.ApiCallback<List<OperatingRoom>>() {
+                @Override
+                public void onSuccess(List<OperatingRoom> result) {
+                    runOnUiThread(() -> {
+                        try {
+                            if (isFinishing() || isDestroyed()) {
+                                return;
+                            }
+                            roomList.clear();
+                            roomOptions.clear();
+                            if (result != null) {
+                                for (OperatingRoom r : result) {
+                                    if (r == null || r.name == null) continue;
+                                    // 仅保留地点模型中 type=room 且启用的记录
+                                    if (r.type == null || !"room".equalsIgnoreCase(r.type)) continue;
+                                    if (!r.isActive) continue;
+                                    roomList.add(r);
+                                    roomOptions.add(r.name);
+                                }
+                            }
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(ConsumableCheckoutNewActivity.this,
+                                    android.R.layout.simple_dropdown_item_1line, roomOptions);
+                            roomSpinner.setAdapter(adapter);
+                        } catch (Exception e) {
+                            Log.e(TAG, "bind locations failed", e);
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    runOnUiThread(() -> {
+                        try {
+                            if (isFinishing() || isDestroyed()) {
+                                return;
+                            }
+                            Log.e(TAG, "reloadLocationOptions failed", e);
+                            showError(UIUtils.friendlyErrorMessage("加载地点失败", e));
+                            roomList.clear();
+                            roomOptions.clear();
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(ConsumableCheckoutNewActivity.this,
+                                    android.R.layout.simple_dropdown_item_1line, roomOptions);
+                            roomSpinner.setAdapter(adapter);
+                        } catch (Exception inner) {
+                            Log.e(TAG, "reloadLocationOptions onFailure bind error", inner);
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "reloadLocationOptions error", e);
         }
     }
     
@@ -792,10 +824,21 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                 }
             }
         } else {
-            // 归还模式：仅允许 takenList 中的标签归还
+            // 归还模式：允许 takenList 和 usedReturnList 中的标签归还
             if (response.hasTaken()) {
                 Log.d(TAG, "Checking takenList with " + response.takenList.size() + " items");
                 for (ConsumableItem item : response.takenList) {
+                    if (barcode.equals(item.getRfid())) {
+                        item.setBarcode(barcode);
+                        return item;
+                    }
+                }
+            }
+
+            // 消耗退回 → 允许归还
+            if (response.hasUsedReturn()) {
+                Log.d(TAG, "Checking usedReturnList with " + response.usedReturnList.size() + " items");
+                for (ConsumableItem item : response.usedReturnList) {
                     if (barcode.equals(item.getRfid())) {
                         item.setBarcode(barcode);
                         return item;
@@ -823,16 +866,7 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                     }
                 }
             }
-            // 消耗退回 → 不可归还
-            if (response.hasUsedReturn()) {
-                Log.d(TAG, "Checking usedReturnList with " + response.usedReturnList.size() + " items");
-                for (ConsumableItem item : response.usedReturnList) {
-                    if (barcode.equals(item.getRfid())) {
-                        showErrorOptimized("[" + barcode + "]为消耗退回记录，不可归还");
-                        return null;
-                    }
-                }
-            }
+
         }
 
         // 如果到这里还没找到匹配项，根据是否完全空结果给出不同提示
@@ -1536,20 +1570,21 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                 }
             }
 
-            // 解析地点ID
+            // 解析地点ID（统一使用 locations 列表，仅依赖 current_location_id 体系）
             Integer operationRoomId = null; // 此处复用字段名，实际含义为地点ID
             try {
-                OperatingRoomManager orm = OperatingRoomManager.getInstance(this);
-                List<OperatingRoom> rooms = orm.getAllRooms();
-                if (rooms != null) {
-                    for (OperatingRoom r : rooms) {
-                        if (r != null && r.name != null && r.name.equals(selectedRoom)) {
-                            operationRoomId = r.serverId; // 选择的去向地点ID
+                if (!TextUtils.isEmpty(selectedRoom) && !roomList.isEmpty()) {
+                    for (OperatingRoom r : roomList) {
+                        if (r == null || r.name == null) continue;
+                        if (selectedRoom.equals(r.name) && r.serverId != null && r.serverId > 0) {
+                            // 选择的去向地点ID（locations.id）
+                            operationRoomId = r.serverId;
                             break;
                         }
                     }
                 }
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
 
             // 归还模式的默认去向地点（本地首选项）
             String defaultReturnTo = null;
@@ -1597,7 +1632,7 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                         thisTake,
                         thisReturn,
                         fromIdStr,
-                        operationMode == OperationMode.TAKE ? (operationRoomId == null ? null : String.valueOf(operationRoomId)) : defaultReturnTo,
+                        operationMode == OperationMode.TAKE ? (operationRoomId == null ? null : String.valueOf(operationRoomId)) : null,
                         new ConsumableApiService.ApiCallback<ConsumableApiService.CreateTakeAndReturnResult>() {
                             @Override
                             public void onSuccess(ConsumableApiService.CreateTakeAndReturnResult result) {

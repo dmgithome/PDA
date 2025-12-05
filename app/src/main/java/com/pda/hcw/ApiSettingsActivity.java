@@ -25,8 +25,6 @@ public class ApiSettingsActivity extends BaseActivity {
     private TextInputEditText epConsumeByBarcodeInput;
     private TextInputEditText epGetAllConsumablesInput;
     private TextInputEditText epCreateTakeReturnInput;
-    private TextInputEditText epGetOperatingRoomListInput;
-    private TextInputEditText epAddOperatingRoomInput;
     private TextInputEditText epOvertimeUnreturnNumberInput;
 
     private Button saveButton;
@@ -75,8 +73,6 @@ public class ApiSettingsActivity extends BaseActivity {
         epConsumeByBarcodeInput = findViewById(R.id.endpoint_consume_by_barcode_input);
         epGetAllConsumablesInput = findViewById(R.id.endpoint_get_all_consumables_input);
         epCreateTakeReturnInput = findViewById(R.id.endpoint_create_take_return_input);
-        epGetOperatingRoomListInput = findViewById(R.id.endpoint_get_operating_room_list_input);
-        epAddOperatingRoomInput = findViewById(R.id.endpoint_add_operating_room_input);
         epOvertimeUnreturnNumberInput = findViewById(R.id.endpoint_overtime_unreturn_number_input);
 
         saveButton = findViewById(R.id.api_save_button);
@@ -92,8 +88,6 @@ public class ApiSettingsActivity extends BaseActivity {
         epConsumeByBarcodeInput.setText(networkConfig.getEndpointPath(ApiEndpoint.CONSUME_BY_BARCODE));
         epGetAllConsumablesInput.setText(networkConfig.getEndpointPath(ApiEndpoint.GET_ALL_CONSUMABLES));
         epCreateTakeReturnInput.setText(networkConfig.getEndpointPath(ApiEndpoint.CREATE_TAKE_RETURN_LOG));
-        epGetOperatingRoomListInput.setText(networkConfig.getEndpointPath(ApiEndpoint.GET_OPERATING_ROOM_LIST));
-        epAddOperatingRoomInput.setText(networkConfig.getEndpointPath(ApiEndpoint.ADD_OPERATING_ROOM));
         epOvertimeUnreturnNumberInput.setText(networkConfig.getEndpointPath(ApiEndpoint.OVERTIME_UNRETURN_NUMBER));
     }
 
@@ -109,8 +103,6 @@ public class ApiSettingsActivity extends BaseActivity {
                 networkConfig.setEndpointPath(ApiEndpoint.CONSUME_BY_BARCODE, safeText(epConsumeByBarcodeInput));
                 networkConfig.setEndpointPath(ApiEndpoint.GET_ALL_CONSUMABLES, safeText(epGetAllConsumablesInput));
                 networkConfig.setEndpointPath(ApiEndpoint.CREATE_TAKE_RETURN_LOG, safeText(epCreateTakeReturnInput));
-                networkConfig.setEndpointPath(ApiEndpoint.GET_OPERATING_ROOM_LIST, safeText(epGetOperatingRoomListInput));
-                networkConfig.setEndpointPath(ApiEndpoint.ADD_OPERATING_ROOM, safeText(epAddOperatingRoomInput));
                 networkConfig.setEndpointPath(ApiEndpoint.OVERTIME_UNRETURN_NUMBER, safeText(epOvertimeUnreturnNumberInput));
 
                 updateNetworkStatus();

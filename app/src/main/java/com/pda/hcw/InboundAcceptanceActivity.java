@@ -294,10 +294,9 @@ public class InboundAcceptanceActivity extends BaseActivity {
     private void applySessionDelta(InboundOrder order) {
         if (order == null || TextUtils.isEmpty(order.code)) return;
         Set<String> sessionDelta = deltaByOrder.get(order.code);
-        if (sessionDelta == null || sessionDelta.isEmpty()) return;
-        try {
-            order.accepted = Math.min(order.total, Math.max(0, order.accepted) + sessionDelta.size());
-        } catch (Throwable ignore) {}
+        int count = (sessionDelta == null ? 0 : sessionDelta.size());
+        // 仅记录本次会话内匹配数量，不再修改 accepted（accepted 由后端聚合）
+        order.matchedInSession = count;
     }
 
     private void dispatchOrderDiff(List<InboundOrder> newList) {
@@ -390,10 +389,14 @@ public class InboundAcceptanceActivity extends BaseActivity {
             TextView tvName = view.findViewById(R.id.name_value);
             TextView tvSpec = view.findViewById(R.id.spec_value);
             TextView tvManu = view.findViewById(R.id.manufacturer_value);
+            TextView tvBrand = view.findViewById(R.id.brand_value);
+            TextView tvUnit = view.findViewById(R.id.unit_value);
             if (tvRfid != null) tvRfid.setText(safe(detail.rfid));
             if (tvName != null) tvName.setText(safe(detail.name));
             if (tvSpec != null) tvSpec.setText(safe(detail.spec));
             if (tvManu != null) tvManu.setText(safe(detail.manufacturer));
+            if (tvBrand != null) tvBrand.setText(safe(detail.brand));
+            if (tvUnit != null) tvUnit.setText(safe(detail.unit));
             new AlertDialog.Builder(this)
                     .setTitle(R.string.inbound_rfid_detail_title)
                     .setView(view)
@@ -806,9 +809,8 @@ public class InboundAcceptanceActivity extends BaseActivity {
         if (order == null || TextUtils.isEmpty(order.code)) return;
         Set<String> set = deltaByOrder.computeIfAbsent(order.code, k -> new HashSet<>());
         if (!set.add(rfid)) return;
-        try {
-            order.accepted = Math.min(order.total, order.accepted + 1);
-        } catch (Throwable ignore) {}
+        // 更新本次会话内匹配数量，accepted 保持为后端返回的已上架数量
+        order.matchedInSession = set.size();
         adapter.notifyDataSetChanged();
     }
 
@@ -822,10 +824,11 @@ public class InboundAcceptanceActivity extends BaseActivity {
 
     private void clearDelta(InboundOrder order) {
         Set<String> set = deltaByOrder.get(order.code);
-        int ded = 0;
-        if (set != null) { ded = set.size(); set.clear(); }
-        // 回退已验收进度到清空前的基线（以当前订单accepted减去本次delta的数量为准）
-        try { order.accepted = Math.max(0, order.accepted - ded); } catch (Throwable ignore) {}
+        if (set != null) {
+            set.clear();
+        }
+        // 清空本次会话内匹配数量
+        order.matchedInSession = 0;
         showSuccess("已清空本次增量");
         adapter.notifyDataSetChanged();
         refocusBarcode();
@@ -845,14 +848,90 @@ public class InboundAcceptanceActivity extends BaseActivity {
                 : new java.util.ArrayList<>(set);
         final int submittedCount = submitRfids.size();
         final int submitOrderIndex = order != null ? orders.indexOf(order) : -1;
-        // 调用后端提交
+        // 先选择入库的一级库（center），再实际提交
+        showInfo("正在加载可用中心库...");
+        chooseCenterAndSubmit(order, submitSet, submitRfids, submittedCount, submitOrderIndex);
+    }
+
+    /**
+     * 选择入库中心库（type=center），然后提交验收。
+     */
+    private void chooseCenterAndSubmit(InboundOrder order,
+                                       final Set<String> submitSet,
+                                       final java.util.List<String> submitRfids,
+                                       final int submittedCount,
+                                       final int submitOrderIndex) {
+        ConsumableApiService.getInstance(this).fetchLocations(new ConsumableApiService.ApiCallback<java.util.List<OperatingRoom>>() {
+            @Override
+            public void onSuccess(java.util.List<OperatingRoom> result) {
+                java.util.List<OperatingRoom> centers = new java.util.ArrayList<>();
+                if (result != null) {
+                    for (OperatingRoom r : result) {
+                        if (r == null || r.serverId == null || r.serverId <= 0) continue;
+                        if (r.type == null || !"center".equalsIgnoreCase(r.type)) continue;
+                        if (!r.isActive) continue;
+                        centers.add(r);
+                    }
+                }
+                if (centers.isEmpty()) {
+                    showError("未配置中心库地点，请先在基础资料中维护");
+                    return;
+                }
+
+                // 若只有一个中心库，直接使用；否则弹出选择框
+                if (centers.size() == 1) {
+                    applySelectedCenterAndSubmit(order, centers.get(0), submitSet, submitRfids, submittedCount, submitOrderIndex);
+                    return;
+                }
+
+                String[] names = new String[centers.size()];
+                for (int i = 0; i < centers.size(); i++) {
+                    names[i] = centers.get(i).name;
+                }
+
+                new AlertDialog.Builder(InboundAcceptanceActivity.this)
+                        .setTitle("选择入库中心库")
+                        .setItems(names, (dialog, which) -> {
+                            if (which >= 0 && which < centers.size()) {
+                                applySelectedCenterAndSubmit(order, centers.get(which), submitSet, submitRfids, submittedCount, submitOrderIndex);
+                            }
+                        })
+                        .setCancelable(true)
+                        .show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                showError(UIUtils.friendlyErrorMessage("加载地点失败", e));
+            }
+        });
+    }
+
+    /**
+     * 把用户选择的中心库写入本地配置（default_return_location_id），然后按原逻辑提交验收。
+     */
+    private void applySelectedCenterAndSubmit(InboundOrder order,
+                                              OperatingRoom center,
+                                              final Set<String> submitSet,
+                                              final java.util.List<String> submitRfids,
+                                              final int submittedCount,
+                                              final int submitOrderIndex) {
+        try {
+            if (center != null && center.serverId != null && center.serverId > 0) {
+                SharedPreferences locSp = getSharedPreferences("locations_prefs", MODE_PRIVATE);
+                locSp.edit().putInt("default_return_location_id", center.serverId).apply();
+            }
+        } catch (Exception ignore) {}
+
         showInfo("正在提交验收...");
-        inboundApi.submitInboundOrder(order, set, new ConsumableApiService.ApiCallback<Boolean>() {
+        inboundApi.submitInboundOrder(order, submitSet, new ConsumableApiService.ApiCallback<Boolean>() {
             @Override public void onSuccess(Boolean ok) {
                 // 清空本次增量，避免重复提交
                 if (submitSet != null) submitSet.clear();
                 if (order != null && !TextUtils.isEmpty(order.code)) {
                     deltaByOrder.remove(order.code);
+                    // 提交成功后，本次会话内匹配数量清零
+                    order.matchedInSession = 0;
                 }
                 if (!submitRfids.isEmpty() && order != null && order.plannedRfids != null) {
                     order.plannedRfids.removeAll(submitRfids);
@@ -891,6 +970,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
                 loadPendingOrders();
                 refocusBarcode();
             }
+
             @Override public void onFailure(Exception e) {
                 showError(UIUtils.friendlyErrorMessage("验收提交失败", e));
                 refocusBarcode();
@@ -1081,7 +1161,12 @@ public class InboundAcceptanceActivity extends BaseActivity {
                 h.time.setText("");
                 h.time.setVisibility(View.GONE);
             }
-            h.progress.setText(o.accepted + "/" + o.total);
+            int total = Math.max(0, o.total);
+            int completed = Math.max(0, o.accepted);
+            int pending = Math.max(0, total - completed);
+            int matched = Math.max(0, o.matchedInSession);
+            // A/B/C = 已匹配 / 待上架 / 总数
+            h.progress.setText(matched + "/" + pending + "/" + total);
             h.acceptBtn.setOnClickListener(v -> { if (listener != null) listener.onAccept(o); });
             h.clearBtn.setOnClickListener(v -> { if (listener != null) listener.onClearDelta(o); });
             h.itemView.setOnClickListener(v -> { if (listener != null) listener.onShowRfid(o); });

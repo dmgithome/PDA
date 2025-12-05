@@ -84,177 +84,6 @@ public class ConsumableApiService {
         });
     }
 
-    /**
-     * 获取术间列表（GET /api/surgery/getOperatingRoomList）
-     */
-    public void fetchOperatingRooms(ApiCallback<List<OperatingRoom>> callback) {
-        executorService.execute(() -> {
-            try {
-                // 登录校验
-                if (SessionManager.getInstance(context).getCurrentUser() == null) {
-                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
-                    return;
-                }
-                if (!networkConfig.isValidConfig()) {
-                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
-                    return;
-                }
-
-                String apiUrl = networkConfig.getFullUrl(ApiEndpoint.GET_OPERATING_ROOM_LIST);
-                String response = sendHttpRequest(apiUrl, "GET", null);
-
-                // 解析响应
-                org.json.JSONObject json = new org.json.JSONObject(response);
-                int status = json.optInt("status", 0);
-                if (status != 200) {
-                    String msg = json.optString("message", "查询失败");
-                    throw new Exception(msg);
-                }
-
-                List<OperatingRoom> rooms = new ArrayList<>();
-                // data 可能是数组或对象（兼容后端示例）
-                Object dataNode = json.opt("data");
-                if (dataNode instanceof org.json.JSONArray) {
-                    org.json.JSONArray arr = (org.json.JSONArray) dataNode;
-                    for (int i = 0; i < arr.length(); i++) {
-                        org.json.JSONObject item = arr.optJSONObject(i);
-                        if (item != null) {
-                            OperatingRoom room = new OperatingRoom();
-                            room.serverId = item.optInt("id", 0);
-                            room.name = item.optString("name", "");
-                            room.updatedTime = System.currentTimeMillis();
-                            rooms.add(room);
-                        }
-                    }
-                } else if (dataNode instanceof org.json.JSONObject) {
-                    org.json.JSONObject item = (org.json.JSONObject) dataNode;
-                    OperatingRoom room = new OperatingRoom();
-                    room.serverId = item.optInt("id", 0);
-                    room.name = item.optString("name", "");
-                    room.updatedTime = System.currentTimeMillis();
-                    rooms.add(room);
-                }
-
-                List<OperatingRoom> result = rooms;
-                mainHandler.post(() -> callback.onSuccess(result));
-            } catch (Exception e) {
-                Log.e(TAG, "fetchOperatingRooms failed", e);
-                mainHandler.post(() -> callback.onFailure(e));
-            }
-        });
-    }
-
-    /**
-     * 新增术间（POST /api/surgery/addOperatingRoom）
-     */
-    public void addOperatingRoom(String name, ApiCallback<OperatingRoom> callback) {
-        executorService.execute(() -> {
-            try {
-                if (SessionManager.getInstance(context).getCurrentUser() == null) {
-                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
-                    return;
-                }
-                if (!networkConfig.isValidConfig()) {
-                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
-                    return;
-                }
-
-                String apiUrl = networkConfig.getFullUrl(ApiEndpoint.ADD_OPERATING_ROOM);
-                org.json.JSONObject body = new org.json.JSONObject();
-                body.put("name", name);
-                String response = sendHttpRequest(apiUrl, "POST", body.toString());
-
-                org.json.JSONObject json = new org.json.JSONObject(response);
-                int status = json.optInt("status", 0);
-                if (status != 200) {
-                    String msg = json.optString("message", "新增失败");
-                    throw new Exception(msg);
-                }
-                org.json.JSONObject data = json.optJSONObject("data");
-                OperatingRoom room = new OperatingRoom();
-                if (data != null) {
-                    room.serverId = data.optInt("id", 0);
-                }
-                room.name = name;
-                room.updatedTime = System.currentTimeMillis();
-
-                OperatingRoom result = room;
-                mainHandler.post(() -> callback.onSuccess(result));
-            } catch (Exception e) {
-                Log.e(TAG, "addOperatingRoom failed", e);
-                mainHandler.post(() -> callback.onFailure(e));
-            }
-        });
-    }
-
-    /**
-     * 更新术间名称（POST /api/surgery/updateOperatingRoom）
-     */
-    public void updateOperatingRoom(int id, String newName, ApiCallback<Boolean> callback) {
-        executorService.execute(() -> {
-            try {
-                if (SessionManager.getInstance(context).getCurrentUser() == null) {
-                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
-                    return;
-                }
-                if (!networkConfig.isValidConfig()) {
-                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
-                    return;
-                }
-
-                String apiUrl = networkConfig.getFullUrl(ApiEndpoint.UPDATE_OPERATING_ROOM);
-                org.json.JSONObject body = new org.json.JSONObject();
-                body.put("id", id);
-                body.put("name", newName);
-                String response = sendHttpRequest(apiUrl, "POST", body.toString());
-
-                org.json.JSONObject json = new org.json.JSONObject(response);
-                int status = json.optInt("status", 0);
-                if (status != 200) {
-                    String msg = json.optString("message", "更新失败");
-                    throw new Exception(msg);
-                }
-                mainHandler.post(() -> callback.onSuccess(true));
-            } catch (Exception e) {
-                Log.e(TAG, "updateOperatingRoom failed", e);
-                mainHandler.post(() -> callback.onFailure(e));
-            }
-        });
-    }
-
-    /**
-     * 删除术间（软删除）（POST /api/surgery/deleteOperatingRoom）
-     */
-    public void deleteOperatingRoom(int id, ApiCallback<Boolean> callback) {
-        executorService.execute(() -> {
-            try {
-                if (SessionManager.getInstance(context).getCurrentUser() == null) {
-                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
-                    return;
-                }
-                if (!networkConfig.isValidConfig()) {
-                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
-                    return;
-                }
-
-                String apiUrl = networkConfig.getFullUrl(ApiEndpoint.DELETE_OPERATING_ROOM);
-                org.json.JSONObject body = new org.json.JSONObject();
-                body.put("id", id);
-                String response = sendHttpRequest(apiUrl, "POST", body.toString());
-
-                org.json.JSONObject json = new org.json.JSONObject(response);
-                int status = json.optInt("status", 0);
-                if (status != 200) {
-                    String msg = json.optString("message", "删除失败");
-                    throw new Exception(msg);
-                }
-                mainHandler.post(() -> callback.onSuccess(true));
-            } catch (Exception e) {
-                Log.e(TAG, "deleteOperatingRoom failed", e);
-                mainHandler.post(() -> callback.onFailure(e));
-            }
-        });
-    }
     private ConsumableApiService(Context context) {
         this.context = context;
         this.executorService = Executors.newFixedThreadPool(3);
@@ -444,6 +273,142 @@ public class ConsumableApiService {
     }
 
     /**
+     * 移库预览结果（PDA 耗材移库用）
+     */
+    public static class TransferPreviewItem {
+        public String rfid;
+        public int fromLocationId;
+        public String fromLocationName;
+        public String code;
+        public String name;
+        public String spec;
+        public String manufacturer;
+        public String brand;
+        public String unit;
+        public String status;
+    }
+
+    /**
+     * 根据条码预览移库耗材（POST /api/transfer/preview_by_barcode）
+     */
+    public void previewTransferByBarcode(String barcode, int toLocationId, ApiCallback<TransferPreviewItem> callback) {
+        executorService.execute(() -> {
+            try {
+                UserInfo currentUser = SessionManager.getInstance(context).getCurrentUser();
+                if (currentUser == null) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
+                    return;
+                }
+                if (!networkConfig.isValidConfig()) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
+                    return;
+                }
+                org.json.JSONObject body = new org.json.JSONObject();
+                body.put("barcode", barcode == null ? "" : barcode.trim());
+                body.put("to_location_id", toLocationId);
+
+                String url = networkConfig.getFullUrl(ApiEndpoint.TRANSFER_PREVIEW_BY_BARCODE);
+                Log.d(TAG, "previewTransferByBarcode(POST): " + url + ", body=" + body);
+                String resp = sendHttpRequest(url, "POST", body.toString());
+
+                TransferPreviewItem item = parseTransferPreviewItem(resp, barcode);
+                mainHandler.post(() -> callback.onSuccess(item));
+            } catch (Exception e) {
+                Log.e(TAG, "previewTransferByBarcode failed", e);
+                mainHandler.post(() -> callback.onFailure(e));
+            }
+        });
+    }
+
+    /**
+     * 根据 RFID 预览移库耗材（POST /api/transfer/preview_by_rfid）
+     */
+    public void previewTransferByRfid(String rfid, int toLocationId, ApiCallback<TransferPreviewItem> callback) {
+        executorService.execute(() -> {
+            try {
+                UserInfo currentUser = SessionManager.getInstance(context).getCurrentUser();
+                if (currentUser == null) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
+                    return;
+                }
+                if (!networkConfig.isValidConfig()) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
+                    return;
+                }
+                org.json.JSONObject body = new org.json.JSONObject();
+                body.put("rfid", rfid == null ? "" : rfid.trim());
+                body.put("to_location_id", toLocationId);
+
+                String url = networkConfig.getFullUrl(ApiEndpoint.TRANSFER_PREVIEW_BY_RFID);
+                Log.d(TAG, "previewTransferByRfid(POST): " + url + ", body=" + body);
+                String resp = sendHttpRequest(url, "POST", body.toString());
+
+                TransferPreviewItem item = parseTransferPreviewItem(resp, rfid);
+                mainHandler.post(() -> callback.onSuccess(item));
+            } catch (Exception e) {
+                Log.e(TAG, "previewTransferByRfid failed", e);
+                mainHandler.post(() -> callback.onFailure(e));
+            }
+        });
+    }
+
+    /**
+     * 解析移库预览响应，提取单条耗材信息。
+     *
+     * 响应形如：
+     * {
+     *   "status":200,
+     *   "message":"...",
+     *   "data":{
+     *     "dictionary_id": number,
+     *     "code": "HZ-001",
+     *     "name": "...",
+     *     "spec": "...",
+     *     "batch": "...",
+     *     "manufacturer": "...",
+     *     "brand": "...",
+     *     "unit": "...",
+     *     "status": "inStock",
+     *     "current_location_id": "1",
+     *     "current_location_name": "中心库A"
+     *   }
+     * }
+     */
+    private TransferPreviewItem parseTransferPreviewItem(String response, String rfidOrBarcode) throws Exception {
+        org.json.JSONObject root = new org.json.JSONObject(response);
+        int status = root.optInt("status", root.optInt("code", 0));
+        if (status != 200) {
+            String msg = root.optString("message", root.optString("msg", "移库预览失败"));
+            throw new Exception(msg);
+        }
+        org.json.JSONObject data = root.optJSONObject("data");
+        if (data == null) {
+            throw new Exception("移库预览返回数据为空");
+        }
+        TransferPreviewItem item = new TransferPreviewItem();
+        item.rfid = rfidOrBarcode;
+        item.code = data.optString("code", "");
+        item.name = data.optString("name", "");
+        item.spec = data.optString("spec", "");
+        item.manufacturer = data.optString("manufacturer", "");
+        item.brand = data.optString("brand", "");
+        item.unit = data.optString("unit", "");
+        item.status = data.optString("status", "");
+        try {
+            String locIdStr = data.optString("current_location_id", "");
+            if (locIdStr != null && !locIdStr.trim().isEmpty()) {
+                item.fromLocationId = Integer.parseInt(locIdStr.trim());
+            } else {
+                item.fromLocationId = 0;
+            }
+        } catch (Exception ignore) {
+            item.fromLocationId = 0;
+        }
+        item.fromLocationName = data.optString("current_location_name", "");
+        return item;
+    }
+
+    /**
      * 获取业务系统库存快照（新建盘点任务用）
      * POST /api/stock/getAllConsumables
      * 请求体：{ page:number, pagesize:number }
@@ -482,28 +447,16 @@ public class ConsumableApiService {
                 org.json.JSONObject dataObj = root.optJSONObject("data");
                 org.json.JSONArray arr = dataObj != null ? dataObj.optJSONArray("data") : null; // 注意是 data.data（数组）
                 if (arr == null) arr = new org.json.JSONArray();
-                // 读取地点字典用于名称映射
-                java.util.Map<Integer, String> locationMap = loadLocationsMapSafe();
-
                 for (int i = 0; i < arr.length(); i++) {
                     org.json.JSONObject obj = arr.optJSONObject(i);
                     if (obj == null) continue;
-                    // 改为以 current_location_id 聚合；名称优先用 current_location_name，其次用地点字典映射
+                    // 以 current_location_id 聚合；名称优先用 current_location_name
                     int roomId = 0;
                     String roomName = null;
                     if (!obj.isNull("current_location_id")) {
                         try { roomId = obj.optInt("current_location_id", 0); } catch (Exception ignore) {}
                     }
-                    // 兼容旧结构
-                    if (roomId <= 0) {
-                        org.json.JSONObject op = obj.optJSONObject("operatingRoom");
-                        if (op != null && !op.isNull("id")) roomId = op.optInt("id", 0);
-                    }
                     roomName = obj.optString("current_location_name", null);
-                    if ((roomName == null || roomName.isEmpty()) && roomId > 0 && locationMap != null) {
-                        String m = locationMap.get(roomId);
-                        if (m != null && !m.isEmpty()) roomName = m;
-                    }
                     if (roomId <= 0 || roomName == null || roomName.isEmpty()) { roomId = 0; roomName = "耗材屋"; }
 
                     String rfid = obj.optString("rfid", null);
@@ -528,39 +481,277 @@ public class ConsumableApiService {
     }
 
     /**
-     * 同步加载地点字典，失败返回 null。
+     * 盘点任务列表（PDA 使用）：POST /api/inventoryTask/list
+     * 当前实现：拉取所有 running 任务，不做地点过滤。
      */
-    private java.util.Map<Integer, String> loadLocationsMapSafe() {
-        try {
-            String url = networkConfig.getFullUrl(ApiEndpoint.LOCATIONS_LIST);
-            String resp = sendHttpRequest(url, "GET", null);
-            java.util.Map<Integer, String> map = new java.util.HashMap<>();
+    public void fetchInventoryTaskList(ApiCallback<List<InventoryTask>> callback) {
+        executorService.execute(() -> {
             try {
-                org.json.JSONObject root = new org.json.JSONObject(resp);
-                org.json.JSONArray arr = null;
-                if (root.has("items")) arr = root.optJSONArray("items");
-                if (arr == null && root.has("data")) {
-                    Object data = root.get("data");
-                    if (data instanceof org.json.JSONArray) arr = (org.json.JSONArray) data;
-                    if (data instanceof org.json.JSONObject) arr = ((org.json.JSONObject) data).optJSONArray("items");
+                UserInfo currentUser = SessionManager.getInstance(context).getCurrentUser();
+                if (currentUser == null) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
+                    return;
                 }
-                if (arr != null) {
-                    for (int i = 0; i < arr.length(); i++) {
-                        org.json.JSONObject o = arr.optJSONObject(i);
-                        if (o == null) continue;
-                        Integer sid = safeToInt(o.opt("id"));
-                        String name = o.optString("name", null);
-                        if (sid != null && sid > 0 && name != null && !name.trim().isEmpty()) {
-                            map.put(sid, name.trim());
+                if (!networkConfig.isValidConfig()) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
+                    return;
+                }
+
+                String url = networkConfig.getFullUrl(ApiEndpoint.INVENTORY_TASK_LIST);
+                org.json.JSONObject body = new org.json.JSONObject();
+                body.put("page", 1);
+                body.put("pagesize", 50);
+                // 仅拉取进行中的任务；若后续需要查看历史，可扩展参数
+                org.json.JSONArray statusList = new org.json.JSONArray();
+                statusList.put("running");
+                body.put("statusList", statusList);
+
+                Log.d(TAG, "fetchInventoryTaskList(POST): " + url + ", body=" + body);
+                String response = sendHttpRequest(url, "POST", body.toString());
+
+                org.json.JSONObject root = new org.json.JSONObject(response);
+                int status = root.optInt("status", root.optInt("code", 0));
+                if (status != 200) {
+                    String msg = root.optString("message", root.optString("msg", "查询失败"));
+                    throw new Exception(msg);
+                }
+                org.json.JSONObject data = root.optJSONObject("data");
+                org.json.JSONArray items = data != null ? data.optJSONArray("items") : null;
+                if (items == null) items = new org.json.JSONArray();
+
+                List<InventoryTask> tasks = new ArrayList<>();
+                for (int i = 0; i < items.length(); i++) {
+                    org.json.JSONObject obj = items.optJSONObject(i);
+                    if (obj == null) continue;
+
+                    InventoryTask task = new InventoryTask();
+                    task.setTaskId(obj.optString("taskId", ""));
+                    String name = obj.optString("taskName", "");
+                    if (name == null || name.trim().isEmpty()) {
+                        name = task.getTaskId();
+                    }
+                    task.setTaskName(name);
+
+                    // 创建时间
+                    String createdAt = obj.optString("created_at", null);
+                    if (createdAt != null && !createdAt.trim().isEmpty()) {
+                        try {
+                            java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
+                            task.setCreateTime(fmt.parse(createdAt));
+                        } catch (Exception ignore) {}
+                    }
+
+                    // 创建人
+                    String creator = obj.optString("createdByName", "");
+                    task.setOperator(creator == null ? "" : creator);
+
+                    // 状态：保留原始枚举以便 PDA 逻辑判断，同时提供中文展示值
+                    String rawStatus = obj.optString("status", "draft");
+                    task.setRawStatus(rawStatus);
+                    String displayStatus;
+                    switch (rawStatus) {
+                        case "running":
+                            displayStatus = "执行中";
+                            break;
+                        case "review":
+                            displayStatus = "待复核";
+                            break;
+                        case "closed":
+                            displayStatus = "已完成";
+                            break;
+                        case "canceled":
+                            displayStatus = "已作废";
+                            break;
+                        case "draft":
+                        default:
+                            displayStatus = "未开始";
+                            break;
+                    }
+                    task.setStatus(displayStatus);
+
+                    // 计划数量及统计字段
+                    int planned = obj.optInt("plannedCount", 0);
+                    int scanned = obj.optInt("scannedCount", 0);
+                    int normal = obj.optInt("normalCount", 0);
+                    int missing = obj.optInt("missingCount", 0);
+                    int surplus = obj.optInt("surplusCount", 0);
+                    task.setTotalItems(planned);
+                    task.setScannedCount(scanned);
+                    task.setNormalCount(normal);
+                    task.setMissingCount(missing);
+                    task.setSurplusCount(surplus);
+                    tasks.add(task);
+                }
+
+                List<InventoryTask> finalTasks = tasks;
+                mainHandler.post(() -> callback.onSuccess(finalTasks));
+            } catch (Exception e) {
+                Log.e(TAG, "fetchInventoryTaskList failed", e);
+                mainHandler.post(() -> callback.onFailure(e));
+            }
+        });
+    }
+
+    /**
+     * 提交盘点扫描批次：POST /api/inventoryTask/submitScanBatch
+     * 返回最新的任务统计汇总。
+     */
+    public void submitInventoryScanBatch(String taskId,
+                                         List<String> rfidList,
+                                         ApiCallback<InventoryTaskSummary> callback) {
+        executorService.execute(() -> {
+            try {
+                if (taskId == null || taskId.trim().isEmpty()) {
+                    mainHandler.post(() -> callback.onFailure(new IllegalArgumentException("taskId 不能为空")));
+                    return;
+                }
+                if (rfidList == null || rfidList.isEmpty()) {
+                    mainHandler.post(() -> callback.onFailure(new IllegalArgumentException("rfidList 不能为空")));
+                    return;
+                }
+
+                UserInfo currentUser = SessionManager.getInstance(context).getCurrentUser();
+                if (currentUser == null) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
+                    return;
+                }
+                if (!networkConfig.isValidConfig()) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
+                    return;
+                }
+
+                String url = networkConfig.getFullUrl(ApiEndpoint.INVENTORY_TASK_SUBMIT_BATCH);
+                org.json.JSONObject body = new org.json.JSONObject();
+                body.put("taskId", taskId);
+
+                org.json.JSONArray arr = new org.json.JSONArray();
+                for (String r : rfidList) {
+                    if (r == null) continue;
+                    String v = r.trim();
+                    if (!v.isEmpty()) arr.put(v);
+                }
+                body.put("rfidList", arr);
+
+                // 附加设备与用户信息（后端字段均为可选）
+                SessionManager sm = SessionManager.getInstance(context);
+                String deviceId = sm.getDeviceId();
+                body.put("deviceId", deviceId == null ? "" : deviceId);
+                String deviceName;
+                try {
+                    deviceName = android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL;
+                } catch (Exception e) {
+                    deviceName = "PDA";
+                }
+                body.put("deviceName", deviceName);
+
+                long userIdNumeric;
+                try {
+                    userIdNumeric = Long.parseLong(currentUser.getUserId());
+                } catch (Exception e) {
+                    userIdNumeric = 0L;
+                }
+                body.put("userId", userIdNumeric);
+                body.put("userName", currentUser.getUsername());
+
+                Log.d(TAG, "submitInventoryScanBatch(POST): " + url + ", body=" + body);
+                String response = sendHttpRequest(url, "POST", body.toString());
+
+                org.json.JSONObject root = new org.json.JSONObject(response);
+                int status = root.optInt("status", root.optInt("code", 0));
+                if (status != 200) {
+                    String msg = root.optString("message", root.optString("msg", "提交失败"));
+                    throw new Exception(msg);
+                }
+                org.json.JSONObject data = root.optJSONObject("data");
+                InventoryTaskSummary summary = new InventoryTaskSummary();
+                if (data != null) {
+                    summary.taskId = data.optString("taskId", taskId);
+                    summary.plannedCount = data.optInt("plannedCount", 0);
+                    summary.scannedCount = data.optInt("scannedCount", 0);
+                    summary.normalCount = data.optInt("normalCount", 0);
+                    summary.missingCount = data.optInt("missingCount", 0);
+                    summary.surplusCount = data.optInt("surplusCount", 0);
+                } else {
+                    summary.taskId = taskId;
+                }
+
+                InventoryTaskSummary finalSummary = summary;
+                mainHandler.post(() -> callback.onSuccess(finalSummary));
+            } catch (Exception e) {
+                Log.e(TAG, "submitInventoryScanBatch failed", e);
+                mainHandler.post(() -> callback.onFailure(e));
+            }
+        });
+    }
+
+    /**
+     * 查询盘点任务明细（GET /api/inventoryTask/detail）
+     * 仅用于 PDA 初始化/刷新地点汇总与RFID明细。
+     */
+    public void fetchInventoryTaskDetail(String taskId,
+                                         ApiCallback<InventoryTaskDetailResult> callback) {
+        executorService.execute(() -> {
+            try {
+                if (taskId == null || taskId.trim().isEmpty()) {
+                    mainHandler.post(() -> callback.onFailure(new IllegalArgumentException("taskId 不能为空")));
+                    return;
+                }
+                if (!networkConfig.isValidConfig()) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
+                    return;
+                }
+
+                String base = networkConfig.getFullUrl(ApiEndpoint.INVENTORY_TASK_LIST)
+                        .replace("/inventoryTask/list", "/inventoryTask/detail");
+                String url = base + "?taskId=" + java.net.URLEncoder.encode(taskId, "UTF-8")
+                        + "&page=1&pagesize=10000";
+
+                Log.d(TAG, "fetchInventoryTaskDetail(GET): " + url);
+                String resp = sendHttpRequest(url, "GET", null);
+
+                org.json.JSONObject root = new org.json.JSONObject(resp);
+                int status = root.optInt("status", root.optInt("code", 0));
+                if (status != 200) {
+                    String msg = root.optString("message", root.optString("msg", "查询失败"));
+                    throw new Exception(msg);
+                }
+                org.json.JSONObject data = root.optJSONObject("data");
+                org.json.JSONObject detail = data != null ? data.optJSONObject("detail") : null;
+                org.json.JSONArray items = detail != null ? detail.optJSONArray("items") : null;
+                if (items == null) items = new org.json.JSONArray();
+
+                InventoryTaskDetailResult result = new InventoryTaskDetailResult();
+                for (int i = 0; i < items.length(); i++) {
+                    org.json.JSONObject obj = items.optJSONObject(i);
+                    if (obj == null) continue;
+                    InventoryTaskDetailItem it = new InventoryTaskDetailItem();
+                    it.rfid = obj.optString("rfid", null);
+                    if (obj.has("operatingRoomID") && !obj.isNull("operatingRoomID")) {
+                        try {
+                            it.operatingRoomID = obj.optInt("operatingRoomID", 0);
+                        } catch (Exception ignore) {
+                            it.operatingRoomID = null;
                         }
                     }
+                    it.operatingRoomName = obj.optString("operatingRoomName", null);
+                    it.name = obj.optString("name", null);
+                    it.spec = obj.optString("spec", null);
+                    it.manufacturer = obj.optString("manufacturer", null);
+                    it.snapshotStatus = obj.optString("snapshotStatus", null);
+                    if (it.snapshotStatus != null && it.snapshotStatus.trim().isEmpty()) it.snapshotStatus = null;
+                    it.latestStatus = obj.optString("latestStatus", null);
+                    if (it.latestStatus != null && it.latestStatus.trim().isEmpty()) it.latestStatus = null;
+                    it.scanStatus = obj.optString("scanStatus", null);
+                    result.items.add(it);
                 }
-            } catch (Exception ignore) {}
-            return map;
-        } catch (Exception e) {
-            Log.w(TAG, "loadLocationsMapSafe failed: " + e.getMessage());
-            return null;
-        }
+
+                InventoryTaskDetailResult finalResult = result;
+                mainHandler.post(() -> callback.onSuccess(finalResult));
+            } catch (Exception e) {
+                Log.e(TAG, "fetchInventoryTaskDetail failed", e);
+                mainHandler.post(() -> callback.onFailure(e));
+            }
+        });
     }
 
     /**
@@ -746,6 +937,37 @@ public class ConsumableApiService {
     }
 
     /**
+     * 盘点任务统计汇总（后端 /inventoryTask/submitScanBatch 返回的数据结构）。
+     */
+    public static class InventoryTaskSummary {
+        public String taskId;
+        public int plannedCount;
+        public int scannedCount;
+        public int normalCount;
+        public int missingCount;
+        public int surplusCount;
+    }
+
+    /**
+     * 盘点任务明细条目（仅保留 PDA 需要的字段）。
+     */
+    public static class InventoryTaskDetailItem {
+        public String rfid;
+        public Integer operatingRoomID;
+        public String operatingRoomName;
+        public String name;
+        public String spec;
+        public String manufacturer;
+        public String snapshotStatus;
+        public String latestStatus;
+        public String scanStatus;
+    }
+
+    public static class InventoryTaskDetailResult {
+        public java.util.List<InventoryTaskDetailItem> items = new java.util.ArrayList<>();
+    }
+
+    /**
      * 取用/归还记录创建结果
      */
     public static class CreateTakeAndReturnResult {
@@ -837,6 +1059,7 @@ public class ConsumableApiService {
                         it.put("spec", item.getSpecification() == null ? "" : item.getSpecification());
                         it.put("manufacturer", item.getManufacturer() == null ? "" : item.getManufacturer());
                         it.put("brand", item.getBrand() == null ? "" : item.getBrand());
+                        // 可选：取用并发校验（当前暂不强制，后端主要针对归还做校验）
                         takeArr.put(it);
                     }
                 }
@@ -858,6 +1081,10 @@ public class ConsumableApiService {
                         it.put("spec", item.getSpecification() == null ? "" : item.getSpecification());
                         it.put("manufacturer", item.getManufacturer() == null ? "" : item.getManufacturer());
                         it.put("brand", item.getBrand() == null ? "" : item.getBrand());
+                        // 并发校验：记录客户端看到的当前库存位置
+                        if (item.getCurrentLocationId() != null && item.getCurrentLocationId() > 0) {
+                            it.put("expected_current_location_id", String.valueOf(item.getCurrentLocationId()));
+                        }
                         returnArr.put(it);
                     }
                 }
@@ -916,6 +1143,7 @@ public class ConsumableApiService {
                         if (data instanceof org.json.JSONObject) arr = ((org.json.JSONObject) data).optJSONArray("items");
                     }
                     if (arr == null) arr = new org.json.JSONArray();
+                    long now = System.currentTimeMillis();
                     for (int i = 0; i < arr.length(); i++) {
                         org.json.JSONObject o = arr.optJSONObject(i);
                         if (o == null) continue;
@@ -923,7 +1151,17 @@ public class ConsumableApiService {
                         if (!o.isNull("id")) sid = safeToInt(o.opt("id"));
                         String name = o.optString("name", null);
                         if (name == null || name.trim().isEmpty()) continue;
-                        list.add(new OperatingRoom(0, sid, name.trim(), System.currentTimeMillis()));
+                        OperatingRoom room = new OperatingRoom(0, sid, name.trim(), now);
+                        // 额外解析地点类型与启停状态（若存在）
+                        try {
+                            if (o.has("type") && !o.isNull("type")) {
+                                room.type = o.optString("type", null);
+                            }
+                            if (o.has("is_active") && !o.isNull("is_active")) {
+                                room.isActive = o.optBoolean("is_active", true);
+                            }
+                        } catch (Exception ignore) {}
+                        list.add(room);
                     }
                 } catch (Exception ignore) {
                     // 非标准结构，忽略

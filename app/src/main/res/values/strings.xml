@@ -46,6 +46,10 @@
     <!-- 入库验收入口 -->
     <string name="main_inbound_acceptance">入库验收</string>
     <string name="main_inbound_acceptance_desc">上架前批量验收RFID</string>
+
+    <!-- 耗材移库入口 -->
+    <string name="main_transfer">耗材移库</string>
+    <string name="main_transfer_desc">中心库之间移库</string>
     
     <!-- 登录界面 -->
     <string name="login_title">用户登录</string>
@@ -198,6 +202,19 @@
     <string name="inbound_rfid_status_matched">[已匹配]</string>
     <string name="inbound_rfid_status_unmatched">[未匹配]</string>
     <string name="inbound_rfid_detail_title">耗材信息</string>
+
+    <!-- 耗材移库 -->
+    <string name="transfer_title">耗材移库</string>
+    <string name="transfer_target_center_hint">请选择目标中心库</string>
+    <string name="transfer_scan_hint">请扫描RFID或条码</string>
+    <string name="transfer_clear">清空</string>
+    <string name="transfer_submit">提交移库</string>
+    <string name="transfer_total_default">合计：0 件</string>
+    <string name="transfer_total_format">合计：%1$d 件</string>
+    <string name="transfer_select_center_first">请先选择目标中心库</string>
+    <string name="transfer_no_items">请先扫描要移库的耗材</string>
+    <string name="transfer_submit_success">移库成功，共 %1$d 件，生成 %2$d 张移库单</string>
+    <string name="transfer_submit_failed">移库提交失败：%1$s</string>
     
     <!-- 菜单项 -->
     <string name="menu_settings">设置</string>

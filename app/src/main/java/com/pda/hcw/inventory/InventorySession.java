@@ -29,6 +29,10 @@ public class InventorySession {
     // 计划元数据：rfid -> 计划条目（用于导出差异、明细展示）
     private final Map<String, InventoryPlanItem> planMeta = new HashMap<>(); // key=canonical rfid
 
+    // 状态快照：rfid -> snapshotStatus/latestStatus
+    private final Map<String, String> snapshotStatusMap = new HashMap<>();
+    private final Map<String, String> latestStatusMap = new HashMap<>();
+
     // 备用键映射：各种表示形式 -> canonical（统一使用18位十进制作为优先canonical；否则用原值）
     private final Map<String, String> altKeyToCanonical = new HashMap<>();
 
@@ -39,10 +43,7 @@ public class InventorySession {
 
     public InventorySession(String taskId) {
         this.taskId = taskId;
-        // 默认包含耗材屋
-        roomNameMap.put(ROOM_ID_CONSUMABLE_HOUSE, "耗材屋");
-        plannedByRoom.put(ROOM_ID_CONSUMABLE_HOUSE, new HashSet<>());
-        countedByRoom.put(ROOM_ID_CONSUMABLE_HOUSE, new HashSet<>());
+        // 不再默认包含耗材屋，地点完全由后端返回的任务数据决定
     }
 
     public String getTaskId() { return taskId; }
@@ -56,10 +57,10 @@ public class InventorySession {
         seen.clear();
         roomNameMap.clear();
         planMeta.clear();
+        snapshotStatusMap.clear();
+        latestStatusMap.clear();
         altKeyToCanonical.clear();
-        roomNameMap.put(ROOM_ID_CONSUMABLE_HOUSE, "耗材屋");
-        plannedByRoom.put(ROOM_ID_CONSUMABLE_HOUSE, new HashSet<>());
-        countedByRoom.put(ROOM_ID_CONSUMABLE_HOUSE, new HashSet<>());
+        // 不再默认添加耗材屋，地点完全由后端返回的任务数据决定
     }
 
     /**
@@ -98,6 +99,26 @@ public class InventorySession {
         }
     }
 
+    /** 为指定RFID记录快照/最新状态（使用canonical key） */
+    public void setStatusFor(String rfid, String snapshotStatus, String latestStatus) {
+        String key = safeRfid(rfid);
+        if (key.isEmpty()) return;
+        snapshotStatusMap.put(key, snapshotStatus);
+        latestStatusMap.put(key, latestStatus);
+    }
+
+    public String getSnapshotStatus(String rfid) {
+        String key = safeRfid(rfid);
+        if (key.isEmpty()) return null;
+        return snapshotStatusMap.get(key);
+    }
+
+    public String getLatestStatus(String rfid) {
+        String key = safeRfid(rfid);
+        if (key.isEmpty()) return null;
+        return latestStatusMap.get(key);
+    }
+
     public boolean onTag(String rawRfid) {
         String raw = safeRfid(rawRfid);
         if (raw.isEmpty()) return false;
@@ -134,18 +155,13 @@ public class InventorySession {
 
     public List<InventoryRoomStatus> getRoomStatusesSorted() {
         List<InventoryRoomStatus> list = new ArrayList<>();
-        // 确保耗材屋存在
-        if (!plannedByRoom.containsKey(ROOM_ID_CONSUMABLE_HOUSE)) {
-            plannedByRoom.put(ROOM_ID_CONSUMABLE_HOUSE, new HashSet<>());
-            countedByRoom.put(ROOM_ID_CONSUMABLE_HOUSE, new HashSet<>());
-            roomNameMap.putIfAbsent(ROOM_ID_CONSUMABLE_HOUSE, "耗材屋");
-        }
+        // 不再强制包含耗材屋，仅遍历实际存在的地点
 
         for (Map.Entry<Integer, Set<String>> e : plannedByRoom.entrySet()) {
             int roomId = e.getKey();
             int planned = e.getValue().size();
             int counted = countedByRoom.getOrDefault(roomId, Collections.emptySet()).size();
-            String name = roomNameMap.getOrDefault(roomId, roomId == 0 ? "耗材屋" : ("术间" + roomId));
+            String name = roomNameMap.getOrDefault(roomId, "术间" + roomId);
             list.add(new InventoryRoomStatus(roomId, name, planned, counted));
         }
 

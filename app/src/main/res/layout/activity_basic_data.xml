@@ -44,70 +44,7 @@
                 android:textColor="@color/text_primary"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- 术间管理 -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/room_management_card"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginBottom="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/surface"
-                app:strokeWidth="1dp"
-                app:strokeColor="@color/border">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_home"
-                        app:tint="@color/primary"/>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="16dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="地点维护"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/text_primary"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="维护地点基础信息"
-                            android:textSize="12sp"
-                            android:textColor="@color/text_secondary"
-                            android:layout_marginTop="4dp"/>
-
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_menu"
-                        app:tint="@color/text_tertiary"
-                        android:rotation="180"/>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
+            <!-- 目前基础资料页面暂无可编辑的地点维护入口，地点统一在 Web 端维护 -->
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

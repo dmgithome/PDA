@@ -11,8 +11,14 @@ public class InventoryTask {
     private String taskName;         // 任务名称
     private Date createTime;        // 创建时间
     private String operator;         // 操作员
-    private int totalItems;          // 总物品数
-    private String status;           // 状态：未执行(待确认)、暂存(执行中)、已完成(已结束)
+    private int totalItems;          // 总物品数（在新盘点中对应 plannedCount）
+    private int scannedCount;        // 已盘数量
+    private int normalCount;         // 正常数量
+    private int missingCount;        // 缺失数量
+    private int surplusCount;        // 盈余数量
+    /** 后端状态原始枚举：draft/running/review/closed/canceled；兼容旧逻辑为 null 时使用中文 status 字段 */
+    private String rawStatus;
+    private String status;           // 展示状态：旧版为“未执行/暂存/已完成”，新版为“未开始/执行中/待复核/已完成/已作废”
     private List<ConsumableItem> expectedItems; // 库存明细
     private List<ConsumableItem> consumedItems; // 消耗明细
     private Date syncTime;          // 同步时间
@@ -79,6 +85,46 @@ public class InventoryTask {
     public void setTotalItems(int totalItems) {
         this.totalItems = totalItems;
     }
+
+    public int getScannedCount() {
+        return scannedCount;
+    }
+
+    public void setScannedCount(int scannedCount) {
+        this.scannedCount = scannedCount;
+    }
+
+    public int getNormalCount() {
+        return normalCount;
+    }
+
+    public void setNormalCount(int normalCount) {
+        this.normalCount = normalCount;
+    }
+
+    public int getMissingCount() {
+        return missingCount;
+    }
+
+    public void setMissingCount(int missingCount) {
+        this.missingCount = missingCount;
+    }
+
+    public int getSurplusCount() {
+        return surplusCount;
+    }
+
+    public void setSurplusCount(int surplusCount) {
+        this.surplusCount = surplusCount;
+    }
+
+    public String getRawStatus() {
+        return rawStatus;
+    }
+
+    public void setRawStatus(String rawStatus) {
+        this.rawStatus = rawStatus;
+    }
     
     public String getStatus() {
         return status;
@@ -132,13 +178,27 @@ public class InventoryTask {
     
     // 获取状态对应的颜色资源ID
     public int getStatusColor() {
-        // 兼容显示：未执行=待确认(橙)、暂存=执行中(蓝)、已完成=已结束(绿)
+        // 优先按后端状态枚举着色，兼容旧中文状态
+        if ("draft".equals(rawStatus)) {
+            return android.R.color.holo_orange_dark;
+        } else if ("running".equals(rawStatus)) {
+            return android.R.color.holo_blue_dark;
+        } else if ("review".equals(rawStatus)) {
+            return android.R.color.holo_orange_light;
+        } else if ("closed".equals(rawStatus)) {
+            return android.R.color.holo_green_dark;
+        } else if ("canceled".equals(rawStatus)) {
+            return android.R.color.darker_gray;
+        }
+        // 兼容旧显示：未执行=待确认(橙)、暂存=执行中(蓝)、已完成=已结束(绿)
         if ("未执行".equals(status) || "待确认".equals(status)) {
             return android.R.color.holo_orange_dark;
         } else if ("暂存".equals(status) || "执行中".equals(status)) {
             return android.R.color.holo_blue_dark;
         } else if ("已完成".equals(status) || "已结束".equals(status)) {
             return android.R.color.holo_green_dark;
+        } else if ("已作废".equals(status)) {
+            return android.R.color.darker_gray;
         } else {
             return android.R.color.darker_gray;
         }
@@ -219,6 +279,11 @@ public class InventoryTask {
                 ", createTime=" + createTime +
                 ", operator='" + operator + '\'' +
                 ", totalItems=" + totalItems +
+                ", scannedCount=" + scannedCount +
+                ", normalCount=" + normalCount +
+                ", missingCount=" + missingCount +
+                ", surplusCount=" + surplusCount +
+                ", rawStatus='" + rawStatus + '\'' +
                 ", status='" + status + '\'' +
                 ", syncTime=" + syncTime +
                 '}';

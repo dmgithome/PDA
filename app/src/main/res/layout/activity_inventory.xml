@@ -226,7 +226,7 @@
                         android:clipToPadding="false"
                         tools:listitem="@layout/item_location_summary"/>
 
-                    <!-- 操作按钮：作废 + 结束盘点 -->
+                    <!-- 操作按钮：仅提交当前盘点进度 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -235,23 +235,11 @@
                         android:background="@color/surface"
                         android:elevation="4dp">
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_void_task"
-                            android:layout_width="0dp"
-                            android:layout_height="48dp"
-                            android:layout_weight="1"
-                            android:text="作废"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:textColor="@color/error"
-                            app:strokeColor="@color/error"/>
-                        <View
-                            android:layout_width="12dp"
-                            android:layout_height="1dp"/>
-                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_end_inventory"
                             android:layout_width="0dp"
                             android:layout_height="48dp"
                             android:layout_weight="1"
-                            android:text="结束盘点"
+                            android:text="提交当前盘点进度"
                             style="@style/Widget.MaterialComponents.Button"/>
                     </LinearLayout>
                 </LinearLayout>

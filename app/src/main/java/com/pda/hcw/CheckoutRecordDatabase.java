@@ -32,7 +32,6 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
     private static final String TABLE_ROLES = "roles";
     private static final String TABLE_SYSTEM_CONFIG = "system_config";
     private static final String TABLE_USER_OPERATION_LOGS = "user_operation_logs";
-    private static final String TABLE_OPERATING_ROOMS = "operating_rooms"; // 新增：术间表
     
     // 表字段 - 领用记录表
     private static final String COLUMN_RECORD_ID = "record_id";
@@ -98,13 +97,6 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
     private static final String COLUMN_CONFIG_VALUE = "config_value";
     private static final String COLUMN_CONFIG_TYPE = "config_type";
     private static final String COLUMN_UPDATED_TIME = "updated_time";
-
-    // 术间表字段
-    private static final String COLUMN_OR_ID = "id";               // 本地自增ID
-    private static final String COLUMN_OR_SERVER_ID = "server_id"; // 服务端ID（唯一，可空）
-    private static final String COLUMN_OR_NAME = "name";           // 名称（唯一）
-    private static final String COLUMN_OR_UPDATED_TIME = "updated_time"; // 更新时间
-    
     // 用户操作记录表字段
     private static final String COLUMN_LOG_ID = "log_id";
     private static final String COLUMN_USER_ID_REF = "user_id";
@@ -236,14 +228,6 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
             + COLUMN_OPERATION_TIME + " INTEGER DEFAULT (strftime('%s', 'now')),"
             + COLUMN_CREATED_TIME + " INTEGER DEFAULT (strftime('%s', 'now'))"
             + ")";
-
-    // 术间表创建语句
-    private static final String CREATE_TABLE_OPERATING_ROOMS = "CREATE TABLE " + TABLE_OPERATING_ROOMS + "("
-            + COLUMN_OR_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + COLUMN_OR_SERVER_ID + " INTEGER UNIQUE,"
-            + COLUMN_OR_NAME + " TEXT NOT NULL UNIQUE,"
-            + COLUMN_OR_UPDATED_TIME + " INTEGER DEFAULT (strftime('%s', 'now'))"
-            + ")";
     
     private static CheckoutRecordDatabase instance;
     
@@ -286,34 +270,31 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
         try {
             // 创建角色表
             db.execSQL(CREATE_TABLE_ROLES);
-            
+
             // 创建领用记录表
             db.execSQL(CREATE_TABLE_CHECKOUT_RECORDS);
-            
+
             // 创建领用记录明细表
             db.execSQL(CREATE_TABLE_CHECKOUT_RECORD_DETAILS);
-            
+
             // 创建盘点任务表
             db.execSQL(CREATE_TABLE_INVENTORY_TASKS);
-            
+
             // 创建盘点任务明细表（优化版）
             db.execSQL(CREATE_TABLE_INVENTORY_TASK_DETAILS);
-            
+
             // 创建系统配置表
             db.execSQL(CREATE_TABLE_SYSTEM_CONFIG);
-            
+
             // 创建用户操作记录表
             db.execSQL(CREATE_TABLE_USER_OPERATION_LOGS);
 
-            // 创建术间表
-            db.execSQL(CREATE_TABLE_OPERATING_ROOMS);
-            
             // 创建索引（已移除 user_operation_logs 相关索引）
             createIndexes(db);
-            
+
             // 初始化默认数据
             initializeDefaultData(db);
-            
+
             Log.d(TAG, "Database tables created successfully");
         } catch (Exception e) {
             Log.e(TAG, "Error creating database tables", e);
@@ -344,23 +325,22 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
             
             if (oldVersion < 3) {
                 // 升级到版本3：移除用户表，简化权限管理系统
-                
+
                 // 1. 创建角色表
                 db.execSQL(CREATE_TABLE_ROLES);
-                
+
                 // 2. 创建领用记录明细表
                 db.execSQL(CREATE_TABLE_CHECKOUT_RECORD_DETAILS);
-                
+
                 // 3. 创建盘点任务明细表
                 db.execSQL(CREATE_TABLE_INVENTORY_TASK_DETAILS);
-                
-                  
+
                 // 5. 创建系统配置表
                 db.execSQL(CREATE_TABLE_SYSTEM_CONFIG);
-                
+
                 // 6. 创建用户操作记录表
                 db.execSQL(CREATE_TABLE_USER_OPERATION_LOGS);
-                
+
                 // 7. 为现有checkout_records表添加新字段
                 try {
                     db.execSQL("ALTER TABLE " + TABLE_CHECKOUT_RECORDS + " ADD COLUMN " + COLUMN_DOCUMENT_NUMBER + " TEXT");
@@ -369,7 +349,7 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                 } catch (Exception e) {
                     Log.w(TAG, "Fields may already exist: " + e.getMessage());
                 }
-                
+
                 // 8. 为现有inventory_tasks表添加新字段
                 try {
                     db.execSQL("ALTER TABLE " + TABLE_INVENTORY_TASKS + " ADD COLUMN " + COLUMN_TASK_OPERATOR_ID + " TEXT");
@@ -382,23 +362,17 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                 } catch (Exception e) {
                     Log.w(TAG, "Fields may already exist: " + e.getMessage());
                 }
-                
+
                 // 9. 创建索引
                 createIndexes(db);
-                
+
                 // 10. 创建触发器
                 createTriggers(db);
-                
+
                 // 11. 初始化默认数据
                 initializeDefaultData(db);
-                
-                Log.d(TAG, "Database upgraded to version 3 with simplified permission management");
-            }
 
-            if (oldVersion < 4) {
-                // 升级到版本4：新增术间表
-                db.execSQL(CREATE_TABLE_OPERATING_ROOMS);
-                Log.d(TAG, "Database upgraded to version 4 with operating rooms table");
+                Log.d(TAG, "Database upgraded to version 3 with simplified permission management");
             }
 
             if (oldVersion < 5) {
@@ -479,205 +453,6 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
         }
     }
 
-    // ===================== 术间管理（本地持久化） =====================
-
-    /**
-     * 替换本地术间列表（清空后批量插入）
-     */
-    public boolean replaceOperatingRooms(java.util.List<OperatingRoom> rooms) {
-        synchronized (databaseLock) {
-            SQLiteDatabase db = null;
-            try {
-                db = getWritableDatabase();
-                db.beginTransaction();
-                db.delete(TABLE_OPERATING_ROOMS, null, null);
-
-                if (rooms != null) {
-                    for (OperatingRoom room : rooms) {
-                        ContentValues values = new ContentValues();
-                        if (room.serverId != null) values.put(COLUMN_OR_SERVER_ID, room.serverId);
-                        values.put(COLUMN_OR_NAME, room.name);
-                        values.put(COLUMN_OR_UPDATED_TIME, System.currentTimeMillis());
-                        db.insert(TABLE_OPERATING_ROOMS, null, values);
-                    }
-                }
-
-                db.setTransactionSuccessful();
-                return true;
-            } catch (Exception e) {
-                Log.e(TAG, "Error replacing operating rooms", e);
-                return false;
-            } finally {
-                if (db != null) db.endTransaction();
-            }
-        }
-    }
-
-    /**
-     * 获取本地术间列表
-     */
-    public java.util.List<OperatingRoom> getOperatingRooms() {
-        java.util.List<OperatingRoom> list = new java.util.ArrayList<>();
-        synchronized (databaseLock) {
-            SQLiteDatabase db = null;
-            Cursor cursor = null;
-            try {
-                db = getReadableDatabase();
-                cursor = db.query(TABLE_OPERATING_ROOMS, null, null, null, null, null, COLUMN_OR_NAME + " ASC");
-                if (cursor != null && cursor.moveToFirst()) {
-                    int idxId = cursor.getColumnIndex(COLUMN_OR_ID);
-                    int idxServerId = cursor.getColumnIndex(COLUMN_OR_SERVER_ID);
-                    int idxName = cursor.getColumnIndex(COLUMN_OR_NAME);
-                    int idxUpdated = cursor.getColumnIndex(COLUMN_OR_UPDATED_TIME);
-                    do {
-                        long id = idxId != -1 ? cursor.getLong(idxId) : 0;
-                        Integer serverId = (idxServerId != -1 && !cursor.isNull(idxServerId)) ? cursor.getInt(idxServerId) : null;
-                        String name = idxName != -1 ? cursor.getString(idxName) : "";
-                        long updated = idxUpdated != -1 ? cursor.getLong(idxUpdated) : 0;
-                        list.add(new OperatingRoom(id, serverId, name, updated));
-                    } while (cursor.moveToNext());
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Error querying operating rooms", e);
-            } finally {
-                if (cursor != null) cursor.close();
-            }
-        }
-        // 二次排序：使用中文+数字的自然排序，避免“术间10”排在“术间2”之前
-        // 使用“中文+数字”自然排序：优先比较名称中的数字（若存在），否则按中文排序
-        java.text.Collator zhCollator = java.text.Collator.getInstance(java.util.Locale.CHINA);
-        java.util.Collections.sort(list, (a, b) -> {
-            String sa = (a != null && a.name != null) ? a.name : "";
-            String sb = (b != null && b.name != null) ? b.name : "";
-            int na = extractFirstInt(sa);
-            int nb = extractFirstInt(sb);
-            if (na >= 0 && nb >= 0 && na != nb) {
-                return Integer.compare(na, nb);
-            }
-            return zhCollator.compare(sa, sb);
-        });
-        return list;
-    }
-
-    private static int extractFirstInt(String s) {
-        if (s == null) return -1;
-        int n = s.length();
-        int i = 0;
-        while (i < n && !Character.isDigit(s.charAt(i))) i++;
-        if (i >= n) return -1;
-        int j = i;
-        long val = 0;
-        while (j < n && Character.isDigit(s.charAt(j))) {
-            val = val * 10 + (s.charAt(j) - '0');
-            if (val > Integer.MAX_VALUE) return Integer.MAX_VALUE; // 防溢出
-            j++;
-        }
-        return (int) val;
-    }
-
-    /**
-     * 获取本地术间名称列表
-     */
-    public java.util.List<String> getOperatingRoomNames() {
-        java.util.List<String> names = new java.util.ArrayList<>();
-        for (OperatingRoom r : getOperatingRooms()) {
-            if (r != null && r.name != null && !r.name.trim().isEmpty()) names.add(r.name);
-        }
-        return names;
-    }
-
-    /**
-     * 新增本地术间（可传入服务端ID）
-     */
-    public long insertOperatingRoom(String name, Integer serverId) {
-        synchronized (databaseLock) {
-            SQLiteDatabase db = null;
-            try {
-                db = getWritableDatabase();
-                ContentValues values = new ContentValues();
-                if (serverId != null) values.put(COLUMN_OR_SERVER_ID, serverId);
-                values.put(COLUMN_OR_NAME, name);
-                values.put(COLUMN_OR_UPDATED_TIME, System.currentTimeMillis());
-                return db.insert(TABLE_OPERATING_ROOMS, null, values);
-            } catch (Exception e) {
-                Log.e(TAG, "Error inserting operating room", e);
-                return -1;
-            }
-        }
-    }
-
-    /**
-     * 判断本地是否已存在同名术间
-     */
-    public boolean existsOperatingRoomByName(String name) {
-        synchronized (databaseLock) {
-            SQLiteDatabase db = null;
-            Cursor cursor = null;
-            try {
-                db = getReadableDatabase();
-                cursor = db.query(TABLE_OPERATING_ROOMS, new String[]{COLUMN_OR_ID}, COLUMN_OR_NAME + "=?", new String[]{name}, null, null, null, "1");
-                return cursor != null && cursor.moveToFirst();
-            } catch (Exception e) {
-                Log.e(TAG, "Error checking room exists", e);
-                return false;
-            } finally {
-                if (cursor != null) cursor.close();
-            }
-        }
-    }
-
-    /**
-     * 更新本地术间名称（依据serverId，若无则按旧名称匹配）
-     */
-    public boolean updateOperatingRoomName(Integer serverId, String oldName, String newName) {
-        synchronized (databaseLock) {
-            SQLiteDatabase db = null;
-            try {
-                db = getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put(COLUMN_OR_NAME, newName);
-                int rows;
-                if (serverId != null) {
-                    rows = db.update(TABLE_OPERATING_ROOMS, values, COLUMN_OR_SERVER_ID + "=?", new String[]{String.valueOf(serverId)});
-                    if (rows == 0 && oldName != null) {
-                        rows = db.update(TABLE_OPERATING_ROOMS, values, COLUMN_OR_NAME + "=?", new String[]{oldName});
-                    }
-                } else {
-                    rows = db.update(TABLE_OPERATING_ROOMS, values, COLUMN_OR_NAME + "=?", new String[]{oldName});
-                }
-                return rows > 0;
-            } catch (Exception e) {
-                Log.e(TAG, "Error updating operating room name", e);
-                return false;
-            }
-        }
-    }
-
-    /**
-     * 删除本地术间（依据serverId优先，否则按名称）
-     */
-    public boolean deleteOperatingRoom(Integer serverId, String name) {
-        synchronized (databaseLock) {
-            SQLiteDatabase db = null;
-            try {
-                db = getWritableDatabase();
-                int rows;
-                if (serverId != null) {
-                    rows = db.delete(TABLE_OPERATING_ROOMS, COLUMN_OR_SERVER_ID + "=?", new String[]{String.valueOf(serverId)});
-                    if (rows == 0 && name != null) {
-                        rows = db.delete(TABLE_OPERATING_ROOMS, COLUMN_OR_NAME + "=?", new String[]{name});
-                    }
-                } else {
-                    rows = db.delete(TABLE_OPERATING_ROOMS, COLUMN_OR_NAME + "=?", new String[]{name});
-                }
-                return rows > 0;
-            } catch (Exception e) {
-                Log.e(TAG, "Error deleting operating room", e);
-                return false;
-            }
-        }
-    }
-    
     /**
      * 插入领用记录
      */

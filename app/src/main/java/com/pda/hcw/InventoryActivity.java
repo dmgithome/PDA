@@ -102,6 +102,11 @@ public class InventoryActivity extends BaseActivity {
     private CheckoutRecordDatabase checkoutDb;
     private InventoryTask currentTask;
     private InventorySession inventorySession;
+    // 当前任务的扫描缓存：已提交与待提交的唯一码集合（仅在本 Activity 生命周期内生效）
+    private final java.util.Set<String> submittedRfids = new java.util.HashSet<>();
+    private final java.util.Set<String> pendingBatchRfids = new java.util.HashSet<>();
+    private boolean isSubmittingBatch = false;
+    private ConsumableApiService.InventoryTaskDetailResult currentTaskDetail;
     private List<LocationSummary> locationSummaries;
     private LocationSummaryAdapter locationSummaryAdapter;
     private LocationSummaryAdapter pendingGridAdapter;
@@ -188,9 +193,6 @@ public class InventoryActivity extends BaseActivity {
         btnPendingRefresh = findViewById(R.id.btn_pending_refresh);
         btnPendingConfirm = findViewById(R.id.btn_pending_confirm);
         btnEndInventory = findViewById(R.id.btn_end_inventory);
-        // 新增作废按钮
-        android.widget.Button btnVoid = findViewById(R.id.btn_void_task);
-        if (btnVoid != null) btnVoid.setOnClickListener(v -> handleVoidCurrentTask());
         btnExportCsv = findViewById(R.id.btn_export_csv);
         refreshTasksButton = findViewById(R.id.refresh_tasks_button);
 
@@ -277,11 +279,30 @@ public class InventoryActivity extends BaseActivity {
     }
 
     private void setupEventListeners() {
-        if (btnCreateTaskCenter != null) btnCreateTaskCenter.setOnClickListener(v -> createNewInventoryTask());
-        if (btnPendingRefresh != null) btnPendingRefresh.setOnClickListener(v -> refreshInventoryPlan());
-        if (btnPendingConfirm != null) btnPendingConfirm.setOnClickListener(v -> confirmCurrentTask());
-        if (btnEndInventory != null) btnEndInventory.setOnClickListener(v -> endInventory());
-        if (btnExportCsv != null) btnExportCsv.setOnClickListener(v -> exportInventoryDiff());
+        // 主入口：不再本地新建任务，改为打开左侧任务列表并刷新
+        if (btnCreateTaskCenter != null) {
+            btnCreateTaskCenter.setOnClickListener(v -> {
+                if (drawerLayout != null) {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+                refreshInventoryTasks();
+            });
+        }
+        // 待确认阶段不再使用，隐藏按钮避免误操作
+        if (btnPendingRefresh != null) {
+            btnPendingRefresh.setVisibility(View.GONE);
+        }
+        if (btnPendingConfirm != null) {
+            btnPendingConfirm.setVisibility(View.GONE);
+        }
+        if (btnEndInventory != null) {
+            btnEndInventory.setText("提交当前盘点进度");
+            btnEndInventory.setOnClickListener(v -> endInventory());
+        }
+        // 本地差异导出逻辑废弃，提示改在 Web 端完成
+        if (btnExportCsv != null) {
+            btnExportCsv.setOnClickListener(v -> showInfo("盘点差异导出请在 Web 端库存盘点页面执行"));
+        }
         if (refreshTasksButton != null) refreshTasksButton.setOnClickListener(v -> refreshInventoryTasks());
 
         if (toolbar != null) toolbar.setNavigationOnClickListener(v -> onBackPressed());
@@ -299,43 +320,141 @@ public class InventoryActivity extends BaseActivity {
     }
 
     private void loadInventoryTasks() {
-        executorService.execute(() -> {
-            try {
-                List<InventoryTask> allTasks = inventoryDatabase.getLocalTasks();
-                allTasks.sort((a, b) -> b.getCreateTime().compareTo(a.getCreateTime()));
-                if (allTasks.size() > 7) allTasks = allTasks.subList(0, 7);
-                final List<InventoryTask> finalTasks = allTasks;
-                uiHandler.post(() -> {
-                    taskList.clear();
-                    taskList.addAll(finalTasks);
-                    taskListAdapter.notifyDataSetChanged();
-                    // 若存在“暂存”任务，优先自动加载最近一条
-                    for (InventoryTask t : finalTasks) {
-                        if (t != null && "暂存".equals(t.getStatus())) {
-                            selectInventoryTask(t);
-                            break;
+        try {
+            ConsumableApiService.getInstance(this).fetchInventoryTaskList(
+                    new ConsumableApiService.ApiCallback<List<InventoryTask>>() {
+                        @Override
+                        public void onSuccess(List<InventoryTask> result) {
+                            if (result == null) result = new ArrayList<>();
+                            // 最近任务排在前面（服务端已按创建时间倒序，这里仅兜底）
+                            try {
+                                result.sort((a, b) -> {
+                                    if (a.getCreateTime() == null || b.getCreateTime() == null) return 0;
+                                    return b.getCreateTime().compareTo(a.getCreateTime());
+                                });
+                            } catch (Exception ignore) {}
+                            taskList.clear();
+                            taskList.addAll(result);
+                            taskListAdapter.notifyDataSetChanged();
+                            if (taskList.isEmpty()) {
+                                showInfo("当前地点暂无进行中的盘点任务，请先在 Web 端创建任务");
+                            }
+                            if (refreshTasksButton != null) {
+                                refreshTasksButton.setEnabled(true);
+                                refreshTasksButton.setText("刷新任务");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Log.e(TAG, "loadInventoryTasks failed", e);
+                            showError(UIUtils.friendlyErrorMessage("加载盘点任务失败", e));
+                            if (refreshTasksButton != null) {
+                                refreshTasksButton.setEnabled(true);
+                                refreshTasksButton.setText("刷新任务");
+                            }
                         }
                     }
-                });
-            } catch (Exception e) {
-                Log.e(TAG, "loadInventoryTasks error", e);
+            );
+        } catch (Exception e) {
+            Log.e(TAG, "loadInventoryTasks error", e);
+            showError("加载盘点任务失败: " + e.getMessage());
+            if (refreshTasksButton != null) {
+                refreshTasksButton.setEnabled(true);
+                refreshTasksButton.setText("刷新任务");
             }
-        });
+        }
     }
 
     private void refreshInventoryTasks() {
-        refreshTasksButton.setEnabled(false);
-        refreshTasksButton.setText("刷新中...");
-        executorService.execute(() -> {
-            try {
-                Thread.sleep(600);
-            } catch (InterruptedException ignored) {}
-            uiHandler.post(() -> {
-                loadInventoryTasks();
-                refreshTasksButton.setEnabled(true);
-                refreshTasksButton.setText("刷新任务");
-            });
-        });
+        if (refreshTasksButton != null) {
+            refreshTasksButton.setEnabled(false);
+            refreshTasksButton.setText("刷新中...");
+        }
+        loadInventoryTasks();
+    }
+
+    /**
+     * 从后端加载当前任务明细，并用其重建 InventorySession 与地点汇总。
+     */
+    private void reloadTaskDetailAndSession(boolean showErrorToast) {
+        final InventoryTask task = currentTask;
+        if (task == null) return;
+        try {
+            ConsumableApiService.getInstance(this).fetchInventoryTaskDetail(
+                    task.getTaskId(),
+                    new ConsumableApiService.ApiCallback<ConsumableApiService.InventoryTaskDetailResult>() {
+                        @Override
+                        public void onSuccess(ConsumableApiService.InventoryTaskDetailResult result) {
+                            currentTaskDetail = result;
+                            rebuildSessionFromDetail(task.getTaskId(), result);
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Log.e(TAG, "reloadTaskDetailAndSession failed", e);
+                            if (showErrorToast) {
+                                showError(UIUtils.friendlyErrorMessage("加载盘点明细失败", e));
+                            }
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            Log.e(TAG, "reloadTaskDetailAndSession error", e);
+            if (showErrorToast) {
+                showError("加载盘点明细失败: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * 基于后端盘点明细构建内存态 InventorySession，并更新地点卡片。
+     */
+    private void rebuildSessionFromDetail(String taskId, ConsumableApiService.InventoryTaskDetailResult detail) {
+        try {
+            inventorySession = new InventorySession(taskId);
+            if (detail == null || detail.items == null || detail.items.isEmpty()) {
+                // 清空地点网格
+                locationSummaries.clear();
+                if (locationSummaryAdapter != null) locationSummaryAdapter.notifyDataSetChanged();
+                return;
+            }
+
+            java.util.List<InventoryPlanItem> plan = new java.util.ArrayList<>();
+            for (ConsumableApiService.InventoryTaskDetailItem it : detail.items) {
+                if (it == null) continue;
+                if (it.snapshotStatus == null) continue; // 非快照行(盈余等)不计入计划
+                String rfid = it.rfid;
+                if (rfid == null || rfid.trim().isEmpty()) continue;
+                int roomId = (it.operatingRoomID != null ? it.operatingRoomID : 0);
+                String roomName = it.operatingRoomName;
+                String name = it.name;
+                String spec = it.spec;
+                String manufacturer = it.manufacturer;
+                plan.add(new InventoryPlanItem(rfid, roomId, roomName, name, spec, manufacturer, null, null));
+            }
+
+            // 载入计划
+            inventorySession.loadPlan(plan);
+
+            // 写入状态快照 + 根据 scanStatus 标记已盘
+            for (ConsumableApiService.InventoryTaskDetailItem it : detail.items) {
+                if (it == null) continue;
+                if (it.snapshotStatus == null) continue;
+                String rfid = it.rfid;
+                if (rfid == null || rfid.trim().isEmpty()) continue;
+                inventorySession.setStatusFor(rfid, it.snapshotStatus, it.latestStatus);
+                if ("scanned".equalsIgnoreCase(it.scanStatus)) {
+                    // 利用 onTag 将其标记为已盘（计划内标签不会被计为盈余）
+                    inventorySession.onTag(rfid);
+                }
+            }
+
+            // 更新地点卡片
+            updateRoomGridFromSession();
+        } catch (Exception e) {
+            Log.e(TAG, "rebuildSessionFromDetail error", e);
+        }
     }
 
     // ========== 状态：未创建 ==========
@@ -360,14 +479,19 @@ public class InventoryActivity extends BaseActivity {
         ConsumableApiService.getInstance(this).fetchInventoryInfoList(new ConsumableApiService.ApiCallback<List<InventoryPlanItem>>() {
             @Override public void onSuccess(List<InventoryPlanItem> result) {
                 try {
-                    Map<String, Integer> roomNameToId = new HashMap<>();
-                    List<OperatingRoom> rooms = OperatingRoomManager.getInstance(InventoryActivity.this).getAllRooms();
-                    if (rooms != null) for (OperatingRoom r : rooms) if (r != null && r.name != null && r.serverId != null) roomNameToId.put(r.name, r.serverId);
                     List<InventoryPlanItem> mapped = new ArrayList<>();
                     for (InventoryPlanItem it : result) {
-                        String rn = it.getRoomName();
-                        int roomId = it.getRoomId() > 0 ? it.getRoomId() : (rn != null && roomNameToId.containsKey(rn) ? roomNameToId.get(rn) : 0);
-                        mapped.add(new InventoryPlanItem(it.getRfid(), roomId, rn, it.getName(), it.getSpec(), it.getManufacturer(), it.getLastUser(), it.getLastUsedAt()));
+                        // 直接信任后端返回的地点ID与名称（current_location_id / current_location_name）
+                        mapped.add(new InventoryPlanItem(
+                                it.getRfid(),
+                                it.getRoomId(),
+                                it.getRoomName(),
+                                it.getName(),
+                                it.getSpec(),
+                                it.getManufacturer(),
+                                it.getLastUser(),
+                                it.getLastUsedAt()
+                        ));
                     }
                     inventorySession = new InventorySession(pendingTaskId != null ? pendingTaskId : ("TASK-" + System.currentTimeMillis()));
                     inventorySession.loadPlan(mapped);
@@ -443,11 +567,20 @@ public class InventoryActivity extends BaseActivity {
 
     // ========== 执行中 ==========
     private void updateHeaderStats() {
-        if (inventorySession == null) return;
-        headerTotalPlanned.setText("总待盘：" + inventorySession.getTotalPlanned());
-        headerCounted.setText("盘毕：" + inventorySession.getCounted());
-        headerUncounted.setText("未盘：" + inventorySession.getUncounted());
-        headerSurplus.setText("盈余：" + inventorySession.getSurplus());
+        int planned = 0;
+        int scanned = 0;
+        int missing = 0;
+        int surplus = 0;
+        if (currentTask != null) {
+            planned = Math.max(0, currentTask.getTotalItems());
+            scanned = Math.max(0, currentTask.getScannedCount());
+            missing = Math.max(0, currentTask.getMissingCount());
+            surplus = Math.max(0, currentTask.getSurplusCount());
+        }
+        headerTotalPlanned.setText("总待盘：" + planned);
+        headerCounted.setText("盘毕：" + scanned);
+        headerUncounted.setText("未盘：" + missing);
+        headerSurplus.setText("盈余：" + surplus);
     }
 
     private void updateRoomGridFromSession() {
@@ -485,29 +618,55 @@ public class InventoryActivity extends BaseActivity {
     }
 
     private void handleTagScanned(Reader.TAGINFO tag) {
-        if (inventorySession == null) return;
-        String epcRawHex = bytesToHexString(tag.EpcId);
-        // 接收即格式化：只按两条合规规则转换；未命中则保留原值
-        String epc = com.pda.hcw.rfid.EpcFormatter.normalizeOnReceive(epcRawHex);
-        boolean accepted = inventorySession.onTag(epc);
-        Log.d(TAG, "扫描到EPC=" + epc + ", 接受=" + accepted + ", 当前状态=" + uiState);
-        if (!accepted) return;
-        // 业务增量模式：仅当实际计数增加时蜂鸣
-        if (!beepModeRaw && rfidBeepManager != null) {
-            try { rfidBeepManager.requestBeep(); } catch (Throwable ignored) {}
+        if (uiState != TaskUIState.EXECUTING || currentTask == null || !"running".equals(currentTask.getRawStatus())) {
+            return;
         }
-        if (uiState == TaskUIState.EXECUTING) {
+        String epcRawHex = bytesToHexString(tag.EpcId);
+        // 接收即格式化：按统一规则转换为业务唯一码
+        String epc = com.pda.hcw.rfid.EpcFormatter.normalizeOnReceive(epcRawHex);
+        if (epc == null || epc.trim().isEmpty()) return;
+        epc = epc.trim();
+
+        // 本轮扫描去重：避免同一轮内重复蜂鸣
+        if (seenEpcsThisRun.contains(epc)) {
+            return;
+        }
+        seenEpcsThisRun.add(epc);
+
+        // 记录到待提交批次（避免重复提交已成功上传的标签）
+        boolean isNewTag = false;
+        if (!submittedRfids.contains(epc)) {
+            pendingBatchRfids.add(epc);
+            isNewTag = true;
+        }
+
+        Log.d(TAG, "扫描到 EPC=" + epc + ", 当前待提交数量=" + pendingBatchRfids.size());
+
+        // 业务增量模式：仅当实际新增采集时蜂鸣
+        if (!beepModeRaw && rfidBeepManager != null) {
+            try {
+                rfidBeepManager.requestBeep();
+            } catch (Throwable ignored) {}
+        }
+
+        // 实时更新本地会话状态并刷新UI
+        if (isNewTag && inventorySession != null) {
+            final String finalEpc = epc;
+            inventorySession.onTag(finalEpc);
+            // 切到主线程刷新UI
             uiHandler.post(() -> {
-                updateHeaderStats();
+                // 更新本地统计（基于 inventorySession 计算）
+                int counted = inventorySession.getCounted();
+                int surplus = inventorySession.getSurplus();
+                int planned = inventorySession.getTotalPlanned();
+                int uncounted = inventorySession.getUncounted();
+                headerTotalPlanned.setText("总待盘：" + planned);
+                headerCounted.setText("盘毕：" + counted);
+                headerUncounted.setText("未盘：" + uncounted);
+                headerSurplus.setText("盈余：" + surplus);
+                // 刷新地点卡片
                 updateRoomGridFromSession();
             });
-            try {
-                if (currentTask != null) {
-                    boolean ok = checkoutDb.markInventoryItemScanned(currentTask.getTaskId(), epc, tag.RSSI);
-                }
-            } catch (Exception e) {
-                Log.w(TAG, "markInventoryItemScanned failed", e);
-            }
         }
     }
 
@@ -595,7 +754,13 @@ public class InventoryActivity extends BaseActivity {
             } else {
                 tvName.setText("—"); tvSpec.setText("—"); tvManu.setText("—"); tvUser.setText("—"); tvTime.setText("—");
             }
-            if (tvStatus != null) tvStatus.setText("—");
+            if (tvStatus != null) {
+                // 先用盘点任务中的 snapshotStatus/latestStatus 映射一个初始状态文案
+                String snap = inventorySession != null ? inventorySession.getSnapshotStatus(rfid) : null;
+                String latest = inventorySession != null ? inventorySession.getLatestStatus(rfid) : null;
+                String initial = mapInventoryStatus(latest != null ? latest : snap);
+                tvStatus.setText(initial != null ? initial : "—");
+            }
             AlertDialog dlg = new AlertDialog.Builder(this)
                     .setTitle("RFID详情")
                     .setView(view)
@@ -664,20 +829,120 @@ public class InventoryActivity extends BaseActivity {
     private boolean isEmpty(String s) { return s == null || s.isEmpty(); }
     private boolean isBlankOrUnknown(String s) { return s == null || s.trim().isEmpty() || "未知".equals(s.trim()); }
 
-    // ========== 结束盘点 ==========
+    /**
+     * 将库存状态枚举映射为中文文案。
+     * 约定：
+     * - inStock    -> 在库
+     * - taken      -> 取用未归还
+     * - consumed   -> 已消耗
+     * - usedReturn -> 消耗退回
+     * 其他或空值返回 null，由调用方决定展示占位符。
+     */
+    private String mapInventoryStatus(String status) {
+        if (status == null) return null;
+        String s = status.trim();
+        if (s.isEmpty()) return null;
+        switch (s) {
+            case "inStock":
+                return "在库";
+            case "taken":
+                return "取用未归还";
+            case "consumed":
+                return "已消耗";
+            case "usedReturn":
+                return "消耗退回";
+            default:
+                return null;
+        }
+    }
+
+    // ========== 结束/提交当前批次 ==========
     private void endInventory() {
         if (uiState != TaskUIState.EXECUTING || currentTask == null) {
-            showInfo("无执行中的任务");
+            showInfo("无执行中的盘点任务");
             return;
         }
-        stopRFIDScanning();
-        inventoryDatabase.updateTaskStatus(currentTask.getTaskId(), "已完成");
-        currentTask.setStatus("已完成");
-        taskStateText.setText("已结束");
-        taskStateText.setTextColor(getResources().getColor(android.R.color.holo_green_dark, null));
-        setUIState(TaskUIState.FINISHED);
-        showFinishedDiff();
-        loadInventoryTasks();
+        // “结束盘点”仅表示本设备停止当前扫描并提交已采集批次，任务本身仍由 Web 端结束
+        if (isRFIDActive) {
+            stopRFIDScanning();
+        }
+        submitCurrentBatch(true);
+    }
+
+    /**
+     * 提交当前缓存的扫描批次到后端 inventoryTask/submitScanBatch 接口。
+     * 若无待提交数据且 forceToast=true，则提示一次；否则静默返回。
+     */
+    private void submitCurrentBatch(boolean forceToastOnEmpty) {
+        if (currentTask == null || !"running".equals(currentTask.getRawStatus())) {
+            if (forceToastOnEmpty) {
+                showInfo("当前任务状态不允许提交盘点数据");
+            }
+            return;
+        }
+        if (isSubmittingBatch) {
+            if (forceToastOnEmpty) {
+                showInfo("上一批盘点数据正在提交，请稍候");
+            }
+            return;
+        }
+
+        // 去除已提交过的标签，避免重复产生盈余行
+        java.util.List<String> batch = new java.util.ArrayList<>();
+        for (String code : new java.util.HashSet<>(pendingBatchRfids)) {
+            if (code == null) continue;
+            String v = code.trim();
+            if (v.isEmpty()) continue;
+            if (submittedRfids.contains(v)) continue;
+            batch.add(v);
+        }
+
+        if (batch.isEmpty()) {
+            if (forceToastOnEmpty) {
+                showInfo("当前无新的标签需要提交");
+            }
+            return;
+        }
+
+        isSubmittingBatch = true;
+        showInfo("正在提交本轮盘点数据，共 " + batch.size() + " 个标签…");
+
+        ConsumableApiService.getInstance(this).submitInventoryScanBatch(
+                currentTask.getTaskId(),
+                batch,
+                new ConsumableApiService.ApiCallback<ConsumableApiService.InventoryTaskSummary>() {
+                    @Override
+                    public void onSuccess(ConsumableApiService.InventoryTaskSummary result) {
+                        try {
+                            // 更新任务统计
+                            if (result != null) {
+                                currentTask.setTotalItems(result.plannedCount);
+                                currentTask.setScannedCount(result.scannedCount);
+                                currentTask.setNormalCount(result.normalCount);
+                                currentTask.setMissingCount(result.missingCount);
+                                currentTask.setSurplusCount(result.surplusCount);
+                            }
+                            // 标记已提交标签并清理当前批次
+                            submittedRfids.addAll(batch);
+                            pendingBatchRfids.removeAll(batch);
+                            updateHeaderStats();
+                            // 提交成功后刷新盘点明细和地点汇总
+                            reloadTaskDetailAndSession(false);
+                            showSuccess("盘点批次提交成功，本轮上传 " + batch.size() + " 个标签");
+                        } finally {
+                            isSubmittingBatch = false;
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e(TAG, "submitCurrentBatch failed", e);
+                        showError(UIUtils.friendlyErrorMessage("盘点批次提交失败", e));
+                        // 失败时保留 pendingBatchRfids 以便后续重试
+                        isSubmittingBatch = false;
+                    }
+                }
+        );
     }
 
     private void showFinishedDiff() {
@@ -863,33 +1128,10 @@ public class InventoryActivity extends BaseActivity {
     // 作废当前执行中的任务
     private void handleVoidCurrentTask() {
         try {
-            if (uiState != TaskUIState.EXECUTING || currentTask == null) {
-                showInfo("无执行中的任务");
-                return;
-            }
             new AlertDialog.Builder(this)
-                    .setTitle("作废任务")
-                    .setMessage("确认作废当前盘点任务？作废后不可恢复")
-                    .setPositiveButton("确定", (d, w) -> {
-                        try {
-                            if (isRFIDActive) stopRFIDScanning();
-                            boolean ok = checkoutDb.voidInventoryTask(currentTask.getTaskId());
-                            if (ok) {
-                                showSuccess("已作废");
-                                currentTask = null;
-                                locationSummaries.clear();
-                                locationSummaryAdapter.notifyDataSetChanged();
-                                setUIState(TaskUIState.NO_TASK);
-                                loadInventoryTasks();
-                            } else {
-                                showError("作废失败");
-                            }
-                        } catch (Exception e) {
-                            Log.e(TAG, "void task failed", e);
-                            showError(UIUtils.friendlyErrorMessage("作废失败", e));
-                        }
-                    })
-                    .setNegativeButton("取消", null)
+                    .setTitle("提示")
+                    .setMessage("盘点任务的作废/取消请在 Web 端库存盘点页面操作，PDA 仅负责扫描与提交盘点数据。")
+                    .setPositiveButton("知道了", null)
                     .show();
         } catch (Exception e) {
             Log.e(TAG, "handleVoidCurrentTask error", e);
@@ -991,10 +1233,24 @@ public class InventoryActivity extends BaseActivity {
             showError("请先选择盘点任务");
             return;
         }
+        if (!"running".equals(currentTask.getRawStatus())) {
+            showError("当前任务状态为非进行中，PDA 不允许继续扫描");
+            return;
+        }
         if (isRFIDActive) {
             stopRFIDScanning();
             showInfo("RFID扫描已停止");
             showRFIDStandbyStatus();
+            // 是否在停止扫描时自动提交当前批次，由设置项控制（默认关闭）
+            boolean autoSubmit = false;
+            try {
+                android.content.SharedPreferences sp = getSharedPreferences("settings_prefs", Context.MODE_PRIVATE);
+                autoSubmit = sp.getBoolean("inventory_auto_submit_on_stop", false);
+            } catch (Exception ignore) {}
+            if (autoSubmit) {
+                // 无数据时静默
+                submitCurrentBatch(false);
+            }
         } else {
             startRFIDScanning();
             showInfo("RFID扫描已启动");
@@ -1060,55 +1316,62 @@ public class InventoryActivity extends BaseActivity {
     // ========== 侧边栏选择 ==========
     private void selectInventoryTask(InventoryTask task) {
         // 切换任务前强制停止扫描，避免跨任务写入
-        if (isRFIDActive) { stopRFIDScanning(); }
+        if (isRFIDActive) {
+            stopRFIDScanning();
+        }
         currentTask = task;
         pendingTaskId = null;
-        taskHeaderBar.setVisibility(View.VISIBLE);
-        taskCodeText.setText("任务单号：" + task.getTaskId());
-        String displayStatus = task.getStatus();
-        if ("未执行".equals(displayStatus)) displayStatus = "待确认"; else if ("暂存".equals(displayStatus)) displayStatus = "执行中"; else if ("已完成".equals(displayStatus)) displayStatus = "已结束";
-        taskStateText.setText(displayStatus);
-        taskStateText.setTextColor(getResources().getColor(task.getStatusColor(), null));
+        submittedRfids.clear();
+        pendingBatchRfids.clear();
 
-        // 恢复会话
-        try {
-            List<InventoryPlanItem> planned = checkoutDb.getInventoryPlannedItems(task.getTaskId());
-            Map<String, Integer> roomNameToId = new HashMap<>();
-            List<OperatingRoom> rooms = OperatingRoomManager.getInstance(this).getAllRooms();
-            if (rooms != null) for (OperatingRoom r : rooms) if (r != null && r.name != null && r.serverId != null) roomNameToId.put(r.name, r.serverId);
-            List<InventoryPlanItem> mapped = new ArrayList<>();
-            for (InventoryPlanItem it : planned) {
-                String rn = it.getRoomName();
-                int roomId = it.getRoomId() > 0 ? it.getRoomId() : (rn != null && roomNameToId.containsKey(rn) ? roomNameToId.get(rn) : 0);
-                mapped.add(new InventoryPlanItem(it.getRfid(), roomId, rn, it.getName(), it.getSpec(), it.getManufacturer(), it.getLastUser(), it.getLastUsedAt()));
-            }
-            inventorySession = new InventorySession(task.getTaskId());
-            inventorySession.loadPlan(mapped);
-            List<String> scanned = checkoutDb.getInventoryScannedRfids(task.getTaskId());
-            for (String r : scanned) inventorySession.onTag(r);
-        } catch (Exception e) { Log.w(TAG, "restore session failed", e); }
-
-        initRFID();
-        if ("暂存".equals(task.getStatus())) {
-            setUIState(TaskUIState.EXECUTING);
-            // 恢复后立即刷新头部统计与房间网格
-            updateHeaderStats();
-            updateRoomGridFromSession();
-            showRFIDStandbyStatus();
-            showInfo("请使用物理按键启动RFID扫描");
-        } else if ("已完成".equals(task.getStatus())) {
-            setUIState(TaskUIState.FINISHED);
-            // 恢复后刷新统计用于已完成展示
-            updateHeaderStats();
-            showFinishedDiff();
-        } else {
-            setUIState(TaskUIState.PENDING);
-            tvPendingSummary.setText("已落库计划：" + inventorySession.getTotalPlanned());
-            // 待确认视图预览
-            updatePendingGridFromSession();
+        if (taskHeaderBar != null) {
+            taskHeaderBar.setVisibility(View.VISIBLE);
+        }
+        if (taskCodeText != null) {
+            taskCodeText.setText("任务单号：" + task.getTaskId());
         }
 
-        drawerLayout.closeDrawers();
+        // 显示状态：优先使用后端原始枚举映射
+        String raw = task.getRawStatus();
+        String displayStatus;
+        if ("running".equals(raw)) {
+            displayStatus = "执行中";
+        } else if ("review".equals(raw)) {
+            displayStatus = "待复核";
+        } else if ("closed".equals(raw)) {
+            displayStatus = "已完成";
+        } else if ("canceled".equals(raw)) {
+            displayStatus = "已作废";
+        } else if ("draft".equals(raw)) {
+            displayStatus = "未开始";
+        } else {
+            // 兼容旧数据
+            displayStatus = task.getStatus();
+        }
+        if (taskStateText != null) {
+            taskStateText.setText(displayStatus);
+            taskStateText.setTextColor(getResources().getColor(task.getStatusColor(), null));
+        }
+
+        // 使用任务头统计刷新表头
+        updateHeaderStats();
+
+        // 每次选择任务时，从后端加载明细并重建地点汇总与RFID状态
+        reloadTaskDetailAndSession(true);
+
+        // 统一进入执行视图，但是否允许扫描由状态控制
+        setUIState(TaskUIState.EXECUTING);
+        if ("running".equals(raw)) {
+            initRFID();
+            showRFIDStandbyStatus();
+            showInfo("已选择盘点任务，请使用物理按键启动RFID扫描");
+        } else {
+            showInfo("当前任务状态为：" + displayStatus + "，仅供查看，PDA 不再提交盘点数据");
+        }
+
+        if (drawerLayout != null) {
+            drawerLayout.closeDrawers();
+        }
     }
 
     // ========== 导出CSV ==========
@@ -1218,7 +1481,12 @@ public class InventoryActivity extends BaseActivity {
     }
 
     private void showRFIDStandbyStatus() {
-        if (uiState == TaskUIState.EXECUTING && uhfManager != null && uhfManager.isInitialized()) {
+        boolean canScan = uiState == TaskUIState.EXECUTING
+                && currentTask != null
+                && "running".equals(currentTask.getRawStatus())
+                && uhfManager != null
+                && uhfManager.isInitialized();
+        if (canScan) {
             rfidStatusLayout.setVisibility(View.VISIBLE);
             rfidStatusText.setText("⏸️ RFID已就绪\n(按物理键开始扫描)");
             rfidStatusText.setTextColor(getResources().getColor(android.R.color.holo_blue_dark, null));
@@ -1251,17 +1519,9 @@ public class InventoryActivity extends BaseActivity {
             drawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
-        if (uiState == TaskUIState.EXECUTING && currentTask != null) {
-            // 自动暂存：停止扫描，保留任务为“暂存”，提示并退出
-            if (isRFIDActive) stopRFIDScanning();
-            showSuccess("已暂存当前盘点");
-            // 清理内存态，返回到任务列表
-            currentTask = null;
-            locationSummaries.clear();
-            if (locationSummaryAdapter != null) locationSummaryAdapter.notifyDataSetChanged();
-            setUIState(TaskUIState.NO_TASK);
-            super.onBackPressed();
-            return;
+        if (uiState == TaskUIState.EXECUTING && currentTask != null && isRFIDActive) {
+            // 仅确保停止扫描与硬件，不再修改任务状态（盘点任务生命周期由 Web 管理）
+            stopRFIDScanning();
         }
         super.onBackPressed();
     }

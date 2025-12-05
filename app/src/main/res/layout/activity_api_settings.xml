@@ -180,32 +180,6 @@
                             android:maxLines="1"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="术间列表 /api/surgery/getOperatingRoomList">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/endpoint_get_operating_room_list_input"
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:inputType="text"
-                            android:maxLines="1"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="新增术间 /api/surgery/addOperatingRoom">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/endpoint_add_operating_room_input"
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:inputType="text"
-                            android:maxLines="1"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

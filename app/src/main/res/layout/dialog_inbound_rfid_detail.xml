@@ -56,6 +56,32 @@
         android:id="@+id/manufacturer_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/text_primary"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="品牌"
+        android:textColor="@color/text_secondary"/>
+
+    <TextView
+        android:id="@+id/brand_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_primary"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="单位"
+        android:textColor="@color/text_secondary"/>
+
+    <TextView
+        android:id="@+id/unit_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textColor="@color/text_primary"/>
 
 </LinearLayout>

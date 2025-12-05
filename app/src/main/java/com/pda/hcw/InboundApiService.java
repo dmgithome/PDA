@@ -197,9 +197,6 @@ public class InboundApiService {
                             putStringIfNotEmpty(itemJson, "code", detail.code);
                             putStringIfNotEmpty(itemJson, "name", detail.name);
                             putStringIfNotEmpty(itemJson, "spec", detail.spec);
-                            putStringIfNotEmpty(itemJson, "manufacturer", detail.manufacturer);
-                            putStringIfNotEmpty(itemJson, "brand", detail.brand);
-                            putStringIfNotEmpty(itemJson, "unit", detail.unit);
                             putStringIfNotEmpty(itemJson, "batch", detail.batch);
                             putStringIfNotEmpty(itemJson, "productionDate", detail.productionDate);
                             putStringIfNotEmpty(itemJson, "expiryDate", detail.expiryDate);
@@ -383,6 +380,8 @@ class InboundOrder {
     public long docTime;
     public int total;
     public int accepted;
+    // 当前PDA会话内已匹配的RFID数量（仅用于UI展示，不参与后端统计）
+    public int matchedInSession;
     public java.util.Set<String> plannedRfids = new java.util.HashSet<>();
     public java.util.List<InboundOrderDetail> details = new java.util.ArrayList<>();
     public java.util.Map<String, InboundOrderDetail> detailByRfid = new java.util.HashMap<>();

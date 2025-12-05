@@ -13,6 +13,9 @@ public enum ApiEndpoint {
     CONSUME_BY_BARCODE("/api/stock/getConsumeOrReturnConsumablesByBarcode", "扫码查询耗材"),
     GET_ALL_CONSUMABLES("/api/stock/getAllConsumables", "库存拉取"),
     CREATE_TAKE_RETURN_LOG("/api/stock/createTakeAndReturnLog", "创建取用/归还记录"),
+    // 库存盘点任务
+    INVENTORY_TASK_LIST("/api/inventoryTask/list", "库存盘点任务列表"),
+    INVENTORY_TASK_SUBMIT_BATCH("/api/inventoryTask/submitScanBatch", "提交盘点扫描批次"),
     // 地点（替代术间，仅查询）
     LOCATIONS_LIST("/api/locations/list", "地点列表"),
     DEFAULT_LOCATION("/api/locations/default", "默认地点查询"),
@@ -20,14 +23,13 @@ public enum ApiEndpoint {
     GET_WAREHOUSING_ORDER("/api/stock/getWarehousingOrder", "获取待上架入库单据"),
     DEVICE_INBOUND_ORDER("/api/stock/hasOrderInbound", "提交有单入库"),
 
-    // 手术/术间
-    GET_OPERATING_ROOM_LIST("/api/surgery/getOperatingRoomList", "获取术间列表"),
-    ADD_OPERATING_ROOM("/api/surgery/addOperatingRoom", "新增术间"),
-    UPDATE_OPERATING_ROOM("/api/surgery/updateOperatingRoom", "更新术间"),
-    DELETE_OPERATING_ROOM("/api/surgery/deleteOperatingRoom", "删除术间(软删除)"),
-
     // 预警/统计
-    OVERTIME_UNRETURN_NUMBER("/api/unreturn/getOverTimeUnreturnNumberByID", "超时未归还数量");
+    OVERTIME_UNRETURN_NUMBER("/api/unreturn/getOverTimeUnreturnNumberByID", "超时未归还数量"),
+
+    // 耗材移库（PDA 动作型移库单）
+    TRANSFER_PREVIEW_BY_RFID("/api/transfer/preview_by_rfid", "移库预览（RFID）"),
+    TRANSFER_PREVIEW_BY_BARCODE("/api/transfer/preview_by_barcode", "移库预览（条码）"),
+    TRANSFER_SUBMIT_FROM_PDA("/api/transfer/submit_from_pda", "提交PDA移库");
 
     private final String defaultPath;
     private final String displayName;
@@ -45,4 +47,3 @@ public enum ApiEndpoint {
         return displayName;
     }
 }
-

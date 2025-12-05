@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private MaterialCardView unreturnQueryCard;
     private MaterialCardView basicDataCard;
     private com.google.android.material.card.MaterialCardView inboundAcceptanceCard;
+    private com.google.android.material.card.MaterialCardView transferCard;
     private Button loginButton;
     private ImageView userAvatar;
     private TextView statusText;
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             consumableReturnCard = findViewById(R.id.consumable_return_card);
             basicDataCard = findViewById(R.id.basic_data_card);
             inboundAcceptanceCard = findViewById(R.id.inbound_acceptance_card);
+            transferCard = findViewById(R.id.transfer_card);
 
             // 安装内容区Banner（不改Toolbar）
             installStatusBanner();
@@ -396,9 +398,17 @@ public class MainActivity extends AppCompatActivity {
                     showQuickSuccess(getString(R.string.feature_under_dev));
                 });
             }
+
+            // 耗材移库
+            if (transferCard != null) {
+                transferCard.setOnClickListener(v -> {
+                    if (!isLoggedIn) { showLoginRequiredDialog(); return; }
+                    Intent intent = new Intent(this, ConsumableTransferActivity.class);
+                    startActivity(intent);
+                });
+            }
             
               
-                        
             Log.d(TAG, "setupButtonListeners completed");
         } catch (Exception e) {
             Log.e(TAG, "Error in setupButtonListeners", e);
