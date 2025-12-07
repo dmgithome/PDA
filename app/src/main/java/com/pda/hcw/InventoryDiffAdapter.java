@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -56,12 +57,52 @@ public class InventoryDiffAdapter extends RecyclerView.Adapter<InventoryDiffAdap
         setHasStableIds(true);
     }
 
+    /**
+     * 【性能优化】使用 DiffUtil 进行增量更新
+     */
     public void setItems(List<DiffItem> data) {
+        final List<DiffItem> oldList = new ArrayList<>(items);
+        final List<DiffItem> newList = data != null ? new ArrayList<>(data) : new ArrayList<>();
+
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return oldList.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newList.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                DiffItem oldItem = oldList.get(oldItemPosition);
+                DiffItem newItem = newList.get(newItemPosition);
+                // 使用 rfid 判断是否同一条记录
+                return oldItem.rfid != null && oldItem.rfid.equals(newItem.rfid);
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                DiffItem oldItem = oldList.get(oldItemPosition);
+                DiffItem newItem = newList.get(newItemPosition);
+                // 比较所有显示的字段
+                return areItemsTheSame(oldItemPosition, newItemPosition)
+                        && oldItem.type == newItem.type
+                        && safeEquals(oldItem.name, newItem.name)
+                        && safeEquals(oldItem.spec, newItem.spec)
+                        && safeEquals(oldItem.roomName, newItem.roomName);
+            }
+        });
+
         items.clear();
-        if (data != null) {
-            items.addAll(data);
-        }
-        notifyDataSetChanged();
+        items.addAll(newList);
+        diffResult.dispatchUpdatesTo(this);
+    }
+
+    private static boolean safeEquals(String a, String b) {
+        return (a == null && b == null) || (a != null && a.equals(b));
     }
 
     @NonNull

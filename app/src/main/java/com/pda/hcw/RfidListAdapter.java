@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -32,12 +33,46 @@ public class RfidListAdapter extends RecyclerView.Adapter<RfidListAdapter.VH> {
         setHasStableIds(true);
     }
 
+    /**
+     * 【性能优化】使用 DiffUtil 进行增量更新
+     */
     public void applyFilter(boolean showCounted) {
-        shown.clear();
+        final List<RfidItem> oldShown = new ArrayList<>(this.shown);
+        final List<RfidItem> newShown = new ArrayList<>();
         for (RfidItem it : all) {
-            if (!it.counted || showCounted) shown.add(it);
+            if (!it.counted || showCounted) newShown.add(it);
         }
-        notifyDataSetChanged();
+
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return oldShown.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newShown.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                RfidItem oldItem = oldShown.get(oldItemPosition);
+                RfidItem newItem = newShown.get(newItemPosition);
+                return oldItem.rfid != null && oldItem.rfid.equals(newItem.rfid);
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                RfidItem oldItem = oldShown.get(oldItemPosition);
+                RfidItem newItem = newShown.get(newItemPosition);
+                return areItemsTheSame(oldItemPosition, newItemPosition)
+                        && oldItem.counted == newItem.counted;
+            }
+        });
+
+        this.shown.clear();
+        this.shown.addAll(newShown);
+        diffResult.dispatchUpdatesTo(this);
     }
 
     public int getTotal() { return all.size(); }

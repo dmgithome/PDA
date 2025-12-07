@@ -99,6 +99,12 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
     
     // 已添加的条码缓存
     private java.util.Set<String> addedBarcodes = new java.util.HashSet<>();
+
+    // 【性能优化】微批处理：收集短时间内的条码，批量查询
+    private static final int BATCH_DELAY_MS = 300; // 批处理延迟时间
+    private final java.util.List<String> pendingBarcodes = new java.util.ArrayList<>();
+    private final Runnable batchProcessRunnable = this::processPendingBarcodes;
+
     // 记录扫码输入框原始KeyListener（用于查看模式禁用/恢复）
     private KeyListener originalBarcodeKeyListener;
     // 扫码输入控制器（封装输入框的启用/禁用/焦点/清空）
@@ -684,18 +690,44 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
     }
     
     /**
-     * 直接调用API查询耗材信息
+     * 【性能优化】将条码加入待处理队列，延迟批量查询
+     * 替代原来的单条查询，实现微批处理模式
      */
     private void callApiForBarcode(String barcode) {
         if (apiService == null) {
             showErrorOptimized("API服务未初始化");
             return;
         }
-        
-        // 显示API加载Toast
-        showInfo("正在查询耗材信息...");
-        
-        apiService.queryConsumableInfo(barcode, new ConsumableApiService.ApiCallback<ConsumableApiResponse>() {
+
+        synchronized (pendingBarcodes) {
+            if (!pendingBarcodes.contains(barcode)) {
+                pendingBarcodes.add(barcode);
+            }
+        }
+
+        // 移除之前的延迟任务，重新计时
+        handler.removeCallbacks(batchProcessRunnable);
+        // 延迟执行批量查询
+        handler.postDelayed(batchProcessRunnable, BATCH_DELAY_MS);
+    }
+
+    /**
+     * 【性能优化】批量处理待查询的条码
+     */
+    private void processPendingBarcodes() {
+        final java.util.List<String> barcodesToProcess;
+        synchronized (pendingBarcodes) {
+            if (pendingBarcodes.isEmpty()) {
+                return;
+            }
+            barcodesToProcess = new java.util.ArrayList<>(pendingBarcodes);
+            pendingBarcodes.clear();
+        }
+
+        Log.d(TAG, "Batch processing " + barcodesToProcess.size() + " barcodes");
+        showInfo("正在查询 " + barcodesToProcess.size() + " 个耗材...");
+
+        apiService.queryConsumableInfoList(barcodesToProcess, new ConsumableApiService.ApiCallback<ConsumableApiResponse>() {
             @Override
             public void onSuccess(ConsumableApiResponse response) {
                 runOnUiThread(() -> {
@@ -703,24 +735,22 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                         if (isFinishing() || isDestroyed()) {
                             return;
                         }
-                        
-                        // 显示成功结果
                         showSuccess("查询成功");
-                        
-                        // 处理API响应
-                        handleApiResponseOptimized(response, barcode);
-                        
+                        // 对每个条码处理响应
+                        for (String barcode : barcodesToProcess) {
+                            handleApiResponseOptimized(response, barcode);
+                        }
                     } catch (Exception e) {
-                        Log.e(TAG, "Error handling API response", e);
+                        Log.e(TAG, "Error handling batch API response", e);
                         showError("处理响应时发生错误");
                     }
                 });
             }
-            
+
             @Override
             public void onFailure(Exception e) {
                 runOnUiThread(() -> {
-                    String errorMessage = UIUtils.friendlyErrorMessage("查询失败", e);
+                    String errorMessage = UIUtils.friendlyErrorMessage("批量查询失败", e);
                     if (errorMessage.length() > 50) {
                         errorMessage = errorMessage.substring(0, 50) + "...";
                     }

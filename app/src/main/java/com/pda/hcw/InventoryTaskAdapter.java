@@ -5,23 +5,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 盘点任务列表适配器
  */
 public class InventoryTaskAdapter extends RecyclerView.Adapter<InventoryTaskAdapter.ViewHolder> {
-    
+
     private List<InventoryTask> items;
     private OnItemClickListener clickListener;
-    
+
     public interface OnItemClickListener {
         void onItemClick(InventoryTask task);
     }
-    
+
     public InventoryTaskAdapter(List<InventoryTask> items, OnItemClickListener clickListener) {
-        this.items = items;
+        this.items = items != null ? new ArrayList<>(items) : new ArrayList<>();
         this.clickListener = clickListener;
     }
     
@@ -109,9 +111,52 @@ public class InventoryTaskAdapter extends RecyclerView.Adapter<InventoryTaskAdap
         return items.size();
     }
     
+    /**
+     * 【性能优化】使用 DiffUtil 进行增量更新
+     */
     public void updateItems(List<InventoryTask> newItems) {
-        this.items = newItems;
-        notifyDataSetChanged();
+        final List<InventoryTask> oldList = this.items;
+        final List<InventoryTask> newList = newItems != null ? new ArrayList<>(newItems) : new ArrayList<>();
+
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return oldList.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newList.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                InventoryTask oldItem = oldList.get(oldItemPosition);
+                InventoryTask newItem = newList.get(newItemPosition);
+                // 使用 taskId 判断是否同一条记录
+                String oldId = oldItem.getTaskId();
+                String newId = newItem.getTaskId();
+                return oldId != null && oldId.equals(newId);
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                InventoryTask oldItem = oldList.get(oldItemPosition);
+                InventoryTask newItem = newList.get(newItemPosition);
+                // 比较所有显示的字段
+                return areItemsTheSame(oldItemPosition, newItemPosition)
+                        && safeEquals(oldItem.getStatus(), newItem.getStatus())
+                        && safeEquals(oldItem.getOperator(), newItem.getOperator())
+                        && oldItem.getTotalItems() == newItem.getTotalItems();
+            }
+        });
+
+        this.items = newList;
+        diffResult.dispatchUpdatesTo(this);
+    }
+
+    private static boolean safeEquals(String a, String b) {
+        return (a == null && b == null) || (a != null && a.equals(b));
     }
     
     static class ViewHolder extends RecyclerView.ViewHolder {

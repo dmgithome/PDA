@@ -6,7 +6,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +24,7 @@ public class LocationSummaryAdapter extends RecyclerView.Adapter<LocationSummary
     }
     
     public LocationSummaryAdapter(List<LocationSummary> items, OnItemClickListener clickListener) {
-        this.items = items;
+        this.items = items != null ? new ArrayList<>(items) : new ArrayList<>();
         this.clickListener = clickListener;
     }
     
@@ -89,9 +91,49 @@ public class LocationSummaryAdapter extends RecyclerView.Adapter<LocationSummary
         return items.size();
     }
     
+    /**
+     * 【性能优化】使用 DiffUtil 进行增量更新
+     */
     public void updateItems(List<LocationSummary> newItems) {
-        this.items = newItems;
-        notifyDataSetChanged();
+        final List<LocationSummary> oldList = this.items;
+        final List<LocationSummary> newList = newItems != null ? new ArrayList<>(newItems) : new ArrayList<>();
+
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return oldList.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newList.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                LocationSummary oldItem = oldList.get(oldItemPosition);
+                LocationSummary newItem = newList.get(newItemPosition);
+                // 使用地点名称判断是否同一条记录
+                String oldLoc = oldItem.getLocation();
+                String newLoc = newItem.getLocation();
+                return oldLoc != null && oldLoc.equals(newLoc);
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                LocationSummary oldItem = oldList.get(oldItemPosition);
+                LocationSummary newItem = newList.get(newItemPosition);
+                // 比较进度和完成度
+                return areItemsTheSame(oldItemPosition, newItemPosition)
+                        && oldItem.getTotalExpected() == newItem.getTotalExpected()
+                        && oldItem.getTotalScanned() == newItem.getTotalScanned()
+                        && oldItem.isCompleted() == newItem.isCompleted()
+                        && oldItem.isStarted() == newItem.isStarted();
+            }
+        });
+
+        this.items = newList;
+        diffResult.dispatchUpdatesTo(this);
     }
     
     static class ViewHolder extends RecyclerView.ViewHolder {

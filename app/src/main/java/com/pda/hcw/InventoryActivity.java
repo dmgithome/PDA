@@ -76,7 +76,6 @@ public class InventoryActivity extends BaseActivity {
     private MaterialButton btnPendingRefresh;
     private MaterialButton btnPendingConfirm;
     private MaterialButton btnEndInventory;
-    private MaterialButton btnExportCsv;
     private MaterialButton refreshTasksButton;
 
     private TextView tvPendingSummary;
@@ -128,6 +127,10 @@ public class InventoryActivity extends BaseActivity {
     private Runnable rfidRunnable;
     // 连续空读计数，用于触发自恢复
     private int emptyReadRounds = 0;
+    // 【性能优化】RFID轮询退避策略
+    private static final int RFID_POLL_MIN_INTERVAL = 200;  // 最小轮询间隔
+    private static final int RFID_POLL_MAX_INTERVAL = 800;  // 最大轮询间隔
+    private int currentPollInterval = RFID_POLL_MIN_INTERVAL;
     // 蜂鸣器
     private com.pda.hcw.rfid.RfidBeepManager rfidBeepManager;
     private boolean beepModeRaw = false; // false=biz(业务增量), true=raw(读到即响)
@@ -193,7 +196,6 @@ public class InventoryActivity extends BaseActivity {
         btnPendingRefresh = findViewById(R.id.btn_pending_refresh);
         btnPendingConfirm = findViewById(R.id.btn_pending_confirm);
         btnEndInventory = findViewById(R.id.btn_end_inventory);
-        btnExportCsv = findViewById(R.id.btn_export_csv);
         refreshTasksButton = findViewById(R.id.refresh_tasks_button);
 
         tvPendingSummary = findViewById(R.id.tv_pending_summary);
@@ -298,10 +300,6 @@ public class InventoryActivity extends BaseActivity {
         if (btnEndInventory != null) {
             btnEndInventory.setText("提交当前盘点进度");
             btnEndInventory.setOnClickListener(v -> endInventory());
-        }
-        // 本地差异导出逻辑废弃，提示改在 Web 端完成
-        if (btnExportCsv != null) {
-            btnExportCsv.setOnClickListener(v -> showInfo("盘点差异导出请在 Web 端库存盘点页面执行"));
         }
         if (refreshTasksButton != null) refreshTasksButton.setOnClickListener(v -> refreshInventoryTasks());
 
@@ -1140,6 +1138,7 @@ public class InventoryActivity extends BaseActivity {
     }
 
     private void startRFIDPolling() {
+        currentPollInterval = RFID_POLL_MIN_INTERVAL; // 重置轮询间隔
         rfidRunnable = new Runnable() {
             @Override public void run() {
                 if (!isRFIDActive || uhfManager == null || !uhfManager.isInitialized()) return;
@@ -1157,6 +1156,8 @@ public class InventoryActivity extends BaseActivity {
                     if (tagList != null) Log.d(TAG, "本轮读取标签数=" + tagList.size());
                     if (tagList != null && !tagList.isEmpty()) {
                         emptyReadRounds = 0;
+                        // 【性能优化】读到标签时恢复最小轮询间隔
+                        currentPollInterval = RFID_POLL_MIN_INTERVAL;
                         for (Reader.TAGINFO tag : tagList) {
                             if (beepModeRaw && rfidBeepManager != null) {
                                 try { rfidBeepManager.requestBeep(); } catch (Throwable ignored) {}
@@ -1164,8 +1165,13 @@ public class InventoryActivity extends BaseActivity {
                             handleTagScanned(tag);
                         }
                     } else {
-                        // 连续空读达到阈值，做一次自恢复（与UHF-G一致）
+                        // 【性能优化】连续空读时逐步增加轮询间隔（退避策略）
                         emptyReadRounds++;
+                        if (currentPollInterval < RFID_POLL_MAX_INTERVAL) {
+                            currentPollInterval = Math.min(currentPollInterval * 2, RFID_POLL_MAX_INTERVAL);
+                            Log.d(TAG, "空读退避：轮询间隔调整为 " + currentPollInterval + "ms");
+                        }
+                        // 连续空读达到阈值，做一次自恢复（与UHF-G一致）
                         if (emptyReadRounds >= 4) {
                             try {
                                 uhfManager.asyncStopReading();
@@ -1182,10 +1188,11 @@ public class InventoryActivity extends BaseActivity {
                 } catch (Exception e) {
                     Log.e(TAG, "RFID polling error", e);
                 }
-                if (isRFIDActive && rfidBgHandler != null) rfidBgHandler.postDelayed(this, 200);
+                // 【性能优化】使用动态轮询间隔
+                if (isRFIDActive && rfidBgHandler != null) rfidBgHandler.postDelayed(this, currentPollInterval);
             }
         };
-        if (rfidBgHandler != null) rfidBgHandler.postDelayed(rfidRunnable, 200);
+        if (rfidBgHandler != null) rfidBgHandler.postDelayed(rfidRunnable, currentPollInterval);
     }
 
     private void stopRFIDPolling() {
@@ -1371,112 +1378,6 @@ public class InventoryActivity extends BaseActivity {
 
         if (drawerLayout != null) {
             drawerLayout.closeDrawers();
-        }
-    }
-
-    // ========== 导出CSV ==========
-    private void exportInventoryDiff() {
-        if (currentTask == null || inventorySession == null) {
-            showInfo("请选择任务");
-            return;
-        }
-
-        executorService.execute(() -> {
-            try {
-                Set<String> planned = inventorySession.getAllPlannedRfids();
-                Set<String> counted = inventorySession.getCountedRfids();
-                Set<String> surplus = inventorySession.getSurplusRfids();
-                List<String> missingList = new ArrayList<>();
-                for (String r : planned) if (!counted.contains(r)) missingList.add(r);
-                List<String> surplusList = new ArrayList<>(surplus);
-
-                final Map<String, ConsumableItem> surplusInfo = new HashMap<>();
-                if (!surplusList.isEmpty()) {
-                    CountDownLatch latch = new CountDownLatch(1);
-                    ConsumableApiService.getInstance(this).queryConsumableInfoList(surplusList, new ConsumableApiService.ApiCallback<ConsumableApiResponse>() {
-                        @Override public void onSuccess(ConsumableApiResponse resp) {
-                            for (ConsumableItem item : resp.inStockList) if (item.getRfid() != null) surplusInfo.put(item.getRfid(), item);
-                            for (ConsumableItem item : resp.takenList) if (item.getRfid() != null && !surplusInfo.containsKey(item.getRfid())) surplusInfo.put(item.getRfid(), item);
-                            for (ConsumableItem item : resp.consumedList) if (item.getRfid() != null && !surplusInfo.containsKey(item.getRfid())) surplusInfo.put(item.getRfid(), item);
-                            for (ConsumableItem item : resp.usedReturnList) if (item.getRfid() != null && !surplusInfo.containsKey(item.getRfid())) surplusInfo.put(item.getRfid(), item);
-                            latch.countDown();
-                        }
-                        @Override public void onFailure(Exception e) { Log.w(TAG, "盈余补齐失败: " + e.getMessage()); latch.countDown(); }
-                    });
-                    latch.await(3, TimeUnit.SECONDS);
-                }
-
-                StringBuilder csv = new StringBuilder();
-                csv.append("rfid,name,spec,manufacturer,diffType,lastUser,lastUsedAt,roomId,roomName\n");
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                for (String r : missingList) {
-                    InventoryPlanItem meta = inventorySession.getPlanMeta(r);
-                    int roomId = 0; String roomName = ""; String name = ""; String spec = ""; String manufacturer = ""; String lastUser = ""; String lastUsedAt = "";
-                    if (meta != null) {
-                        roomId = meta.getRoomId();
-                        roomName = meta.getRoomName() != null ? meta.getRoomName() : "";
-                        name = meta.getName() != null ? meta.getName() : "";
-                        spec = meta.getSpec() != null ? meta.getSpec() : "";
-                        manufacturer = meta.getManufacturer() != null ? meta.getManufacturer() : "";
-                        if (meta.getLastUsedAt() != null) lastUsedAt = sdf.format(new Date(meta.getLastUsedAt()));
-                        if (meta.getLastUser() != null) lastUser = meta.getLastUser();
-                    }
-                    csv.append(String.join(",",
-                            escapeCsv(r), escapeCsv(name), escapeCsv(spec), escapeCsv(manufacturer),
-                            "缺失", escapeCsv(lastUser), escapeCsv(lastUsedAt), String.valueOf(roomId), escapeCsv(roomName)
-                    )).append("\n");
-                }
-                for (String r : surplusList) {
-                    ConsumableItem info = surplusInfo.get(r);
-                    String name = info != null ? info.getCommonName() : "";
-                    String spec = info != null ? info.getSpecification() : "";
-                    String manufacturer = info != null ? info.getManufacturer() : "";
-                    csv.append(String.join(",",
-                            escapeCsv(r), escapeCsv(name), escapeCsv(spec), escapeCsv(manufacturer),
-                            "盈余", "", "", "", ""
-                    )).append("\n");
-                }
-
-                String code = currentTask.getTaskId();
-                String fileName = "PD-DIFF-" + code + ".csv";
-                String path = writeCsvToDownloads(fileName, csv.toString());
-                uiHandler.post(() -> showSuccess("差异表已导出到下载: " + path));
-            } catch (Exception e) {
-                Log.e(TAG, "导出差异失败", e);
-                uiHandler.post(() -> showError(UIUtils.friendlyErrorMessage("导出差异失败", e)));
-            }
-        });
-    }
-
-    private String escapeCsv(String s) {
-        if (s == null) return "";
-        boolean needQuote = s.contains(",") || s.contains("\n") || s.contains("\"");
-        String v = s.replace("\"", "\"\"");
-        return needQuote ? "\"" + v + "\"" : v;
-    }
-
-    private String writeCsvToDownloads(String fileName, String content) throws Exception {
-        if (android.os.Build.VERSION.SDK_INT >= 29) {
-            android.content.ContentValues values = new android.content.ContentValues();
-            values.put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, fileName);
-            values.put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "text/csv");
-            values.put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, android.os.Environment.DIRECTORY_DOWNLOADS);
-            Uri uri = getContentResolver().insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
-            if (uri == null) throw new Exception("无法创建下载文件");
-            try (java.io.OutputStream os = getContentResolver().openOutputStream(uri)) {
-                os.write(content.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-                os.flush();
-            }
-            return android.os.Environment.DIRECTORY_DOWNLOADS + "/" + fileName;
-        } else {
-            java.io.File dir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS);
-            if (!dir.exists()) dir.mkdirs();
-            java.io.File out = new java.io.File(dir, fileName);
-            try (java.io.FileOutputStream fos = new java.io.FileOutputStream(out)) {
-                fos.write(content.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-                fos.flush();
-            }
-            return out.getAbsolutePath();
         }
     }
 

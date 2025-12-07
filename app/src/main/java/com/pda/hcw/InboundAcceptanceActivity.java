@@ -77,6 +77,12 @@ public class InboundAcceptanceActivity extends BaseActivity {
     // 条码/按键仲裁
     private long lastBarcodeEventAt = 0L;
 
+    // 【性能优化】微批处理：收集短时间内的RFID，批量查询
+    private static final int INBOUND_BATCH_DELAY_MS = 300;
+    private final Map<String, InboundOrder> pendingRfidToOrder = new HashMap<>();
+    private final Handler inboundBatchHandler = new Handler();
+    private final Runnable inboundBatchRunnable = this::processPendingInboundRfids;
+
     @Override
     protected int getLayoutResourceId() { return R.layout.activity_inbound_acceptance; }
     @Override
@@ -728,17 +734,46 @@ public class InboundAcceptanceActivity extends BaseActivity {
             return;
         }
 
-        // 调用库存状态接口：仅当标签处于“未入库(notInStock)”状态时才允许上架入库
-        java.util.List<String> list = new java.util.ArrayList<>();
-        list.add(rfid);
-        ConsumableApiService.getInstance(this).queryConsumableInfoList(list, new ConsumableApiService.ApiCallback<ConsumableApiResponse>() {
-            @Override public void onSuccess(ConsumableApiResponse resp) {
-                handleInboundInventoryCheck(order, rfid, resp);
+        // 【性能优化】加入待处理队列，延迟批量查询
+        synchronized (pendingRfidToOrder) {
+            if (!pendingRfidToOrder.containsKey(rfid)) {
+                pendingRfidToOrder.put(rfid, order);
+            }
+        }
+        inboundBatchHandler.removeCallbacks(inboundBatchRunnable);
+        inboundBatchHandler.postDelayed(inboundBatchRunnable, INBOUND_BATCH_DELAY_MS);
+    }
+
+    /**
+     * 【性能优化】批量处理待查询的RFID
+     */
+    private void processPendingInboundRfids() {
+        final Map<String, InboundOrder> toProcess;
+        synchronized (pendingRfidToOrder) {
+            if (pendingRfidToOrder.isEmpty()) {
+                return;
+            }
+            toProcess = new HashMap<>(pendingRfidToOrder);
+            pendingRfidToOrder.clear();
+        }
+
+        java.util.List<String> rfidList = new java.util.ArrayList<>(toProcess.keySet());
+        Log.d(TAG, "Batch processing " + rfidList.size() + " RFIDs for inbound check");
+
+        ConsumableApiService.getInstance(this).queryConsumableInfoList(rfidList, new ConsumableApiService.ApiCallback<ConsumableApiResponse>() {
+            @Override
+            public void onSuccess(ConsumableApiResponse resp) {
+                runOnUiThread(() -> {
+                    for (Map.Entry<String, InboundOrder> entry : toProcess.entrySet()) {
+                        handleInboundInventoryCheck(entry.getValue(), entry.getKey(), resp);
+                    }
+                });
             }
 
-            @Override public void onFailure(Exception e) {
-                Log.w(TAG, "inbound inventory check failed for rfid=" + rfid, e);
-                showError(UIUtils.friendlyErrorMessage("获取耗材库存状态失败", e));
+            @Override
+            public void onFailure(Exception e) {
+                Log.w(TAG, "Batch inbound inventory check failed", e);
+                runOnUiThread(() -> showError(UIUtils.friendlyErrorMessage("批量获取耗材库存状态失败", e)));
             }
         });
     }
