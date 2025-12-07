@@ -93,7 +93,7 @@ public class CheckoutRecordAdapter extends RecyclerView.Adapter<CheckoutRecordAd
                         && safeEquals(oldItem.operatingRoom, newItem.operatingRoom)
                         && oldItem.totalQuantity == newItem.totalQuantity
                         && safeEquals(oldItem.operator, newItem.operator)
-                        && safeEquals(oldItem.time, newItem.time);
+                        && oldItem.checkoutTime == newItem.checkoutTime;
             }
         });
 

@@ -126,7 +126,7 @@ public class LocationSummaryAdapter extends RecyclerView.Adapter<LocationSummary
                 // 比较进度和完成度
                 return areItemsTheSame(oldItemPosition, newItemPosition)
                         && oldItem.getTotalExpected() == newItem.getTotalExpected()
-                        && oldItem.getTotalScanned() == newItem.getTotalScanned()
+                        && oldItem.getScannedCount() == newItem.getScannedCount()
                         && oldItem.isCompleted() == newItem.isCompleted()
                         && oldItem.isStarted() == newItem.isStarted();
             }
