@@ -25,7 +25,7 @@ public class InventoryTask {
     
     // 默认构造函数
     public InventoryTask() {
-        this.status = "未执行";
+        this.status = "未开始";
         this.totalItems = 0;
         this.expectedItems = new java.util.ArrayList<ConsumableItem>();
         this.consumedItems = new java.util.ArrayList<ConsumableItem>();
@@ -190,12 +190,14 @@ public class InventoryTask {
         } else if ("canceled".equals(rawStatus)) {
             return android.R.color.darker_gray;
         }
-        // 兼容旧显示：未执行=待确认(橙)、暂存=执行中(蓝)、已完成=已结束(绿)
-        if ("未执行".equals(status) || "待确认".equals(status)) {
+        // 兼容中文显示状态
+        if ("未开始".equals(status)) {
             return android.R.color.holo_orange_dark;
-        } else if ("暂存".equals(status) || "执行中".equals(status)) {
+        } else if ("执行中".equals(status)) {
             return android.R.color.holo_blue_dark;
-        } else if ("已完成".equals(status) || "已结束".equals(status)) {
+        } else if ("待复核".equals(status)) {
+            return android.R.color.holo_orange_light;
+        } else if ("已完成".equals(status)) {
             return android.R.color.holo_green_dark;
         } else if ("已作废".equals(status)) {
             return android.R.color.darker_gray;
@@ -204,14 +206,14 @@ public class InventoryTask {
         }
     }
     
-    // 检查任务是否可以进行盘点
+    // 检查任务是否可以进行盘点（新版：执行中状态才可操作）
     public boolean canStartInventory() {
-        return "未执行".equals(status) || "暂存".equals(status);
+        return "running".equals(rawStatus) || "执行中".equals(status);
     }
-    
-    // 检查任务是否可以提交
+
+    // 检查任务是否可以提交结束采集
     public boolean canSubmit() {
-        return "暂存".equals(status);
+        return "running".equals(rawStatus) || "执行中".equals(status);
     }
     
     // 获取所有物品的并集（库存明细 + 消耗明细）
@@ -258,16 +260,10 @@ public class InventoryTask {
         return locationItems;
     }
     
-    // 获取任务的所有地点列表
+    // 获取任务的所有地点列表（地点信息完全由后端返回，此方法不再使用硬编码）
     public java.util.Set<String> getLocations() {
         java.util.Set<String> locations = new java.util.HashSet<>();
-        // 这里暂时返回固定地点，后续可以根据实际数据扩展
-        locations.add("耗材屋");
-        locations.add("术间1");
-        locations.add("术间2");
-        locations.add("术间3");
-        locations.add("术间4");
-        locations.add("术间5");
+        // 地点信息应从后端任务明细中获取，此处返回空集合
         return locations;
     }
     

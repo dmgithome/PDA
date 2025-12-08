@@ -8,8 +8,8 @@ import java.io.Serializable;
  */
 public class InventoryPlanItem implements Serializable {
     private final String rfid;
-    private final int roomId; // 术间ID；0 表示耗材屋或未知
-    private final String roomName; // 可为空
+    private final int roomId; // 地点ID（由后端返回）
+    private final String roomName; // 地点名称（由后端返回）
 
     // 可选信息（占位）
     private final String name;          // 耗材名称

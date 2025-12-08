@@ -333,7 +333,7 @@ public class InventoryActivity extends BaseActivity {
                             } catch (Exception ignore) {}
                             taskList.clear();
                             taskList.addAll(result);
-                            taskListAdapter.notifyDataSetChanged();
+                            taskListAdapter.updateItems(result);
                             if (taskList.isEmpty()) {
                                 showInfo("当前地点暂无进行中的盘点任务，请先在 Web 端创建任务");
                             }
@@ -418,10 +418,23 @@ public class InventoryActivity extends BaseActivity {
                 return;
             }
 
+            // 先探测当前任务是否具备“快照状态”字段：
+            // - 新版后端：计划内行 snapshotStatus 不为空，盈余行 snapshotStatus 为空；
+            // - 旧版/历史任务：可能所有行 snapshotStatus 都为空，此时不能简单认为都是盈余，否则地点网格永远为空。
+            boolean hasSnapshotFlag = false;
+            for (ConsumableApiService.InventoryTaskDetailItem it : detail.items) {
+                if (it != null && it.snapshotStatus != null && !it.snapshotStatus.trim().isEmpty()) {
+                    hasSnapshotFlag = true;
+                    break;
+                }
+            }
+
             java.util.List<InventoryPlanItem> plan = new java.util.ArrayList<>();
             for (ConsumableApiService.InventoryTaskDetailItem it : detail.items) {
                 if (it == null) continue;
-                if (it.snapshotStatus == null) continue; // 非快照行(盈余等)不计入计划
+                // 如果后端已经提供 snapshotStatus，则仅将 snapshotStatus!=null 的快照行视为“计划内”，盈余等补录行不计入计划；
+                // 若整单任务不存在 snapshotStatus（历史/旧任务），则退化为“所有明细均视为计划行”，避免地点卡片永远不渲染。
+                if (hasSnapshotFlag && it.snapshotStatus == null) continue;
                 String rfid = it.rfid;
                 if (rfid == null || rfid.trim().isEmpty()) continue;
                 int roomId = (it.operatingRoomID != null ? it.operatingRoomID : 0);
@@ -438,7 +451,7 @@ public class InventoryActivity extends BaseActivity {
             // 写入状态快照 + 根据 scanStatus 标记已盘
             for (ConsumableApiService.InventoryTaskDetailItem it : detail.items) {
                 if (it == null) continue;
-                if (it.snapshotStatus == null) continue;
+                if (hasSnapshotFlag && it.snapshotStatus == null) continue;
                 String rfid = it.rfid;
                 if (rfid == null || rfid.trim().isEmpty()) continue;
                 inventorySession.setStatusFor(rfid, it.snapshotStatus, it.latestStatus);
@@ -532,7 +545,8 @@ public class InventoryActivity extends BaseActivity {
         UserInfo u = SessionManager.getInstance(this).getCurrentUser();
         task.setOperator(u != null ? u.getUsername() : "");
         task.setTotalItems(inventorySession.getTotalPlanned());
-        task.setStatus("暂存"); // 执行中
+        task.setRawStatus("running");
+        task.setStatus("执行中");
         boolean ok = inventoryDatabase.saveInventoryTask(task);
         if (!ok) {
             showError("保存任务失败");
@@ -543,7 +557,8 @@ public class InventoryActivity extends BaseActivity {
         List<InventoryPlanItem> items = new ArrayList<>();
         for (String r : inventorySession.getAllPlannedRfids()) {
             InventoryPlanItem meta = inventorySession.getPlanMeta(r);
-            if (meta != null) items.add(meta); else items.add(new InventoryPlanItem(r, 0, "耗材屋", null, null, null, null, null));
+            // 只添加有元数据的项，地点信息完全由后端返回
+            if (meta != null) items.add(meta);
         }
         int inserted = checkoutDb.bulkInsertInventoryTaskDetails(task.getTaskId(), items);
         showSuccess("已确认任务，落库明细：" + inserted + " 条");
@@ -566,17 +581,21 @@ public class InventoryActivity extends BaseActivity {
     // ========== 执行中 ==========
     private void updateHeaderStats() {
         int planned = 0;
-        int scanned = 0;
+        int normal = 0;
         int missing = 0;
         int surplus = 0;
         if (currentTask != null) {
+            // 总待盘 = 快照数量（plannedCount），保持不变
             planned = Math.max(0, currentTask.getTotalItems());
-            scanned = Math.max(0, currentTask.getScannedCount());
+            // 盘毕 = Web 端“正常”数量（匹配到快照的唯一码数量）
+            normal = Math.max(0, currentTask.getNormalCount());
+            // 未盘 = Web 端“缺失”数量
             missing = Math.max(0, currentTask.getMissingCount());
+            // 盈余 = Web 端“盈余”数量
             surplus = Math.max(0, currentTask.getSurplusCount());
         }
         headerTotalPlanned.setText("总待盘：" + planned);
-        headerCounted.setText("盘毕：" + scanned);
+        headerCounted.setText("盘毕：" + normal);
         headerUncounted.setText("未盘：" + missing);
         headerSurplus.setText("盈余：" + surplus);
     }
@@ -589,9 +608,13 @@ public class InventoryActivity extends BaseActivity {
             ls.setRoomId(s.getRoomId());
             list.add(ls);
         }
-        locationSummaries.clear();
-        locationSummaries.addAll(list);
-        locationSummaryAdapter.notifyDataSetChanged();
+        // 使用适配器内部维护的列表，避免仅修改外部 locationSummaries 而不更新 UI
+        if (locationSummaryAdapter != null) {
+            locationSummaryAdapter.updateItems(list);
+        } else {
+            locationSummaries.clear();
+            locationSummaries.addAll(list);
+        }
     }
 
     private void updatePendingGridFromSession() {
@@ -966,7 +989,8 @@ public class InventoryActivity extends BaseActivity {
             String name = meta != null ? meta.getName() : null;
             String spec = meta != null ? meta.getSpec() : null;
             String manu = meta != null ? meta.getManufacturer() : null;
-            String roomName = meta != null ? meta.getRoomName() : inventorySession.getRoomName(InventorySession.ROOM_ID_CONSUMABLE_HOUSE);
+            // 地点信息完全由后端返回
+            String roomName = meta != null ? meta.getRoomName() : "";
             diffMissingItems.add(new InventoryDiffAdapter.DiffItem(
                     InventoryDiffAdapter.DiffType.MISSING,
                     r,

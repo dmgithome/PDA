@@ -57,11 +57,12 @@ public class InventoryTaskAdapter extends RecyclerView.Adapter<InventoryTaskAdap
         // 设置总数
         holder.totalItemsText.setText("总数：" + task.getTotalItems());
         
-        // 如果任务已开始，显示进度信息
-        if ("暂存".equals(task.getStatus()) || "已完成".equals(task.getStatus())) {
+        // 如果任务执行中或已完成，显示进度信息
+        if ("执行中".equals(task.getStatus()) || "已完成".equals(task.getStatus()) || "待复核".equals(task.getStatus())) {
             holder.progressText.setVisibility(View.VISIBLE);
-            // 这里可以计算并显示进度信息
-            holder.progressText.setText("进度：待实现");
+            int scanned = task.getScannedCount();
+            int total = task.getTotalItems();
+            holder.progressText.setText("已盘：" + scanned + "/" + total);
         } else {
             holder.progressText.setVisibility(View.GONE);
         }
@@ -73,19 +74,26 @@ public class InventoryTaskAdapter extends RecyclerView.Adapter<InventoryTaskAdap
             }
         });
         
-        // 根据状态设置不同的背景色
+        // 根据状态设置不同的背景色（使用新版状态名）
         switch (task.getStatus()) {
-            case "未执行":
+            case "未开始":
                 holder.itemView.setBackgroundColor(
                     holder.itemView.getContext().getResources().getColor(
                         android.R.color.holo_orange_light, null
                     )
                 );
                 break;
-            case "暂存":
+            case "执行中":
                 holder.itemView.setBackgroundColor(
                     holder.itemView.getContext().getResources().getColor(
                         android.R.color.holo_blue_light, null
+                    )
+                );
+                break;
+            case "待复核":
+                holder.itemView.setBackgroundColor(
+                    holder.itemView.getContext().getResources().getColor(
+                        android.R.color.holo_orange_dark, null
                     )
                 );
                 break;
@@ -93,6 +101,13 @@ public class InventoryTaskAdapter extends RecyclerView.Adapter<InventoryTaskAdap
                 holder.itemView.setBackgroundColor(
                     holder.itemView.getContext().getResources().getColor(
                         android.R.color.holo_green_light, null
+                    )
+                );
+                break;
+            case "已作废":
+                holder.itemView.setBackgroundColor(
+                    holder.itemView.getContext().getResources().getColor(
+                        android.R.color.darker_gray, null
                     )
                 );
                 break;

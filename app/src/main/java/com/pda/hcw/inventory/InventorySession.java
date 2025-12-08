@@ -13,10 +13,10 @@ import java.util.Set;
 /**
  * 单次盘点任务的内存态会话，用于高频更新与UI展示。
  * - 仅在本地存储计划清单与扫描状态，不持久化。
- * - 用于驱动表头与术间卡片、明细列表。
+ * - 用于驱动表头与地点卡片、明细列表。
+ * - 地点完全由后端返回的任务数据决定，不使用硬编码默认值。
  */
 public class InventorySession {
-    public static final int ROOM_ID_CONSUMABLE_HOUSE = 0; // 耗材屋
 
     private final String taskId;
     private final Map<Integer, Set<String>> plannedByRoom = new HashMap<>();     // roomId -> planned RFIDs (canonical key)
@@ -43,7 +43,6 @@ public class InventorySession {
 
     public InventorySession(String taskId) {
         this.taskId = taskId;
-        // 不再默认包含耗材屋，地点完全由后端返回的任务数据决定
     }
 
     public String getTaskId() { return taskId; }
@@ -60,7 +59,6 @@ public class InventorySession {
         snapshotStatusMap.clear();
         latestStatusMap.clear();
         altKeyToCanonical.clear();
-        // 不再默认添加耗材屋，地点完全由后端返回的任务数据决定
     }
 
     /**
@@ -89,7 +87,8 @@ public class InventorySession {
 
             int roomId = it.getRoomId();
             String rn = it.getRoomName();
-            roomNameMap.putIfAbsent(roomId, rn != null && !rn.isEmpty() ? rn : (roomId == 0 ? "耗材屋" : ("术间" + roomId)));
+            // 地点名称完全由后端返回，不使用硬编码默认值
+            roomNameMap.putIfAbsent(roomId, rn != null && !rn.isEmpty() ? rn : ("地点" + roomId));
             plannedByRoom.computeIfAbsent(roomId, k -> new HashSet<>()).add(canonical);
             countedByRoom.computeIfAbsent(roomId, k -> new HashSet<>()); // init bucket
             allPlanned.add(canonical);
@@ -127,7 +126,7 @@ public class InventorySession {
 
         String canonical = canonicalize(raw);
         if (canonical != null && allPlanned.contains(canonical)) {
-            // 找到所属术间并标记已盘
+            // 找到所属地点并标记已盘
             for (Map.Entry<Integer, Set<String>> e : plannedByRoom.entrySet()) {
                 if (e.getValue().contains(canonical)) {
                     countedByRoom.get(e.getKey()).add(canonical);
@@ -155,13 +154,13 @@ public class InventorySession {
 
     public List<InventoryRoomStatus> getRoomStatusesSorted() {
         List<InventoryRoomStatus> list = new ArrayList<>();
-        // 不再强制包含耗材屋，仅遍历实际存在的地点
 
         for (Map.Entry<Integer, Set<String>> e : plannedByRoom.entrySet()) {
             int roomId = e.getKey();
             int planned = e.getValue().size();
             int counted = countedByRoom.getOrDefault(roomId, Collections.emptySet()).size();
-            String name = roomNameMap.getOrDefault(roomId, "术间" + roomId);
+            // 地点名称完全由后端返回，不使用硬编码默认值
+            String name = roomNameMap.getOrDefault(roomId, "地点" + roomId);
             list.add(new InventoryRoomStatus(roomId, name, planned, counted));
         }
 

@@ -990,8 +990,8 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
             
             try {
                 db = getReadableDatabase();
-                String selection = COLUMN_TASK_STATUS + " IN (?, ?, ?)";
-                String[] selectionArgs = {"未执行", "暂存", "已完成"};
+                String selection = COLUMN_TASK_STATUS + " IN (?, ?, ?, ?, ?)";
+                String[] selectionArgs = {"未开始", "执行中", "待复核", "已完成", "已作废"};
                 String orderBy = COLUMN_CREATE_TIME + " DESC";
                 
                 cursor = db.query(TABLE_INVENTORY_TASKS, null, selection, selectionArgs, null, null, orderBy);
@@ -1122,7 +1122,7 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
             try {
                 db = getReadableDatabase();
                 c = db.query(TABLE_INVENTORY_TASKS, new String[]{COLUMN_TASK_ID_INV},
-                        COLUMN_TASK_STATUS + "=?", new String[]{"暂存"}, null, null, null, "1");
+                        COLUMN_TASK_STATUS + "=?", new String[]{"执行中"}, null, null, null, "1");
                 return c != null && c.moveToFirst();
             } catch (Exception e) {
                 Log.e(TAG, "hasActiveInventoryTask failed", e);
@@ -1199,7 +1199,8 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                     v.put(COLUMN_MANUFACTURER, it.getManufacturer() != null ? it.getManufacturer() : "");
                     v.put(COLUMN_EXPECTED_QUANTITY, 1);
                     v.put(COLUMN_ACTUAL_QUANTITY, 0);
-                    String loc = it.getRoomName() != null ? it.getRoomName() : "耗材屋";
+                    // 地点信息完全由后端返回，不使用硬编码默认值
+                    String loc = it.getRoomName() != null ? it.getRoomName() : "";
                     v.put(COLUMN_LOCATION, loc);
                     v.put(COLUMN_SCAN_STATUS, "未扫描");
                     v.put(COLUMN_EPC_CODE, rfid);
@@ -1251,7 +1252,8 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                         nv.put(COLUMN_MANUFACTURER, "");
                         nv.put(COLUMN_EXPECTED_QUANTITY, 0);
                         nv.put(COLUMN_ACTUAL_QUANTITY, 1);
-                        nv.put(COLUMN_LOCATION, "耗材屋");
+                        // 盈余项地点未知，不使用硬编码默认值
+                        nv.put(COLUMN_LOCATION, "");
                         nv.put(COLUMN_SCAN_STATUS, "已扫描");
                         nv.put(COLUMN_EPC_CODE, rfid);
                         nv.put(COLUMN_RSSI, rssi);

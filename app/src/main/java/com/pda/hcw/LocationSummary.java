@@ -7,7 +7,7 @@ public class LocationSummary {
     private String location;         // 地点名称
     private int totalExpected;       // 预期总数
     private int scannedCount;       // 已扫描数
-    private Integer roomId;         // 术间ID（可为空，0=耗材屋）
+    private Integer roomId;         // 地点ID（由后端返回）
     
     // 默认构造函数
     public LocationSummary() {

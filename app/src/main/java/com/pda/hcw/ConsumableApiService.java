@@ -457,7 +457,8 @@ public class ConsumableApiService {
                         try { roomId = obj.optInt("current_location_id", 0); } catch (Exception ignore) {}
                     }
                     roomName = obj.optString("current_location_name", null);
-                    if (roomId <= 0 || roomName == null || roomName.isEmpty()) { roomId = 0; roomName = "耗材屋"; }
+                    // 地点信息完全由后端返回，不使用硬编码默认值
+                    if (roomName == null) { roomName = ""; }
 
                     String rfid = obj.optString("rfid", null);
                     if (rfid == null || rfid.trim().isEmpty()) continue; // 严格按定义，无rfid则跳过
@@ -896,6 +897,12 @@ public class ConsumableApiService {
         item.setSpecification(itemJson.optString("spec", ""));
         item.setManufacturer(itemJson.optString("manufacturer", ""));
         item.setBrand(itemJson.optString("brand", ""));
+        // 优先使用后端返回的单位字段，缺失时再回退到默认“个”
+        String unit = itemJson.optString("unit", "").trim();
+        if (unit.isEmpty()) {
+            unit = "个";
+        }
+        item.setUnit(unit);
         // 扩展解析：最后一次操作信息（若存在）
         String opName = itemJson.optString("lastOperatorName", null);
         String opTime = itemJson.optString("lastOperationTime", null);
@@ -905,8 +912,7 @@ public class ConsumableApiService {
         item.setLastOperationTime(opTime);
         // 使用rfid作为条码号显示，但调用方可能会覆盖为原始扫描的条码
         item.setBarcode(itemJson.optString("rfid", ""));
-        // 设置默认单位和数量
-        item.setUnit("个");
+        // 默认数量为1
         item.setQuantity(1);
         // 当前所在地点ID（若后端返回）
         try {
@@ -1059,6 +1065,12 @@ public class ConsumableApiService {
                         it.put("spec", item.getSpecification() == null ? "" : item.getSpecification());
                         it.put("manufacturer", item.getManufacturer() == null ? "" : item.getManufacturer());
                         it.put("brand", item.getBrand() == null ? "" : item.getBrand());
+                        // 单位：优先使用客户端持有的单位信息，缺失时回退到“个”
+                        String unit = item.getUnit();
+                        if (unit == null || unit.trim().isEmpty()) {
+                            unit = "个";
+                        }
+                        it.put("unit", unit);
                         // 可选：取用并发校验（当前暂不强制，后端主要针对归还做校验）
                         takeArr.put(it);
                     }
@@ -1081,6 +1093,11 @@ public class ConsumableApiService {
                         it.put("spec", item.getSpecification() == null ? "" : item.getSpecification());
                         it.put("manufacturer", item.getManufacturer() == null ? "" : item.getManufacturer());
                         it.put("brand", item.getBrand() == null ? "" : item.getBrand());
+                        String unit = item.getUnit();
+                        if (unit == null || unit.trim().isEmpty()) {
+                            unit = "个";
+                        }
+                        it.put("unit", unit);
                         // 并发校验：记录客户端看到的当前库存位置
                         if (item.getCurrentLocationId() != null && item.getCurrentLocationId() > 0) {
                             it.put("expected_current_location_id", String.valueOf(item.getCurrentLocationId()));
