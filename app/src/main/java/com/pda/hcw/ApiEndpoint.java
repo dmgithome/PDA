@@ -29,7 +29,10 @@ public enum ApiEndpoint {
     // 耗材移库（PDA 动作型移库单）
     TRANSFER_PREVIEW_BY_RFID("/api/transfer/preview_by_rfid", "移库预览（RFID）"),
     TRANSFER_PREVIEW_BY_BARCODE("/api/transfer/preview_by_barcode", "移库预览（条码）"),
-    TRANSFER_SUBMIT_FROM_PDA("/api/transfer/submit_from_pda", "提交PDA移库");
+    TRANSFER_SUBMIT_FROM_PDA("/api/transfer/submit_from_pda", "提交PDA移库"),
+
+    // SPD 仓库
+    SPD_REPOSITORIES("/api/spd/repositories", "SPD仓库列表");
 
     private final String defaultPath;
     private final String displayName;

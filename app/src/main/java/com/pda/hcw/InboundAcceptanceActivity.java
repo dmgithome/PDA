@@ -943,7 +943,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
     }
 
     /**
-     * 把用户选择的中心库写入本地配置（default_return_location_id），然后按原逻辑提交验收。
+     * 把用户选择的中心库写入本地配置（default_return_location_id），然后继续选择SPD仓库。
      */
     private void applySelectedCenterAndSubmit(InboundOrder order,
                                               OperatingRoom center,
@@ -958,8 +958,67 @@ public class InboundAcceptanceActivity extends BaseActivity {
             }
         } catch (Exception ignore) {}
 
+        // 继续选择SPD仓库
+        showInfo("正在加载SPD仓库列表...");
+        chooseSpdAndSubmit(order, submitSet, submitRfids, submittedCount, submitOrderIndex);
+    }
+
+    /**
+     * 选择SPD仓库，然后提交验收。
+     */
+    private void chooseSpdAndSubmit(InboundOrder order,
+                                    final Set<String> submitSet,
+                                    final java.util.List<String> submitRfids,
+                                    final int submittedCount,
+                                    final int submitOrderIndex) {
+        ConsumableApiService.getInstance(this).fetchSpdRepositories(new ConsumableApiService.ApiCallback<java.util.List<ConsumableApiService.SpdRepository>>() {
+            @Override
+            public void onSuccess(java.util.List<ConsumableApiService.SpdRepository> result) {
+                if (result == null || result.isEmpty()) {
+                    showError("未配置SPD仓库，请先在后台系统中配置SPD仓库信息");
+                    return;
+                }
+
+                // 若只有一个SPD仓库，直接使用；否则弹出选择框
+                if (result.size() == 1) {
+                    finalSubmitWithSpdId(order, result.get(0).id, submitSet, submitRfids, submittedCount, submitOrderIndex);
+                    return;
+                }
+
+                String[] names = new String[result.size()];
+                for (int i = 0; i < result.size(); i++) {
+                    names[i] = result.get(i).getDisplayName();
+                }
+
+                new AlertDialog.Builder(InboundAcceptanceActivity.this)
+                        .setTitle("选择SPD仓库")
+                        .setItems(names, (dialog, which) -> {
+                            if (which >= 0 && which < result.size()) {
+                                finalSubmitWithSpdId(order, result.get(which).id, submitSet, submitRfids, submittedCount, submitOrderIndex);
+                            }
+                        })
+                        .setCancelable(true)
+                        .show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                showError(UIUtils.friendlyErrorMessage("加载SPD仓库列表失败", e));
+            }
+        });
+    }
+
+    /**
+     * 最终提交验收（已选择中心库和SPD仓库）。
+     */
+    private void finalSubmitWithSpdId(InboundOrder order,
+                                      int spdBindingId,
+                                      final Set<String> submitSet,
+                                      final java.util.List<String> submitRfids,
+                                      final int submittedCount,
+                                      final int submitOrderIndex) {
         showInfo("正在提交验收...");
-        inboundApi.submitInboundOrder(order, submitSet, new ConsumableApiService.ApiCallback<Boolean>() {
+        inboundApi.submitInboundOrder(order, submitSet, spdBindingId, new ConsumableApiService.ApiCallback<Boolean>() {
             @Override public void onSuccess(Boolean ok) {
                 // 清空本次增量，避免重复提交
                 if (submitSet != null) submitSet.clear();

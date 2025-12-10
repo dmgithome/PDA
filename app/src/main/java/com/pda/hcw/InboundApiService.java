@@ -167,6 +167,7 @@ public class InboundApiService {
 
     /** 提交有单入库上架记录 (/api/stock/hasOrderInbound) */
     public void submitInboundOrder(InboundOrder order, java.util.Set<String> rfids,
+                                   int spdBindingId,
                                    ConsumableApiService.ApiCallback<Boolean> callback) {
         executor.execute(() -> {
             try {
@@ -181,6 +182,7 @@ public class InboundApiService {
                 if (sdCode == null || sdCode.trim().isEmpty()) { postFailure(callback, new Exception("请先在设置中配置sdCode")); return; }
                 if (cabinetId <= 0) { postFailure(callback, new Exception("请先在设置中配置货柜ID")); return; }
                 if (rfids == null || rfids.isEmpty()) { postFailure(callback, new Exception("无新增可提交")); return; }
+                if (spdBindingId <= 0) { postFailure(callback, new Exception("请选择SPD仓库")); return; }
                 String userId = currentUser.getUserId();
                 if (userId == null || userId.trim().isEmpty()) { postFailure(callback, new Exception("用户信息缺少ID")); return; }
 
@@ -226,15 +228,17 @@ public class InboundApiService {
                 body.put("createDate", now);
                 body.put("items", itemsArray);
 
-                // 默认目标地点（入库验收要求顶层 target_location_id 必填）
+                // 目标地点（入库验收要求顶层 target_location_id 必填）
                 try {
                     SharedPreferences locSp = context.getSharedPreferences("locations_prefs", Context.MODE_PRIVATE);
                     int targetId = locSp.getInt("default_return_location_id", -1);
                     if (targetId <= 0) {
-                        postFailure(callback, new Exception("请先在地点维护中设置默认地点"));
+                        postFailure(callback, new Exception("请先选择入库中心库"));
                         return;
                     }
                     body.put("target_location_id", targetId);
+                    // SPD仓库（bindingId），由用户选择传入
+                    body.put("bindingId", spdBindingId);
                 } catch (Exception e) {
                     postFailure(callback, new Exception("读取默认地点失败，请重试"));
                     return;

@@ -1244,4 +1244,80 @@ public class ConsumableApiService {
     public void shutdown() {
         executorService.shutdown();
     }
+
+    /**
+     * SPD 仓库信息
+     */
+    public static class SpdRepository {
+        public int id;
+        public String rpId;
+        public String rpName;
+
+        public SpdRepository(int id, String rpId, String rpName) {
+            this.id = id;
+            this.rpId = rpId;
+            this.rpName = rpName;
+        }
+
+        public String getDisplayName() {
+            if (rpName != null && !rpName.trim().isEmpty()) {
+                return rpName;
+            }
+            return rpId != null ? rpId : String.valueOf(id);
+        }
+    }
+
+    /**
+     * 获取 SPD 仓库列表（GET /api/spd/repositories）
+     */
+    public void fetchSpdRepositories(ApiCallback<List<SpdRepository>> callback) {
+        executorService.execute(() -> {
+            try {
+                if (!networkConfig.isValidConfig()) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
+                    return;
+                }
+
+                String url = networkConfig.getFullUrl(ApiEndpoint.SPD_REPOSITORIES);
+                Log.d(TAG, "fetchSpdRepositories(GET): " + url);
+                String resp = sendHttpRequest(url, "GET", null);
+
+                List<SpdRepository> list = new ArrayList<>();
+                org.json.JSONObject root = new org.json.JSONObject(resp);
+                int status = root.optInt("status", root.optInt("code", 200));
+                if (status != 200) {
+                    String msg = root.optString("message", root.optString("msg", "查询SPD仓库失败"));
+                    throw new Exception(msg);
+                }
+
+                // 响应结构：{ data: [{ id, rpId, rpName }] }
+                org.json.JSONArray arr = root.optJSONArray("data");
+                if (arr == null) {
+                    // 尝试直接作为数组解析
+                    try {
+                        arr = new org.json.JSONArray(resp);
+                    } catch (Exception ignore) {
+                        arr = new org.json.JSONArray();
+                    }
+                }
+
+                for (int i = 0; i < arr.length(); i++) {
+                    org.json.JSONObject obj = arr.optJSONObject(i);
+                    if (obj == null) continue;
+                    int id = obj.optInt("id", 0);
+                    String rpId = obj.optString("rpId", null);
+                    String rpName = obj.optString("rpName", null);
+                    if (id > 0) {
+                        list.add(new SpdRepository(id, rpId, rpName));
+                    }
+                }
+
+                final List<SpdRepository> finalList = list;
+                mainHandler.post(() -> callback.onSuccess(finalList));
+            } catch (Exception e) {
+                Log.e(TAG, "fetchSpdRepositories failed", e);
+                mainHandler.post(() -> callback.onFailure(e));
+            }
+        });
+    }
 }

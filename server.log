@@ -1,2 +1,4 @@
 {"level":30,"time":1764661557829,"pid":76071,"hostname":"dmdeMacBook-Pro.local","msg":"config>{\"host\":\"192.168.143.34\",\"user\":\"znyj_spd\",\"password\":\"******\",\"database\":\"znyj_spd\",\"port\":33316}"}
 {"level":30,"time":1764661557829,"pid":76071,"hostname":"dmdeMacBook-Pro.local","msg":"MySQL MCP server running on stdio"}
+{"level":30,"time":1765158539605,"pid":21116,"hostname":"dmdeMacBook-Pro.local","msg":"config>{\"host\":\"192.168.143.34\",\"user\":\"znyj_spd\",\"password\":\"******\",\"database\":\"znyj_spd\",\"port\":33316}"}
+{"level":30,"time":1765158539606,"pid":21116,"hostname":"dmdeMacBook-Pro.local","msg":"MySQL MCP server running on stdio"}
