@@ -91,6 +91,7 @@ public class InboundApiService {
                         io.code = o.optString("orderNo", "");
                         io.total = o.optInt("number", 0);
                         io.accepted = o.optInt("shelfedNumber", 0);
+                        io.rpNameTo = o.optString("rpNameTo", null);  // SPD仓库名称
 
                         // 提取未上架的RFID集合（按库存盘点归一化规则归一化），并收集明细
                         Set<String> plan = new HashSet<>();
@@ -386,6 +387,8 @@ class InboundOrder {
     public int accepted;
     // 当前PDA会话内已匹配的RFID数量（仅用于UI展示，不参与后端统计）
     public int matchedInSession;
+    // SPD仓库名称（如：手术室、麻醉等）
+    public String rpNameTo;
     public java.util.Set<String> plannedRfids = new java.util.HashSet<>();
     public java.util.List<InboundOrderDetail> details = new java.util.ArrayList<>();
     public java.util.Map<String, InboundOrderDetail> detailByRfid = new java.util.HashMap<>();

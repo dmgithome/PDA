@@ -1247,7 +1247,12 @@ public class InboundAcceptanceActivity extends BaseActivity {
         }
         @Override public void onBindViewHolder(InboundOrderViewHolder h, int pos) {
             InboundOrder o = data.get(pos);
-            h.code.setText(o.code == null ? "" : o.code);
+            // 显示订单号和SPD仓库名称
+            String displayText = (o.code == null ? "" : o.code);
+            if (o.rpNameTo != null && !o.rpNameTo.isEmpty()) {
+                displayText += " [" + o.rpNameTo + "]";
+            }
+            h.code.setText(displayText);
             if (o.docTime > 0) {
                 h.time.setText(fmt.format(new Date(o.docTime)));
                 h.time.setVisibility(View.VISIBLE);
