@@ -192,6 +192,18 @@
                             android:maxLines="1"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="未归还列表 /api/unreturn/getTimeoutUnreturnedConsumables">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/endpoint_unreturn_list_input"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:inputType="text"
+                            android:maxLines="1"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

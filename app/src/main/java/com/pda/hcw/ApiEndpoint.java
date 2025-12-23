@@ -25,6 +25,7 @@ public enum ApiEndpoint {
 
     // 预警/统计
     OVERTIME_UNRETURN_NUMBER("/api/unreturn/getOverTimeUnreturnNumberByID", "超时未归还数量"),
+    UNRETURN_LIST("/api/unreturn/getTimeoutUnreturnedConsumables", "未归还列表"),
 
     // 耗材移库（PDA 动作型移库单）
     TRANSFER_PREVIEW_BY_RFID("/api/transfer/preview_by_rfid", "移库预览（RFID）"),

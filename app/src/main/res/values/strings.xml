@@ -281,19 +281,19 @@
     <string name="location_supply_room">耗材屋</string>
 
     <!-- 超时未归还 -->
-    <string name="overtime_unreturn_title">超时未归还</string>
-    <string name="overtime_unreturn_empty">暂无数据（占位页）</string>
-    <string name="overtime_unreturn_desc">此页面用于展示当前用户超时未归还耗材列表</string>
-    <string name="home_unreturn_label">超时未归还</string>
+    <string name="overtime_unreturn_title">未归还查询</string>
+    <string name="overtime_unreturn_empty">暂无未归还耗材</string>
+    <string name="overtime_unreturn_desc">此页面用于展示当前用户未归还耗材列表（按取用时间排序）</string>
+    <string name="home_unreturn_label">未归还</string>
     <string name="home_unreturn_unit">个</string>
     <string name="home_unreturn_failed">获取失败</string>
 
     <!-- 未归还查询卡片 -->
     <string name="unreturn_query_title">未归还查询</string>
-    <string name="unreturn_query_desc_dev">开发中</string>
+    <string name="unreturn_query_desc_dev">查看我的未归还耗材</string>
 
     <!-- Banner 文案 -->
-    <string name="overtime_unreturn_banner" formatted="false">您有%d个超时未归还耗材，请尽快处理</string>
+    <string name="overtime_unreturn_banner" formatted="false">您有%d个未归还耗材，请尽快处理</string>
     <string name="overtime_unreturn_fetch_failed">未归还提醒查询失败，请检查网络和接口配置</string>
     <string name="feature_under_dev">功能开发中</string>
     <string name="location_operating_room_1">术间1</string>

@@ -26,6 +26,7 @@ public class ApiSettingsActivity extends BaseActivity {
     private TextInputEditText epGetAllConsumablesInput;
     private TextInputEditText epCreateTakeReturnInput;
     private TextInputEditText epOvertimeUnreturnNumberInput;
+    private TextInputEditText epUnreturnListInput;
 
     private Button saveButton;
     private Button resetButton;
@@ -74,6 +75,7 @@ public class ApiSettingsActivity extends BaseActivity {
         epGetAllConsumablesInput = findViewById(R.id.endpoint_get_all_consumables_input);
         epCreateTakeReturnInput = findViewById(R.id.endpoint_create_take_return_input);
         epOvertimeUnreturnNumberInput = findViewById(R.id.endpoint_overtime_unreturn_number_input);
+        epUnreturnListInput = findViewById(R.id.endpoint_unreturn_list_input);
 
         saveButton = findViewById(R.id.api_save_button);
         resetButton = findViewById(R.id.api_reset_button);
@@ -89,6 +91,7 @@ public class ApiSettingsActivity extends BaseActivity {
         epGetAllConsumablesInput.setText(networkConfig.getEndpointPath(ApiEndpoint.GET_ALL_CONSUMABLES));
         epCreateTakeReturnInput.setText(networkConfig.getEndpointPath(ApiEndpoint.CREATE_TAKE_RETURN_LOG));
         epOvertimeUnreturnNumberInput.setText(networkConfig.getEndpointPath(ApiEndpoint.OVERTIME_UNRETURN_NUMBER));
+        epUnreturnListInput.setText(networkConfig.getEndpointPath(ApiEndpoint.UNRETURN_LIST));
     }
 
     private void bindActions() {
@@ -104,6 +107,7 @@ public class ApiSettingsActivity extends BaseActivity {
                 networkConfig.setEndpointPath(ApiEndpoint.GET_ALL_CONSUMABLES, safeText(epGetAllConsumablesInput));
                 networkConfig.setEndpointPath(ApiEndpoint.CREATE_TAKE_RETURN_LOG, safeText(epCreateTakeReturnInput));
                 networkConfig.setEndpointPath(ApiEndpoint.OVERTIME_UNRETURN_NUMBER, safeText(epOvertimeUnreturnNumberInput));
+                networkConfig.setEndpointPath(ApiEndpoint.UNRETURN_LIST, safeText(epUnreturnListInput));
 
                 updateNetworkStatus();
                 showSuccess("保存成功");

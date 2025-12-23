@@ -394,8 +394,8 @@ public class MainActivity extends AppCompatActivity {
             if (unreturnQueryCard != null) {
                 unreturnQueryCard.setOnClickListener(v -> {
                     if (!isLoggedIn) { showLoginRequiredDialog(); return; }
-                    // 使用 Snackbar 短提示，避免顶部状态区常驻
-                    showQuickSuccess(getString(R.string.feature_under_dev));
+                    Intent intent = new Intent(this, OvertimeUnreturnListActivity.class);
+                    startActivity(intent);
                 });
             }
 

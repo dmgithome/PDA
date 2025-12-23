@@ -84,6 +84,120 @@ public class ConsumableApiService {
         });
     }
 
+    /**
+     * 未归还列表返回项（用于PDA“未归还查询”页面）
+     */
+    public static class UnreturnListItem {
+        public int id;
+        public String code;
+        public String name;
+        public String spec;
+        public String manufacturer;
+        public String rfid;
+        public String batch;
+        /** 取用时间（yyyy-MM-dd HH:mm:ss） */
+        public String takeTime;
+        /** 未归还时长（分钟，可能为空） */
+        public Integer durationMinutes;
+        public int number;
+        public int locationId;
+        public String locationName;
+    }
+
+    /**
+     * 未归还列表结果
+     */
+    public static class UnreturnListResult {
+        public int total;
+        public java.util.List<UnreturnListItem> items = new java.util.ArrayList<>();
+    }
+
+    /**
+     * 获取当前用户未归还耗材列表（POST /api/unreturn/getTimeoutUnreturnedConsumables）
+     * - 仅展示当前登录用户的数据：请求参数中固定带 userIds=[currentUserId]
+     * - 默认拉取较大 pagesize，满足“简单列表”场景
+     */
+    public void fetchMyUnreturnList(ApiCallback<UnreturnListResult> callback) {
+        executorService.execute(() -> {
+            try {
+                UserInfo currentUser = SessionManager.getInstance(context).getCurrentUser();
+                if (currentUser == null) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
+                    return;
+                }
+                if (!networkConfig.isValidConfig()) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
+                    return;
+                }
+                int userId;
+                try {
+                    userId = Integer.parseInt(currentUser.getUserId());
+                } catch (Exception ex) {
+                    mainHandler.post(() -> callback.onFailure(new Exception("无法解析用户ID")));
+                    return;
+                }
+
+                org.json.JSONObject body = new org.json.JSONObject();
+                body.put("page", 1);
+                body.put("pagesize", 5000);
+                org.json.JSONArray userIds = new org.json.JSONArray();
+                userIds.put(userId);
+                body.put("userIds", userIds);
+
+                String url = networkConfig.getFullUrl(ApiEndpoint.UNRETURN_LIST);
+                Log.d(TAG, "fetchMyUnreturnList(POST): " + url);
+                String resp = sendHttpRequest(url, "POST", body.toString());
+
+                org.json.JSONObject json = new org.json.JSONObject(resp);
+                int status = json.optInt("status", 0);
+                if (status != 200) {
+                    String msg = json.optString("message", "查询失败");
+                    throw new Exception(msg);
+                }
+
+                org.json.JSONObject data = json.optJSONObject("data");
+                UnreturnListResult result = new UnreturnListResult();
+                if (data != null) {
+                    result.total = data.optInt("total", 0);
+                    org.json.JSONArray items = data.optJSONArray("items");
+                    if (items != null) {
+                        for (int i = 0; i < items.length(); i++) {
+                            org.json.JSONObject obj = items.optJSONObject(i);
+                            if (obj == null) continue;
+                            UnreturnListItem it = new UnreturnListItem();
+                            it.id = obj.optInt("id", 0);
+                            it.code = obj.optString("code", "");
+                            it.name = obj.optString("name", "");
+                            it.spec = obj.optString("spec", "");
+                            it.manufacturer = obj.optString("manufacturer", "");
+                            it.rfid = obj.optString("rfid", "");
+                            it.batch = obj.optString("batch", "");
+                            it.takeTime = obj.optString("time", "");
+                            if (obj.has("durationMinutes") && !obj.isNull("durationMinutes")) {
+                                it.durationMinutes = obj.optInt("durationMinutes", 0);
+                            } else {
+                                it.durationMinutes = null;
+                            }
+                            it.number = obj.optInt("number", 1);
+
+                            org.json.JSONObject loc = obj.optJSONObject("location");
+                            if (loc != null) {
+                                it.locationId = loc.optInt("id", 0);
+                                it.locationName = loc.optString("name", "");
+                            }
+                            result.items.add(it);
+                        }
+                    }
+                }
+
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                Log.e(TAG, "fetchMyUnreturnList failed", e);
+                mainHandler.post(() -> callback.onFailure(e));
+            }
+        });
+    }
+
     private ConsumableApiService(Context context) {
         this.context = context;
         this.executorService = Executors.newFixedThreadPool(3);
