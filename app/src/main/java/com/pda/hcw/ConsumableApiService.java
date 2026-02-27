@@ -576,13 +576,14 @@ public class ConsumableApiService {
 
                     String rfid = obj.optString("rfid", null);
                     if (rfid == null || rfid.trim().isEmpty()) continue; // 严格按定义，无rfid则跳过
+                    String code = obj.optString("code", null);
                     String name = obj.optString("name", null);
                     String spec = obj.optString("spec", null);
                     String manufacturer = obj.optString("manufacturer", null);
                     String lastUser = null; // 接口未返回，预留
                     Long lastUsedAt = null;
 
-                    plan.add(new InventoryPlanItem(rfid.trim(), roomId, roomName, name, spec, manufacturer, lastUser, lastUsedAt));
+                    plan.add(new InventoryPlanItem(rfid.trim(), roomId, roomName, code, name, spec, manufacturer, lastUser, lastUsedAt));
                 }
 
                 final List<InventoryPlanItem> result = plan;
@@ -849,6 +850,8 @@ public class ConsumableApiService {
                         }
                     }
                     it.operatingRoomName = obj.optString("operatingRoomName", null);
+                    it.code = obj.optString("code", null);
+                    if (it.code != null && it.code.trim().isEmpty()) it.code = null;
                     it.name = obj.optString("name", null);
                     it.spec = obj.optString("spec", null);
                     it.manufacturer = obj.optString("manufacturer", null);
@@ -1075,6 +1078,7 @@ public class ConsumableApiService {
         public String rfid;
         public Integer operatingRoomID;
         public String operatingRoomName;
+        public String code;
         public String name;
         public String spec;
         public String manufacturer;

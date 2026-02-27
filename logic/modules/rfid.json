@@ -1,0 +1,431 @@
+{
+  "id": "rfid",
+  "name": "RFID硬件管理模块",
+  "description": "封装UHF RFID读卡器的初始化、参数配置、标签读取、EPC编解码及音频反馈功能，提供统一的硬件抽象层",
+  "code_refs": [
+    {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java"},
+    {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/EpcFormatter.java"},
+    {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/RfidBeepManager.java"}
+  ],
+  "flows": [
+    {
+      "id": "rfid_init_flow",
+      "name": "RFID模块初始化流程",
+      "description": "初始化UHF RFID模块，包括获取实例、设置功率（带降级）、设置频段和其他参数",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java",
+        "lines": "49-80,93-136"
+      },
+      "steps": [
+        {"step": 1, "action": "获取UHFRManager单例实例", "condition": null},
+        {"step": 2, "action": "尝试设置用户配置的功率值", "condition": "实例获取成功"},
+        {"step": 3, "action": "功率设置成功则设置频段", "condition": "setPower返回MT_OK_ERR"},
+        {"step": 4, "action": "降级到30dBm重试", "condition": "功率设置失败"},
+        {"step": 5, "action": "设置Session/Target/Q值/FastID参数", "condition": "功率设置成功（原值或降级）"},
+        {"step": 6, "action": "标记isInitialized=true", "condition": "所有参数设置完成"}
+      ],
+      "error_handling": "任何步骤异常则返回false，不改变isInitialized状态"
+    },
+    {
+      "id": "rfid_high_perf_read_flow",
+      "name": "高性能读取模式启动流程",
+      "description": "启动高性能RFID读取，先强制停止所有操作，等待资源释放，再设置高性能参数",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java",
+        "lines": "273-311"
+      },
+      "steps": [
+        {"step": 1, "action": "检查isInitialized状态", "condition": null},
+        {"step": 2, "action": "检查isReading状态，防止重复启动", "condition": "已初始化"},
+        {"step": 3, "action": "调用forceStopAllOperations强制停止", "condition": "未在读取中"},
+        {"step": 4, "action": "等待100ms确保资源释放", "condition": null},
+        {"step": 5, "action": "设置Session/Target/Q值/FastID参数", "condition": null},
+        {"step": 6, "action": "标记isReading=true", "condition": "参数设置完成"}
+      ],
+      "error_handling": "异常时返回false，不改变isReading状态"
+    },
+    {
+      "id": "rfid_stop_flow",
+      "name": "RFID停止读取流程",
+      "description": "停止所有RFID读取操作，包括异步读取和定时盘存",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java",
+        "lines": "441-463,516-542"
+      },
+      "steps": [
+        {"step": 1, "action": "检查isReading状态", "condition": null},
+        {"step": 2, "action": "调用asyncStopReading停止异步读取", "condition": "正在读取"},
+        {"step": 3, "action": "调用stopTagInventory停止定时盘存", "condition": null},
+        {"step": 4, "action": "重置isReading=false", "condition": null},
+        {"step": 5, "action": "等待100ms确保停止完成", "condition": null}
+      ],
+      "error_handling": "各步骤独立try-catch，确保尽可能停止所有操作"
+    },
+    {
+      "id": "rfid_close_flow",
+      "name": "RFID模块关闭流程",
+      "description": "完全关闭UHF模块，释放资源",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java",
+        "lines": "555-581"
+      },
+      "steps": [
+        {"step": 1, "action": "如果isReading则先调用stopReading", "condition": null},
+        {"step": 2, "action": "调用uhfReader.close()", "condition": "uhfReader不为null"},
+        {"step": 3, "action": "置空uhfReader引用", "condition": null},
+        {"step": 4, "action": "重置isInitialized=false和isReading=false", "condition": null}
+      ],
+      "error_handling": "异常时仍尝试清理状态"
+    }
+  ],
+  "rules": [
+    {
+      "id": "epc_rule_prefix_000000",
+      "name": "EPC前缀000000规则",
+      "description": "以'000000'开头且总长24的字符串，取后18位作为标准EPC值",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/EpcFormatter.java",
+        "lines": "28-29"
+      },
+      "condition": "input.length() == 24 && input.startsWith(\"000000\")",
+      "action": "return input.substring(6)",
+      "example": {
+        "input": "000000ABCDEF123456789012",
+        "output": "ABCDEF123456789012"
+      }
+    },
+    {
+      "id": "epc_rule_suffix_00",
+      "name": "EPC后缀00规则",
+      "description": "以'00'结尾且总长20的字符串，取前18位作为标准EPC值",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/EpcFormatter.java",
+        "lines": "31-32"
+      },
+      "condition": "input.length() == 20 && input.endsWith(\"00\")",
+      "action": "return input.substring(0, 18)",
+      "example": {
+        "input": "ABCDEF12345678901200",
+        "output": "ABCDEF123456789012"
+      }
+    },
+    {
+      "id": "epc_rule_hex_form_a",
+      "name": "EPC HEX形态A规则",
+      "description": "HEX以'000000'开头且总长42，取后36位按ASCII解码为18字符",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/EpcFormatter.java",
+        "lines": "37-44"
+      },
+      "condition": "isHexLike(s) && s.length() == 42 && s.startsWith(\"000000\")",
+      "action": "取后36位HEX，按ASCII解码，若结果为18字符则返回",
+      "example": {
+        "input": "000000414243444546313233343536373839303132",
+        "output": "ABCDEF123456789012"
+      }
+    },
+    {
+      "id": "epc_rule_hex_form_b",
+      "name": "EPC HEX形态B规则",
+      "description": "HEX总长40，ASCII解码后长度20且以'00'结尾，取前18字符",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/EpcFormatter.java",
+        "lines": "45-51"
+      },
+      "condition": "isHexLike(s) && s.length() == 40 && decode后length==20 && endsWith(\"00\")",
+      "action": "ASCII解码后取前18字符",
+      "example": {
+        "input": "41424344454631323334353637383930313230300",
+        "output": "ABCDEF123456789012"
+      }
+    },
+    {
+      "id": "epc_rule_passthrough",
+      "name": "EPC透传规则",
+      "description": "未匹配任何规则时，返回原值（仅trim）",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/EpcFormatter.java",
+        "lines": "54-55"
+      },
+      "condition": "不满足以上任何规则",
+      "action": "return input.trim()"
+    },
+    {
+      "id": "power_fallback_rule",
+      "name": "功率降级规则",
+      "description": "设置功率失败时自动降级到30dBm",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java",
+        "lines": "112-130,216-226"
+      },
+      "condition": "setPower返回值 != MT_OK_ERR",
+      "action": "降级调用setPower(30, 30)"
+    },
+    {
+      "id": "beep_throttle_rule",
+      "name": "蜂鸣限流规则",
+      "description": "蜂鸣请求需满足最小间隔才发声，多标签模式40ms，单标签模式120ms",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/RfidBeepManager.java",
+        "lines": "56-70"
+      },
+      "condition": "now - lastBeepAt >= gap",
+      "action": "发声并更新lastBeepAt",
+      "parameters": {
+        "multi_mode_gap_ms": 40,
+        "single_mode_gap_ms": 120,
+        "multi_mode_duration_ms": 60,
+        "single_mode_duration_ms": 120
+      }
+    },
+    {
+      "id": "region_mapping_rule",
+      "name": "频段映射规则",
+      "description": "将业务频段代码映射到硬件Region_Conf枚举",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java",
+        "lines": "600-609"
+      },
+      "mapping": {
+        "1": {"name": "中国", "freq": "920-925MHz", "hardware_value": 2},
+        "2": {"name": "美国", "freq": "902-928MHz", "hardware_value": 1},
+        "3": {"name": "欧洲", "freq": "865-868MHz", "hardware_value": 2},
+        "default": {"hardware_value": 1}
+      }
+    },
+    {
+      "id": "session_mode_rule",
+      "name": "Session模式规则",
+      "description": "布尔值转Session参数：多标签模式=3，单标签模式=0",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java",
+        "lines": "746-761"
+      },
+      "mapping": {
+        "true": 3,
+        "false": 0
+      }
+    }
+  ],
+  "state_machines": [
+    {
+      "id": "uhf_manager_state",
+      "name": "UHFManager状态机",
+      "description": "管理RFID模块的初始化和读取状态",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java",
+        "lines": "24-25"
+      },
+      "states": [
+        {"id": "uninitialized", "description": "未初始化状态，isInitialized=false"},
+        {"id": "initialized_idle", "description": "已初始化但未读取，isInitialized=true, isReading=false"},
+        {"id": "reading", "description": "正在读取，isInitialized=true, isReading=true"}
+      ],
+      "transitions": [
+        {"from": "uninitialized", "to": "initialized_idle", "trigger": "initialize()成功", "action": "设置功率/频段/参数"},
+        {"from": "initialized_idle", "to": "reading", "trigger": "startHighPerformanceReading()/startNormalReading()/asyncStartReading()成功", "action": "设置读取参数"},
+        {"from": "reading", "to": "initialized_idle", "trigger": "stopReading()/asyncStopReading()成功", "action": "停止异步读取和定时盘存"},
+        {"from": "initialized_idle", "to": "uninitialized", "trigger": "close()", "action": "关闭uhfReader，清空引用"},
+        {"from": "reading", "to": "uninitialized", "trigger": "close()", "action": "先停止读取，再关闭模块"}
+      ],
+      "guards": {
+        "initialize": "uhfReader实例获取成功且功率设置成功（原值或降级）",
+        "startReading": "isInitialized==true && isReading==false",
+        "stopReading": "isReading==true"
+      }
+    },
+    {
+      "id": "beep_manager_state",
+      "name": "RfidBeepManager状态机",
+      "description": "管理蜂鸣器的激活状态",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/RfidBeepManager.java",
+        "lines": "25-28"
+      },
+      "states": [
+        {"id": "inactive", "description": "未激活，active=false"},
+        {"id": "active", "description": "已激活，active=true"}
+      ],
+      "transitions": [
+        {"from": "inactive", "to": "active", "trigger": "start()", "action": "创建ToneGenerator，重置lastBeepAt"},
+        {"from": "active", "to": "inactive", "trigger": "stop()", "action": "仅标记active=false"},
+        {"from": "active", "to": "inactive", "trigger": "release()", "action": "停止并释放ToneGenerator资源"}
+      ]
+    }
+  ],
+  "pseudocodes": [
+    {
+      "id": "epc_normalize_pseudocode",
+      "name": "EPC标准化伪代码",
+      "description": "将各种格式的EPC值标准化为18位标准值",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/EpcFormatter.java",
+        "lines": "22-56"
+      },
+      "pseudocode": [
+        "FUNCTION normalizeOnReceive(input):",
+        "  IF input IS NULL THEN RETURN NULL",
+        "  s = TRIM(input)",
+        "  IF s IS EMPTY THEN RETURN s",
+        "",
+        "  // 规则1: 前缀000000，长度24",
+        "  IF LENGTH(s) == 24 AND STARTS_WITH(s, '000000') THEN",
+        "    RETURN SUBSTRING(s, 6)  // 取后18位",
+        "",
+        "  // 规则2: 后缀00，长度20",
+        "  IF LENGTH(s) == 20 AND ENDS_WITH(s, '00') THEN",
+        "    RETURN SUBSTRING(s, 0, 18)  // 取前18位",
+        "",
+        "  // HEX形态检测",
+        "  IF isHexLike(s) THEN",
+        "    // 形态A: HEX前缀000000，长度42",
+        "    IF LENGTH(s) == 42 AND STARTS_WITH(s, '000000') THEN",
+        "      tail = SUBSTRING(s, 6)  // 取后36位HEX",
+        "      decoded = ASCII_DECODE(tail)",
+        "      IF decoded != NULL AND LENGTH(decoded) == 18 THEN",
+        "        RETURN decoded",
+        "",
+        "    // 形态B: HEX长度40，解码后20位且以00结尾",
+        "    IF LENGTH(s) == 40 THEN",
+        "      decoded = ASCII_DECODE(s)",
+        "      IF decoded != NULL AND LENGTH(decoded) == 20 AND ENDS_WITH(decoded, '00') THEN",
+        "        RETURN SUBSTRING(decoded, 0, 18)",
+        "",
+        "  // 未匹配任何规则，返回原值",
+        "  RETURN s"
+      ]
+    },
+    {
+      "id": "uhf_init_pseudocode",
+      "name": "UHF初始化伪代码",
+      "description": "初始化UHF模块的完整流程，包含功率降级逻辑",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java",
+        "lines": "49-136"
+      },
+      "pseudocode": [
+        "FUNCTION initialize(context):",
+        "  TRY",
+        "    this.context = context",
+        "    this.sharedUtil = NEW SharedUtil(context)",
+        "",
+        "    // 获取UHF实例",
+        "    uhfReader = UHFRManager.getInstance()",
+        "    IF uhfReader IS NULL THEN RETURN FALSE",
+        "",
+        "    // 尝试设置用户配置的功率",
+        "    userPower = sharedUtil.getPower()",
+        "    result = uhfReader.setPower(userPower, userPower)",
+        "",
+        "    IF result == MT_OK_ERR THEN",
+        "      LOG '功率设置成功: ' + userPower + 'dBm'",
+        "    ELSE",
+        "      // 降级到30dBm",
+        "      LOG '功率设置失败，降级到30dBm'",
+        "      result = uhfReader.setPower(30, 30)",
+        "      IF result != MT_OK_ERR THEN RETURN FALSE",
+        "",
+        "    // 设置频段",
+        "    uhfReader.setRegion(sharedUtil.getWorkFreq())",
+        "",
+        "    // 设置其他参数",
+        "    uhfReader.setGen2session(sharedUtil.getSession())",
+        "    uhfReader.setTarget(sharedUtil.getTarget())",
+        "    uhfReader.setQvaule(sharedUtil.getQvalue())",
+        "    uhfReader.setFastID(sharedUtil.getFastId())",
+        "",
+        "    isInitialized = TRUE",
+        "    RETURN TRUE",
+        "",
+        "  CATCH Exception",
+        "    LOG '初始化失败'",
+        "    RETURN FALSE"
+      ]
+    },
+    {
+      "id": "beep_request_pseudocode",
+      "name": "蜂鸣请求伪代码",
+      "description": "带限流的蜂鸣请求处理",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/RfidBeepManager.java",
+        "lines": "56-70"
+      },
+      "pseudocode": [
+        "FUNCTION requestBeep():",
+        "  IF NOT active OR NOT enabled THEN RETURN",
+        "",
+        "  // 计算最小间隔",
+        "  gap = multiMode ? 40ms : 120ms",
+        "  now = CURRENT_TIME_MS()",
+        "",
+        "  // 限流检查",
+        "  IF now - lastBeepAt < gap THEN RETURN",
+        "",
+        "  TRY",
+        "    // 确保ToneGenerator存在",
+        "    IF toneGenerator IS NULL THEN",
+        "      toneGenerator = NEW ToneGenerator(STREAM_MUSIC, 100)",
+        "",
+        "    // 选择音色和时长",
+        "    tone = multiMode ? TONE_PROP_BEEP : TONE_PROP_ACK",
+        "    duration = multiMode ? 60ms : 120ms",
+        "",
+        "    // 发声",
+        "    toneGenerator.startTone(tone, duration)",
+        "    lastBeepAt = now",
+        "",
+        "  CATCH Exception",
+        "    LOG '蜂鸣失败'"
+      ]
+    },
+    {
+      "id": "bytes_to_hex_pseudocode",
+      "name": "字节数组转HEX字符串伪代码",
+      "description": "将RFID标签的EpcId字节数组转换为十六进制字符串",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java",
+        "lines": "630-640"
+      },
+      "pseudocode": [
+        "FUNCTION bytesToHexString(bytes):",
+        "  IF bytes IS NULL OR LENGTH(bytes) == 0 THEN",
+        "    RETURN ''",
+        "",
+        "  result = ''",
+        "  FOR EACH byte IN bytes DO",
+        "    // 转换为无符号值并格式化为2位HEX",
+        "    hexValue = FORMAT('%02X', byte AND 0xFF)",
+        "    result = result + hexValue",
+        "",
+        "  RETURN result"
+      ]
+    },
+    {
+      "id": "hex_to_ascii_pseudocode",
+      "name": "HEX转ASCII伪代码",
+      "description": "将HEX字符串按ASCII解码为字符串",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/EpcFormatter.java",
+        "lines": "69-81"
+      },
+      "pseudocode": [
+        "FUNCTION tryAsciiFromHex(hex):",
+        "  TRY",
+        "    IF hex IS NULL OR LENGTH(hex) % 2 != 0 THEN",
+        "      RETURN NULL",
+        "",
+        "    result = ''",
+        "    FOR i = 0 TO LENGTH(hex) STEP 2 DO",
+        "      // 取2位HEX，解析为整数",
+        "      byteValue = PARSE_INT(SUBSTRING(hex, i, i+2), 16)",
+        "      // 转换为字符",
+        "      result = result + CHAR(byteValue)",
+        "",
+        "    RETURN result",
+        "",
+        "  CATCH Exception",
+        "    RETURN NULL"
+      ]
+    }
+  ]
+}

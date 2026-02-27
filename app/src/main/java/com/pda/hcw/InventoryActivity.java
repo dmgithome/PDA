@@ -49,8 +49,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class InventoryActivity extends BaseActivity {
     private static final String TAG = "InventoryActivity";
-    private static final String PREFS_NAME = "inventory_prefs";
-    private static final String PREF_RFID_FILTER_MODE = "rfid_filter_mode"; // 0:仅未盘 1:全部
+    private static final String MISSING_CODE_LABEL = "子码缺失";
 
     // UI 状态机
     private enum TaskUIState { NO_TASK, PENDING, EXECUTING, FINISHED }
@@ -439,10 +438,11 @@ public class InventoryActivity extends BaseActivity {
                 if (rfid == null || rfid.trim().isEmpty()) continue;
                 int roomId = (it.operatingRoomID != null ? it.operatingRoomID : 0);
                 String roomName = it.operatingRoomName;
+                String code = it.code;
                 String name = it.name;
                 String spec = it.spec;
                 String manufacturer = it.manufacturer;
-                plan.add(new InventoryPlanItem(rfid, roomId, roomName, name, spec, manufacturer, null, null));
+                plan.add(new InventoryPlanItem(rfid, roomId, roomName, code, name, spec, manufacturer, null, null));
             }
 
             // 载入计划
@@ -497,6 +497,7 @@ public class InventoryActivity extends BaseActivity {
                                 it.getRfid(),
                                 it.getRoomId(),
                                 it.getRoomName(),
+                                it.getCode(),
                                 it.getName(),
                                 it.getSpec(),
                                 it.getManufacturer(),
@@ -699,37 +700,77 @@ public class InventoryActivity extends BaseActivity {
 
             List<String> rfids = inventorySession.getRoomRfidList(roomId, true);
             Map<String, Boolean> state = inventorySession.getRoomRfidStateMap(roomId);
-            List<RfidItem> data = new ArrayList<>();
-            for (String r : rfids) data.add(new RfidItem(r, state.getOrDefault(r, false)));
+            Map<String, RoomGroupedRfidAdapter.RoomGroupedItem> grouped = new HashMap<>();
+            int uncountedTotal = 0;
+            boolean hasNonMissingCode = false;
+
+            for (String rfid : rfids) {
+                boolean counted = state.getOrDefault(rfid, false);
+                if (counted) {
+                    continue; // 仅展示未盘
+                }
+                uncountedTotal++;
+
+                InventoryPlanItem meta = inventorySession.getPlanMeta(rfid);
+                String rawCode = meta != null ? meta.getCode() : null;
+                String groupCode = rawCode == null ? "" : rawCode.trim();
+                if (!groupCode.isEmpty()) {
+                    hasNonMissingCode = true;
+                } else {
+                    groupCode = MISSING_CODE_LABEL;
+                }
+
+                RoomGroupedRfidAdapter.RoomGroupedItem group = grouped.get(groupCode);
+                if (group == null) {
+                    group = new RoomGroupedRfidAdapter.RoomGroupedItem();
+                    group.code = groupCode;
+                    group.name = meta != null ? meta.getName() : null;
+                    group.spec = meta != null ? meta.getSpec() : null;
+                    group.manufacturer = meta != null ? meta.getManufacturer() : null;
+                    grouped.put(groupCode, group);
+                } else if (meta != null) {
+                    // 聚合组已有空字段时，尝试用新元数据补齐
+                    if (TextUtils.isEmpty(group.name) && !TextUtils.isEmpty(meta.getName())) {
+                        group.name = meta.getName();
+                    }
+                    if (TextUtils.isEmpty(group.spec) && !TextUtils.isEmpty(meta.getSpec())) {
+                        group.spec = meta.getSpec();
+                    }
+                    if (TextUtils.isEmpty(group.manufacturer) && !TextUtils.isEmpty(meta.getManufacturer())) {
+                        group.manufacturer = meta.getManufacturer();
+                    }
+                }
+                group.rfids.add(rfid);
+            }
+
+            List<RoomGroupedRfidAdapter.RoomGroupedItem> data = new ArrayList<>(grouped.values());
+            data.sort((a, b) -> {
+                boolean aMissing = MISSING_CODE_LABEL.equals(a.code);
+                boolean bMissing = MISSING_CODE_LABEL.equals(b.code);
+                if (aMissing != bMissing) return aMissing ? 1 : -1; // 子码缺失固定置后
+                String ac = a.code == null ? "" : a.code;
+                String bc = b.code == null ? "" : b.code;
+                return ac.compareToIgnoreCase(bc);
+            });
+            if (!data.isEmpty() && !hasNonMissingCode) {
+                Log.w(TAG, "当前术间所有未盘标签均缺失子码，roomId=" + roomId + ", roomName=" + loc);
+            }
 
             View view = getLayoutInflater().inflate(R.layout.dialog_room_rfid_list, null);
             androidx.recyclerview.widget.RecyclerView rv = view.findViewById(R.id.rv_rfid_list);
-            android.widget.RadioGroup rg = view.findViewById(R.id.rg_filter);
-            android.widget.RadioButton rbOnly = view.findViewById(R.id.rb_only_uncounted);
-            android.widget.RadioButton rbAll = view.findViewById(R.id.rb_all);
-            android.widget.TextView tv = view.findViewById(R.id.tv_summary);
-
-            // 记忆上次过滤状态
-            android.content.SharedPreferences sp = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-            int filterMode = sp.getInt(PREF_RFID_FILTER_MODE, 0); // 默认仅未盘
-            boolean showCounted = (filterMode == 1);
+            android.widget.TextView tvSummary = view.findViewById(R.id.tv_summary);
+            android.widget.TextView tvEmpty = view.findViewById(R.id.tv_empty);
 
             rv.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
-            RfidListAdapter adapter = new RfidListAdapter(data, showCounted, item -> showRfidDetailDialog(item.rfid));
+            RoomGroupedRfidAdapter adapter = new RoomGroupedRfidAdapter(data, this::showRfidDetailDialog);
             rv.setAdapter(adapter);
-            updateRfidSummary(tv, adapter);
-
-            // 初始化单选
-            if (showCounted) rbAll.setChecked(true); else rbOnly.setChecked(true);
-            rg.setOnCheckedChangeListener((group, checkedId) -> {
-                boolean show = checkedId == R.id.rb_all;
-                adapter.applyFilter(show);
-                updateRfidSummary(tv, adapter);
-                sp.edit().putInt(PREF_RFID_FILTER_MODE, show ? 1 : 0).apply();
-            });
+            updateGroupedSummary(tvSummary, data.size(), uncountedTotal);
+            boolean isEmpty = data.isEmpty();
+            tvEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+            rv.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
 
             new AlertDialog.Builder(this)
-                    .setTitle(loc + " - RFID明细")
+                    .setTitle(loc + " - 未盘明细（按子码）")
                     .setView(view)
                     .setNegativeButton("关闭", null)
                     .show();
@@ -739,12 +780,9 @@ public class InventoryActivity extends BaseActivity {
         }
     }
 
-    private void updateRfidSummary(TextView tv, RfidListAdapter adapter) {
+    private void updateGroupedSummary(TextView tv, int groupCount, int rfidCount) {
         try {
-            int total = adapter.getTotal();
-            int counted = adapter.getCounted();
-            int uncounted = Math.max(0, total - counted);
-            tv.setText("共:" + total + "  已盘:" + counted + "  未盘:" + uncounted);
+            tv.setText("子码组: " + groupCount + "  未盘RFID: " + rfidCount);
         } catch (Exception ignore) {}
     }
 

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Logic Extract Pre-commit Hook
+# 验证 manifest 结构和引用
+
+LOGIC_DIR="logic"
+MANIFEST="$LOGIC_DIR/manifest.json"
+WATCH_REGEX="$LOGIC_DIR/watch.regex"
+
+if [ ! -f "$MANIFEST" ]; then
+  echo "SKIP: $MANIFEST not found"
+  exit 0
+fi
+
+if [ ! -f "$WATCH_REGEX" ]; then
+  echo "SKIP: $WATCH_REGEX not found"
+  exit 0
+fi
+
+# 运行验证脚本
+SKILL_DIR="$HOME/.claude/skills/logic-extract"
+if [ -f "$SKILL_DIR/scripts/verify.mjs" ]; then
+  node "$SKILL_DIR/scripts/verify.mjs" --project-root "$(pwd)"
+else
+  echo "WARN: verify.mjs not found, skipping verification"
+fi

@@ -1,0 +1,23 @@
+# 监控的业务代码文件模式 (正则表达式，每行一个，# 开头为注释)
+# 当这些文件变更时，pre-commit 会要求更新 manifest
+
+# JavaScript/TypeScript
+^src/.*\.(js|ts|jsx|tsx)$
+^scripts/.*\.(js|ts)$
+^apis/.*\.yao$
+
+# Python
+^app/.*\.py$
+^src/.*\.py$
+
+# Go
+^cmd/.*\.go$
+^internal/.*\.go$
+^pkg/.*\.go$
+
+# Java
+^src/main/java/.*\.java$
+
+# 排除测试文件 (不监控)
+# ^.*test.*$
+# ^.*spec.*$

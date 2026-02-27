@@ -1,0 +1,41 @@
+{
+  "$schema": "https://logic-command-center.dev/schema/v3.1",
+  "project": {
+    "id": "pda-hcw",
+    "name": "PDA 医疗耗材管理系统",
+    "description": "Android PDA 应用，用于医疗耗材的出库、入库、盘点、调拨等仓储管理操作，支持条码扫描和 UHF RFID 批量读取",
+    "version": "1.0.0",
+    "updated_at": "2026-02-04T00:00:00Z",
+    "language": "java"
+  },
+  "modules": [
+    "checkout",
+    "inventory",
+    "inbound",
+    "transfer",
+    "auth",
+    "rfid"
+  ],
+  "modules_dir": "./modules",
+  "data_models_ref": "./data_models.json",
+  "glossary": {
+    "EPC": {"term": "EPC", "description": "Electronic Product Code，电子产品编码，RFID 标签的唯一标识"},
+    "RFID": {"term": "RFID", "description": "Radio Frequency Identification，射频识别技术"},
+    "UHF": {"term": "UHF", "description": "Ultra High Frequency，超高频 RFID（860-960MHz）"},
+    "SPD": {"term": "SPD", "description": "Supply Processing Distribution，医疗供应链配送中心"},
+    "中心库": {"term": "中心库", "description": "医院的中央耗材仓库，type=center"},
+    "术间": {"term": "术间", "description": "手术室，type=room，耗材取用的目标地点"},
+    "盘点": {"term": "盘点", "description": "库存清点，对比计划库存与实际扫描结果"},
+    "取用": {"term": "取用", "description": "从中心库领取耗材到术间"},
+    "归还": {"term": "归还", "description": "将未使用的耗材从术间退回中心库"},
+    "入库验收": {"term": "入库验收", "description": "有单入库上架，将 SPD 配送的耗材验收入库"},
+    "调拨": {"term": "调拨", "description": "耗材在不同中心库之间的移库操作"}
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-02-04",
+      "changes": ["初始版本：从代码中提取业务逻辑清单"]
+    }
+  ]
+}

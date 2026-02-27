@@ -1,0 +1,594 @@
+{
+  "id": "inventory",
+  "name": "盘点模块",
+  "description": "Android PDA 库存盘点功能，支持 RFID 批量扫描、实时统计、差异分析。采用状态机驱动 UI，任务生命周期由 Web 端管理，PDA 仅负责扫描与提交。",
+  "code_refs": [
+    {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java"},
+    {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryDatabase.java"},
+    {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/inventory/InventorySession.java"},
+    {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/inventory/InventoryRoomStatus.java"},
+    {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/inventory/InventoryPlanItem.java"}
+  ],
+  "flows": [
+    {
+      "id": "inventory_main_flow",
+      "name": "盘点主流程",
+      "description": "从选择任务到提交盘点数据的完整流程",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "163-175, 320-365, 1348-1406"
+      },
+      "steps": [
+        {
+          "step": 1,
+          "action": "初始化",
+          "description": "onCreate 中初始化视图、数据、事件监听，加载盘点任务列表，设置 UI 状态为 NO_TASK"
+        },
+        {
+          "step": 2,
+          "action": "加载任务列表",
+          "description": "调用 fetchInventoryTaskList API 获取当前地点的盘点任务，按创建时间倒序排列"
+        },
+        {
+          "step": 3,
+          "action": "选择任务",
+          "description": "用户从侧边栏选择任务，切换前强制停止扫描，清空已提交/待提交缓存，加载任务明细"
+        },
+        {
+          "step": 4,
+          "action": "加载任务明细",
+          "description": "调用 fetchInventoryTaskDetail API，重建 InventorySession 和地点汇总"
+        },
+        {
+          "step": 5,
+          "action": "RFID 扫描",
+          "description": "用户按物理键启动扫描，读取标签并实时更新统计"
+        },
+        {
+          "step": 6,
+          "action": "提交批次",
+          "description": "调用 submitInventoryScanBatch API 提交扫描到的 RFID 列表"
+        }
+      ]
+    },
+    {
+      "id": "rfid_scan_flow",
+      "name": "RFID 扫描流程",
+      "description": "物理按键触发的 RFID 扫描启停与标签处理流程",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "1076-1148, 1164-1224, 1262-1289, 641-691"
+      },
+      "steps": [
+        {
+          "step": 1,
+          "action": "按键触发",
+          "description": "KeyReceiver 接收 F1-F4/F7/F8 按键释放事件，调用 toggleRFIDScanning"
+        },
+        {
+          "step": 2,
+          "action": "状态校验",
+          "description": "检查 uiState==EXECUTING、currentTask!=null、rawStatus==running"
+        },
+        {
+          "step": 3,
+          "action": "启动扫描",
+          "description": "初始化 UHF、设置多标签模式、启动异步读取、创建后台轮询线程"
+        },
+        {
+          "step": 4,
+          "action": "轮询读取",
+          "description": "后台线程定时调用 tagInventoryRealTime/tagInventoryByTimer 获取标签"
+        },
+        {
+          "step": 5,
+          "action": "标签处理",
+          "description": "handleTagScanned 格式化 EPC、去重、加入待提交批次、更新 Session 和 UI"
+        },
+        {
+          "step": 6,
+          "action": "停止扫描",
+          "description": "再次按键或退出时停止轮询、停止硬件读取、可选自动提交批次"
+        }
+      ]
+    },
+    {
+      "id": "batch_submit_flow",
+      "name": "批次提交流程",
+      "description": "将扫描到的 RFID 批量提交到后端",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "897-967"
+      },
+      "steps": [
+        {
+          "step": 1,
+          "action": "前置校验",
+          "description": "检查任务状态为 running、非正在提交中"
+        },
+        {
+          "step": 2,
+          "action": "去重过滤",
+          "description": "从 pendingBatchRfids 中移除已在 submittedRfids 中的标签"
+        },
+        {
+          "step": 3,
+          "action": "调用 API",
+          "description": "调用 submitInventoryScanBatch 提交批次"
+        },
+        {
+          "step": 4,
+          "action": "成功处理",
+          "description": "更新任务统计、标记已提交、清理待提交、刷新明细和地点汇总"
+        },
+        {
+          "step": 5,
+          "action": "失败处理",
+          "description": "保留 pendingBatchRfids 以便重试"
+        }
+      ]
+    },
+    {
+      "id": "session_rebuild_flow",
+      "name": "会话重建流程",
+      "description": "从后端任务明细重建内存态 InventorySession",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "411-469"
+      },
+      "steps": [
+        {
+          "step": 1,
+          "action": "创建会话",
+          "description": "new InventorySession(taskId)"
+        },
+        {
+          "step": 2,
+          "action": "检测快照标志",
+          "description": "遍历明细判断是否存在 snapshotStatus 字段，区分新旧版本任务"
+        },
+        {
+          "step": 3,
+          "action": "构建计划列表",
+          "description": "筛选 snapshotStatus!=null 的行（新版）或全部行（旧版）作为计划内"
+        },
+        {
+          "step": 4,
+          "action": "加载计划",
+          "description": "调用 inventorySession.loadPlan(plan)"
+        },
+        {
+          "step": 5,
+          "action": "写入状态",
+          "description": "调用 setStatusFor 记录 snapshotStatus/latestStatus"
+        },
+        {
+          "step": 6,
+          "action": "标记已盘",
+          "description": "scanStatus==scanned 的行调用 onTag 标记为已盘"
+        },
+        {
+          "step": 7,
+          "action": "更新 UI",
+          "description": "调用 updateRoomGridFromSession 刷新地点卡片"
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "rule_single_active_task",
+      "name": "单一执行中任务约束",
+      "description": "本地只允许存在一个执行中的盘点任务，确认新任务前需检查",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "537-540"
+      },
+      "condition": "checkoutDb.hasActiveInventoryTask() == true",
+      "action": "showError('存在执行中的盘点任务，请先结束或作废')"
+    },
+    {
+      "id": "rule_scan_state_check",
+      "name": "扫描状态校验",
+      "description": "只有在 EXECUTING 状态且任务为 running 时才允许扫描",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "642-644, 1263-1270"
+      },
+      "condition": "uiState != EXECUTING || currentTask == null || rawStatus != 'running'",
+      "action": "拒绝处理标签或显示错误提示"
+    },
+    {
+      "id": "rule_tag_dedup_session",
+      "name": "标签去重（会话级）",
+      "description": "同一扫描轮次内已见过的 EPC 不重复处理",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "652-656"
+      },
+      "condition": "seenEpcsThisRun.contains(epc)",
+      "action": "return（跳过处理）"
+    },
+    {
+      "id": "rule_tag_dedup_submit",
+      "name": "标签去重（提交级）",
+      "description": "已成功提交的标签不再加入待提交批次",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "658-661, 912-919"
+      },
+      "condition": "submittedRfids.contains(epc)",
+      "action": "不加入 pendingBatchRfids"
+    },
+    {
+      "id": "rule_submit_lock",
+      "name": "提交互斥锁",
+      "description": "防止并发提交，上一批提交完成前不允许新提交",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "904-909"
+      },
+      "condition": "isSubmittingBatch == true",
+      "action": "showInfo('上一批盘点数据正在提交，请稍候')"
+    },
+    {
+      "id": "rule_stop_scan_on_task_switch",
+      "name": "切换任务前停止扫描",
+      "description": "选择新任务前强制停止当前扫描，避免跨任务写入",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "1349-1352"
+      },
+      "condition": "isRFIDActive == true",
+      "action": "stopRFIDScanning()"
+    },
+    {
+      "id": "rule_rfid_empty_read_recovery",
+      "name": "空读自恢复",
+      "description": "连续 4 轮空读后重启异步读取，提升稳定性",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "1198-1210"
+      },
+      "condition": "emptyReadRounds >= 4",
+      "action": "asyncStopReading -> sleep(30) -> asyncStartReading"
+    },
+    {
+      "id": "rule_poll_backoff",
+      "name": "轮询退避策略",
+      "description": "连续空读时逐步增加轮询间隔（200ms -> 800ms），读到标签时恢复最小间隔",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "131-133, 1183-1196"
+      },
+      "condition": "tagList 为空",
+      "action": "currentPollInterval = min(currentPollInterval * 2, 800)"
+    },
+    {
+      "id": "rule_session_tag_classification",
+      "name": "标签分类规则",
+      "description": "扫描到的标签根据是否在计划集中分为已盘（计划内）或盈余",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/inventory/InventorySession.java",
+        "lines": "121-142"
+      },
+      "condition": "canonical != null && allPlanned.contains(canonical)",
+      "action": "加入 countedByRoom 和 countedAll；否则加入 surplus"
+    }
+  ],
+  "state_machines": [
+    {
+      "id": "task_ui_state_machine",
+      "name": "任务 UI 状态机",
+      "description": "控制盘点界面四个视图的显示切换",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "56-57, 309-318"
+      },
+      "states": [
+        {
+          "id": "NO_TASK",
+          "name": "无任务",
+          "description": "显示 viewNoTask，隐藏任务头和统计栏"
+        },
+        {
+          "id": "PENDING",
+          "name": "待确认",
+          "description": "显示 viewPending，用于本地创建任务后拉取库存预览（当前流程已弃用）"
+        },
+        {
+          "id": "EXECUTING",
+          "name": "执行中",
+          "description": "显示 viewExecuting，展示地点卡片网格，允许 RFID 扫描"
+        },
+        {
+          "id": "FINISHED",
+          "name": "已完成",
+          "description": "显示 viewFinished，展示差异明细（缺失/盈余）"
+        }
+      ],
+      "transitions": [
+        {
+          "from": "NO_TASK",
+          "to": "PENDING",
+          "trigger": "createNewInventoryTask()",
+          "description": "本地新建任务（当前流程已改为从侧边栏选择）"
+        },
+        {
+          "from": "NO_TASK",
+          "to": "EXECUTING",
+          "trigger": "selectInventoryTask(task)",
+          "description": "从侧边栏选择已有任务"
+        },
+        {
+          "from": "PENDING",
+          "to": "EXECUTING",
+          "trigger": "confirmCurrentTask()",
+          "description": "确认本地任务进入执行"
+        },
+        {
+          "from": "EXECUTING",
+          "to": "FINISHED",
+          "trigger": "任务状态变为 closed/review",
+          "description": "任务完成后展示差异"
+        },
+        {
+          "from": "EXECUTING",
+          "to": "NO_TASK",
+          "trigger": "onBackPressed() 或任务作废",
+          "description": "退出当前任务"
+        }
+      ]
+    },
+    {
+      "id": "rfid_scan_state_machine",
+      "name": "RFID 扫描状态机",
+      "description": "控制 RFID 硬件的启停状态",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "124, 1076-1148, 1262-1289"
+      },
+      "states": [
+        {
+          "id": "IDLE",
+          "name": "空闲",
+          "description": "isRFIDActive=false，硬件未读取"
+        },
+        {
+          "id": "SCANNING",
+          "name": "扫描中",
+          "description": "isRFIDActive=true，后台轮询读取标签"
+        }
+      ],
+      "transitions": [
+        {
+          "from": "IDLE",
+          "to": "SCANNING",
+          "trigger": "物理按键(F1-F4/F7/F8) 且 uiState==EXECUTING && rawStatus==running",
+          "description": "启动扫描"
+        },
+        {
+          "from": "SCANNING",
+          "to": "IDLE",
+          "trigger": "物理按键 或 endInventory() 或 onPause() 或 onBackPressed()",
+          "description": "停止扫描"
+        }
+      ]
+    }
+  ],
+  "pseudocodes": [
+    {
+      "id": "pseudo_handle_tag_scanned",
+      "name": "handleTagScanned 标签处理",
+      "description": "处理单个 RFID 标签的核心逻辑",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "641-691"
+      },
+      "pseudocode": [
+        "FUNCTION handleTagScanned(tag):",
+        "  IF uiState != EXECUTING OR currentTask == null OR rawStatus != 'running':",
+        "    RETURN",
+        "  ",
+        "  epcRawHex = bytesToHexString(tag.EpcId)",
+        "  epc = EpcFormatter.normalizeOnReceive(epcRawHex)",
+        "  IF epc is empty:",
+        "    RETURN",
+        "  ",
+        "  // 本轮去重",
+        "  IF epc IN seenEpcsThisRun:",
+        "    RETURN",
+        "  seenEpcsThisRun.add(epc)",
+        "  ",
+        "  // 提交级去重",
+        "  isNewTag = false",
+        "  IF epc NOT IN submittedRfids:",
+        "    pendingBatchRfids.add(epc)",
+        "    isNewTag = true",
+        "  ",
+        "  // 蜂鸣反馈（业务增量模式）",
+        "  IF NOT beepModeRaw:",
+        "    rfidBeepManager.requestBeep()",
+        "  ",
+        "  // 更新本地会话并刷新 UI",
+        "  IF isNewTag AND inventorySession != null:",
+        "    inventorySession.onTag(epc)",
+        "    POST TO UI_THREAD:",
+        "      更新表头统计",
+        "      updateRoomGridFromSession()"
+      ]
+    },
+    {
+      "id": "pseudo_session_on_tag",
+      "name": "InventorySession.onTag 标签入账",
+      "description": "将扫描到的标签分类为已盘或盈余",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/inventory/InventorySession.java",
+        "lines": "121-142"
+      },
+      "pseudocode": [
+        "FUNCTION onTag(rawRfid):",
+        "  raw = safeRfid(rawRfid)",
+        "  IF raw is empty:",
+        "    RETURN false",
+        "  ",
+        "  // 简单去重",
+        "  IF raw IN seen:",
+        "    RETURN false",
+        "  seen.add(raw)",
+        "  ",
+        "  canonical = canonicalize(raw)",
+        "  IF canonical != null AND canonical IN allPlanned:",
+        "    // 计划内标签：找到所属地点并标记已盘",
+        "    FOR EACH (roomId, plannedSet) IN plannedByRoom:",
+        "      IF canonical IN plannedSet:",
+        "        countedByRoom[roomId].add(canonical)",
+        "        countedAll.add(canonical)",
+        "        BREAK",
+        "  ELSE:",
+        "    // 盈余标签",
+        "    surplus.add(raw)",
+        "  ",
+        "  RETURN true"
+      ]
+    },
+    {
+      "id": "pseudo_submit_batch",
+      "name": "submitCurrentBatch 批次提交",
+      "description": "将待提交的 RFID 批量上传到后端",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "897-967"
+      },
+      "pseudocode": [
+        "FUNCTION submitCurrentBatch(forceToastOnEmpty):",
+        "  // 前置校验",
+        "  IF currentTask == null OR rawStatus != 'running':",
+        "    IF forceToastOnEmpty: showInfo('当前任务状态不允许提交')",
+        "    RETURN",
+        "  IF isSubmittingBatch:",
+        "    IF forceToastOnEmpty: showInfo('上一批正在提交')",
+        "    RETURN",
+        "  ",
+        "  // 构建去重批次",
+        "  batch = []",
+        "  FOR EACH code IN pendingBatchRfids:",
+        "    IF code NOT IN submittedRfids:",
+        "      batch.add(code)",
+        "  ",
+        "  IF batch is empty:",
+        "    IF forceToastOnEmpty: showInfo('无新标签需要提交')",
+        "    RETURN",
+        "  ",
+        "  isSubmittingBatch = true",
+        "  showInfo('正在提交...')",
+        "  ",
+        "  CALL API submitInventoryScanBatch(taskId, batch):",
+        "    ON SUCCESS(result):",
+        "      更新 currentTask 统计字段",
+        "      submittedRfids.addAll(batch)",
+        "      pendingBatchRfids.removeAll(batch)",
+        "      updateHeaderStats()",
+        "      reloadTaskDetailAndSession(false)",
+        "      showSuccess('提交成功')",
+        "      isSubmittingBatch = false",
+        "    ON FAILURE(e):",
+        "      showError('提交失败')",
+        "      // 保留 pendingBatchRfids 以便重试",
+        "      isSubmittingBatch = false"
+      ]
+    },
+    {
+      "id": "pseudo_rebuild_session",
+      "name": "rebuildSessionFromDetail 会话重建",
+      "description": "从后端任务明细重建内存态会话",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "411-469"
+      },
+      "pseudocode": [
+        "FUNCTION rebuildSessionFromDetail(taskId, detail):",
+        "  inventorySession = new InventorySession(taskId)",
+        "  IF detail is null OR detail.items is empty:",
+        "    清空地点网格",
+        "    RETURN",
+        "  ",
+        "  // 检测是否有快照标志（区分新旧版本任务）",
+        "  hasSnapshotFlag = false",
+        "  FOR EACH item IN detail.items:",
+        "    IF item.snapshotStatus is not empty:",
+        "      hasSnapshotFlag = true",
+        "      BREAK",
+        "  ",
+        "  // 构建计划列表",
+        "  plan = []",
+        "  FOR EACH item IN detail.items:",
+        "    // 新版：仅 snapshotStatus!=null 的为计划内",
+        "    // 旧版：所有行都视为计划内",
+        "    IF hasSnapshotFlag AND item.snapshotStatus is null:",
+        "      CONTINUE",
+        "    IF item.rfid is empty:",
+        "      CONTINUE",
+        "    plan.add(new InventoryPlanItem(...))",
+        "  ",
+        "  inventorySession.loadPlan(plan)",
+        "  ",
+        "  // 写入状态快照并标记已盘",
+        "  FOR EACH item IN detail.items:",
+        "    IF hasSnapshotFlag AND item.snapshotStatus is null:",
+        "      CONTINUE",
+        "    inventorySession.setStatusFor(rfid, snapshotStatus, latestStatus)",
+        "    IF item.scanStatus == 'scanned':",
+        "      inventorySession.onTag(rfid)",
+        "  ",
+        "  updateRoomGridFromSession()"
+      ]
+    },
+    {
+      "id": "pseudo_rfid_polling",
+      "name": "RFID 轮询读取",
+      "description": "后台线程轮询读取 RFID 标签的核心逻辑",
+      "code_ref": {
+        "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InventoryActivity.java",
+        "lines": "1164-1220"
+      },
+      "pseudocode": [
+        "FUNCTION rfidRunnable.run():",
+        "  IF NOT isRFIDActive OR uhfManager not initialized:",
+        "    RETURN",
+        "  ",
+        "  TRY:",
+        "    // 先尝试实时读取",
+        "    tagList = uhfManager.tagInventoryRealTime()",
+        "    ",
+        "    // 若为空，回退到定时读取",
+        "    IF tagList is empty:",
+        "      tagList = uhfManager.tagInventoryByTimer(50ms)",
+        "    ",
+        "    IF tagList is not empty:",
+        "      emptyReadRounds = 0",
+        "      currentPollInterval = MIN_INTERVAL (200ms)",
+        "      FOR EACH tag IN tagList:",
+        "        IF beepModeRaw: rfidBeepManager.requestBeep()",
+        "        handleTagScanned(tag)",
+        "    ELSE:",
+        "      // 退避策略",
+        "      emptyReadRounds++",
+        "      currentPollInterval = min(currentPollInterval * 2, MAX_INTERVAL)",
+        "      ",
+        "      // 空读自恢复",
+        "      IF emptyReadRounds >= 4:",
+        "        uhfManager.asyncStopReading()",
+        "        sleep(30ms)",
+        "        uhfManager.asyncStartReading()",
+        "        emptyReadRounds = 0",
+        "  CATCH Exception:",
+        "    Log error",
+        "  ",
+        "  // 调度下一轮",
+        "  IF isRFIDActive:",
+        "    rfidBgHandler.postDelayed(this, currentPollInterval)"
+      ]
+    }
+  ]
+}
