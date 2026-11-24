@@ -4,6 +4,9 @@
   "description": "PDA 动作型移库单功能，支持条码/RFID扫描耗材，按源中心库+子码聚合展示，一次提交后端按源中心库拆分移库单",
   "code_refs": [
     {
+      "file": "app/src/main/java/com/pda/hcw/SubmissionQueue.java"
+    },
+    {
       "file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/ConsumableTransferActivity.java"
     }
   ],
@@ -121,6 +124,14 @@
     }
   ],
   "rules": [
+    {
+      "id": "transfer_confirmed_input",
+      "name": "确认本次移库清单",
+      "description": "确认整单成功后只移除点击提交时的标签。等待回执时新扫的标签留给下一单。",
+      "code_ref": {
+        "file": "app/src/main/java/com/pda/hcw/ConsumableTransferActivity.java"
+      }
+    },
     {
       "id": "rule_center_required",
       "name": "目标中心库必选",

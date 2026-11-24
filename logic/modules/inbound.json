@@ -3,6 +3,9 @@
   "name": "入库验收模块",
   "description": "PDA端入库验收功能，支持条码单个扫码验收和RFID批量验收，仅展示未全部上架的单据，每单支持验收(落库)与清空本次增量操作",
   "code_refs": [
+    {
+      "file": "app/src/main/java/com/pda/hcw/SubmissionQueue.java"
+    },
     {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InboundAcceptanceActivity.java"},
     {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/InboundApiService.java"}
   ],
@@ -258,12 +261,12 @@
         {
           "step": 8,
           "action": "调用API提交",
-          "description": "submitInboundOrder发送POST请求"
+          "description": "先在本机保存本次验收清单和编号，再提交"
         },
         {
           "step": 9,
           "action": "清理本地状态",
-          "description": "清空deltaByOrder，更新或移除已完成单据"
+          "description": "根据逐标签回执处理本次清单，保留新扫描并展示待核对原因"
         },
         {
           "step": 10,
@@ -274,6 +277,14 @@
     }
   ],
   "rules": [
+    {
+      "id": "inbound_confirmed_input",
+      "name": "按标签核对入库结果",
+      "description": "验收固定本次标签和目标库位。回执逐个列出成功和待核对标签，展示原因，等待期间新扫的标签继续待验。",
+      "code_ref": {
+        "file": "app/src/main/java/com/pda/hcw/InboundAcceptanceActivity.java"
+      }
+    },
     {
       "id": "epc_normalize_rule",
       "name": "EPC格式化规则",

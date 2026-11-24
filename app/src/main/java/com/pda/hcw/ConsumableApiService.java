@@ -263,7 +263,7 @@ public class ConsumableApiService {
      * @param data 请求数据
      * @return 响应数据
      */
-    private String sendHttpRequest(String url, String method, String data) throws Exception {
+    String sendHttpRequest(String url, String method, String data) throws Exception {
         HttpURLConnection connection = null;
         try {
             URL requestUrl = new URL(url);
@@ -772,32 +772,39 @@ public class ConsumableApiService {
                 Log.d(TAG, "submitInventoryScanBatch(POST): " + url + ", body=" + body);
                 String response = sendHttpRequest(url, "POST", body.toString());
 
-                org.json.JSONObject root = new org.json.JSONObject(response);
-                int status = root.optInt("status", root.optInt("code", 0));
-                if (status != 200) {
-                    String msg = root.optString("message", root.optString("msg", "提交失败"));
-                    throw new Exception(msg);
-                }
-                org.json.JSONObject data = root.optJSONObject("data");
-                InventoryTaskSummary summary = new InventoryTaskSummary();
-                if (data != null) {
-                    summary.taskId = data.optString("taskId", taskId);
-                    summary.plannedCount = data.optInt("plannedCount", 0);
-                    summary.scannedCount = data.optInt("scannedCount", 0);
-                    summary.normalCount = data.optInt("normalCount", 0);
-                    summary.missingCount = data.optInt("missingCount", 0);
-                    summary.surplusCount = data.optInt("surplusCount", 0);
-                } else {
-                    summary.taskId = taskId;
-                }
-
-                InventoryTaskSummary finalSummary = summary;
-                mainHandler.post(() -> callback.onSuccess(finalSummary));
+                InventoryTaskSummary summary = parseScanReceipt(response, taskId, arr);
+                mainHandler.post(() -> callback.onSuccess(summary));
             } catch (Exception e) {
                 Log.e(TAG, "submitInventoryScanBatch failed", e);
                 mainHandler.post(() -> callback.onFailure(e));
             }
         });
+    }
+
+    static InventoryTaskSummary parseScanReceipt(String response, String taskId, JSONArray sent) throws Exception {
+        JSONObject root = new JSONObject(response);
+        if (root.getInt("status") != 200) throw new Exception(root.optString("message", "提交失败"));
+        JSONObject data = root.getJSONObject("data");
+        if (!taskId.equals(data.getString("taskId")) || data.getLong("batchId") <= 0)
+            throw new Exception("服务器回执的任务或批次不匹配");
+        java.util.Set<String> expected = new java.util.HashSet<>();
+        for (int i = 0; i < sent.length(); i++) expected.add(sent.getString(i));
+        JSONArray accepted = data.getJSONArray("acceptedRfids");
+        if (expected.isEmpty() || accepted.length() != expected.size()) throw new Exception("服务器未确认完整批次");
+        for (int i = 0; i < accepted.length(); i++) {
+            if (!expected.remove(accepted.getString(i))) throw new Exception("服务器回执中的标签与本批不一致");
+        }
+        InventoryTaskSummary summary = new InventoryTaskSummary();
+        summary.taskId = taskId;
+        summary.plannedCount = data.getInt("plannedCount");
+        summary.scannedCount = data.getInt("scannedCount");
+        summary.normalCount = data.getInt("normalCount");
+        summary.missingCount = data.getInt("missingCount");
+        summary.surplusCount = data.getInt("surplusCount");
+        if (Math.min(Math.min(summary.plannedCount, summary.scannedCount),
+                Math.min(summary.normalCount, Math.min(summary.missingCount, summary.surplusCount))) < 0)
+            throw new Exception("服务器返回的盘点数量无效");
+        return summary;
     }
 
     /**
@@ -819,48 +826,25 @@ public class ConsumableApiService {
 
                 String base = networkConfig.getFullUrl(ApiEndpoint.INVENTORY_TASK_LIST)
                         .replace("/inventoryTask/list", "/inventoryTask/detail");
-                String url = base + "?taskId=" + java.net.URLEncoder.encode(taskId, "UTF-8")
-                        + "&page=1&pagesize=10000";
-
-                Log.d(TAG, "fetchInventoryTaskDetail(GET): " + url);
-                String resp = sendHttpRequest(url, "GET", null);
-
-                org.json.JSONObject root = new org.json.JSONObject(resp);
-                int status = root.optInt("status", root.optInt("code", 0));
-                if (status != 200) {
-                    String msg = root.optString("message", root.optString("msg", "查询失败"));
-                    throw new Exception(msg);
-                }
-                org.json.JSONObject data = root.optJSONObject("data");
-                org.json.JSONObject detail = data != null ? data.optJSONObject("detail") : null;
-                org.json.JSONArray items = detail != null ? detail.optJSONArray("items") : null;
-                if (items == null) items = new org.json.JSONArray();
-
+                String query = base + "?taskId=" + java.net.URLEncoder.encode(taskId, "UTF-8");
                 InventoryTaskDetailResult result = new InventoryTaskDetailResult();
-                for (int i = 0; i < items.length(); i++) {
-                    org.json.JSONObject obj = items.optJSONObject(i);
-                    if (obj == null) continue;
-                    InventoryTaskDetailItem it = new InventoryTaskDetailItem();
-                    it.rfid = obj.optString("rfid", null);
-                    if (obj.has("operatingRoomID") && !obj.isNull("operatingRoomID")) {
-                        try {
-                            it.operatingRoomID = obj.optInt("operatingRoomID", 0);
-                        } catch (Exception ignore) {
-                            it.operatingRoomID = null;
-                        }
+                int total = -1;
+                for (int page = 1; ; page++) {
+                    String resp = sendHttpRequest(query + "&page=" + page + "&pagesize=1000", "GET", null);
+                    org.json.JSONObject root = new org.json.JSONObject(resp);
+                    if (root.optInt("status", root.optInt("code", 0)) != 200) {
+                        throw new Exception(root.optString("message", "查询失败"));
                     }
-                    it.operatingRoomName = obj.optString("operatingRoomName", null);
-                    it.code = obj.optString("code", null);
-                    if (it.code != null && it.code.trim().isEmpty()) it.code = null;
-                    it.name = obj.optString("name", null);
-                    it.spec = obj.optString("spec", null);
-                    it.manufacturer = obj.optString("manufacturer", null);
-                    it.snapshotStatus = obj.optString("snapshotStatus", null);
-                    if (it.snapshotStatus != null && it.snapshotStatus.trim().isEmpty()) it.snapshotStatus = null;
-                    it.latestStatus = obj.optString("latestStatus", null);
-                    if (it.latestStatus != null && it.latestStatus.trim().isEmpty()) it.latestStatus = null;
-                    it.scanStatus = obj.optString("scanStatus", null);
-                    result.items.add(it);
+                    org.json.JSONObject detail = root.getJSONObject("data").getJSONObject("detail");
+                    org.json.JSONArray items = detail.getJSONArray("items");
+                    int currentTotal = detail.getInt("total");
+                    if (currentTotal < 0 || detail.getInt("page") != page || (total >= 0 && total != currentTotal)) {
+                        throw new Exception("盘点计划已变化，请刷新");
+                    }
+                    total = currentTotal;
+                    appendInventoryPage(items, result);
+                    if (result.items.size() == total) break;
+                    if (items.length() == 0 || result.items.size() > total) throw new Exception("盘点计划未加载完整");
                 }
 
                 InventoryTaskDetailResult finalResult = result;
@@ -870,6 +854,33 @@ public class ConsumableApiService {
                 mainHandler.post(() -> callback.onFailure(e));
             }
         });
+    }
+
+    private void appendInventoryPage(org.json.JSONArray items, InventoryTaskDetailResult result) throws org.json.JSONException {
+        for (int i = 0; i < items.length(); i++) {
+            org.json.JSONObject obj = items.getJSONObject(i);
+            InventoryTaskDetailItem it = new InventoryTaskDetailItem();
+            it.rfid = obj.optString("rfid", null);
+            if (obj.has("operatingRoomID") && !obj.isNull("operatingRoomID")) {
+                try {
+                    it.operatingRoomID = obj.optInt("operatingRoomID", 0);
+                } catch (Exception ignore) {
+                    it.operatingRoomID = null;
+                }
+            }
+            it.operatingRoomName = obj.optString("operatingRoomName", null);
+            it.code = obj.optString("code", null);
+            if (it.code != null && it.code.trim().isEmpty()) it.code = null;
+            it.name = obj.optString("name", null);
+            it.spec = obj.optString("spec", null);
+            it.manufacturer = obj.optString("manufacturer", null);
+            it.snapshotStatus = obj.isNull("snapshotStatus") ? null : obj.getString("snapshotStatus");
+            if (it.snapshotStatus != null && it.snapshotStatus.trim().isEmpty()) it.snapshotStatus = null;
+            it.latestStatus = obj.optString("latestStatus", null);
+            if (it.latestStatus != null && it.latestStatus.trim().isEmpty()) it.latestStatus = null;
+            it.scanStatus = obj.optString("scanStatus", null);
+            result.items.add(it);
+        }
     }
 
     /**
@@ -1094,162 +1105,124 @@ public class ConsumableApiService {
     /**
      * 取用/归还记录创建结果
      */
-    public static class CreateTakeAndReturnResult {
-        public Long recordId;
-        public Integer takeCount;
-        public Integer returnCount;
-    }
 
     /**
      * 创建取用/归还记录（POST /api/stock/createTakeAndReturnLog）
      */
-    public void createTakeAndReturnLog(Integer operationRoomId,
-                                       java.util.List<ConsumableItem> takeItems,
-                                       java.util.List<ConsumableItem> returnItems,
-                                       @androidx.annotation.Nullable String fromLocationId,
-                                       @androidx.annotation.Nullable String toLocationId,
-                                       ApiCallback<CreateTakeAndReturnResult> callback) {
-        executorService.execute(() -> {
-            try {
-                // 校验登录与配置
-                UserInfo currentUser = SessionManager.getInstance(context).getCurrentUser();
-                if (currentUser == null) {
-                    mainHandler.post(() -> callback.onFailure(new Exception("用户未登录")));
-                    return;
-                }
+    JSONObject buildCheckoutBody(Integer operationRoomId, List<ConsumableItem> takeItems,
+                                 List<ConsumableItem> returnItems, String fromLocationId, String toLocationId) throws Exception {
+        // 校验登录与配置
+        UserInfo currentUser = SessionManager.getInstance(context).getCurrentUser();
+        if (currentUser == null) {
+            throw new IllegalArgumentException("用户未登录");
+        }
 
-                if (!networkConfig.isValidConfig()) {
-                    mainHandler.post(() -> callback.onFailure(new Exception("API服务器地址未配置，请先在设置中配置API地址")));
-                    return;
-                }
+        if (!networkConfig.isValidConfig()) {
+            throw new IllegalArgumentException("API服务器地址未配置，请先在设置中配置API地址");
+        }
 
-                // 读取配置中的cabinetId
-                int cabinetId = BarcodeValidator.getInstance(context).getCabinetId();
-                if (cabinetId <= 0) {
-                    mainHandler.post(() -> callback.onFailure(new Exception("请先在设置中配置货柜ID")));
-                    return;
-                }
+        // 读取配置中的cabinetId
+        int cabinetId = BarcodeValidator.getInstance(context).getCabinetId();
+        if (cabinetId <= 0) {
+            throw new IllegalArgumentException("请先在设置中配置货柜ID");
+        }
 
-                // 不再调用 GET_STOCK_BY_RFID 补齐ID；明细ID与服务端主键无关联，仅为行号
+        // 不再调用 GET_STOCK_BY_RFID 补齐ID；明细ID与服务端主键无关联，仅为行号
 
-                // 构造请求体
-                org.json.JSONObject body = new org.json.JSONObject();
-                // userID 为数字
-                long userIdNumeric;
-                try {
-                    userIdNumeric = Long.parseLong(currentUser.getUserId());
-                } catch (Exception e) {
-                    userIdNumeric = 0L;
-                }
-                body.put("userID", userIdNumeric);
-                String now = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
-                        .format(new java.util.Date());
-                body.put("openDoorTime", now);
-                body.put("closeDoorTime", now);
-                if (operationRoomId == null) {
-                    body.put("operationroomId", org.json.JSONObject.NULL);
-                } else {
-                    body.put("operationroomId", operationRoomId);
-                }
-                body.put("cabinetID", cabinetId);
-                // from 优先使用调用方传入的 current_location_id；缺失时回退柜ID
-                if (fromLocationId != null && !fromLocationId.trim().isEmpty()) {
-                    body.put("from_location_id", fromLocationId.trim());
-                } else {
-                    body.put("from_location_id", String.valueOf(cabinetId));
-                }
-                if (toLocationId != null && !toLocationId.trim().isEmpty()) {
-                    body.put("to_location_id", toLocationId.trim());
-                } else {
-                    body.put("to_location_id", org.json.JSONObject.NULL);
-                }
+        // 构造请求体
+        org.json.JSONObject body = new org.json.JSONObject();
+        // userID 为数字
+        long userIdNumeric;
+        try {
+            userIdNumeric = Long.parseLong(currentUser.getUserId());
+        } catch (Exception e) {
+            userIdNumeric = 0L;
+        }
+        body.put("userID", userIdNumeric);
+        String now = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
+                .format(new java.util.Date());
+        body.put("openDoorTime", now);
+        body.put("closeDoorTime", now);
+        if (operationRoomId == null) {
+            body.put("operationroomId", org.json.JSONObject.NULL);
+        } else {
+            body.put("operationroomId", operationRoomId);
+        }
+        body.put("cabinetID", cabinetId);
+        // from 优先使用调用方传入的 current_location_id；缺失时回退柜ID
+        if (fromLocationId != null && !fromLocationId.trim().isEmpty()) {
+            body.put("from_location_id", fromLocationId.trim());
+        } else {
+            body.put("from_location_id", String.valueOf(cabinetId));
+        }
+        if (toLocationId != null && !toLocationId.trim().isEmpty()) {
+            body.put("to_location_id", toLocationId.trim());
+        } else {
+            body.put("to_location_id", org.json.JSONObject.NULL);
+        }
 
-                org.json.JSONArray takeArr = new org.json.JSONArray();
-                int lineId = 1;
-                if (takeItems != null) {
-                    for (ConsumableItem item : takeItems) {
-                        // 校验基本字段
-                        if (item == null) continue;
-                        org.json.JSONObject it = new org.json.JSONObject();
-                        // 明细ID使用本次提交内的递增序号
-                        it.put("id", lineId++);
-                        String rfid = item.getRfid();
-                        it.put("rfid", rfid);
-                        it.put("batch", item.getBatch() == null ? "" : item.getBatch());
-                        it.put("expiryDate", item.getExpiryDate() == null ? "" : item.getExpiryDate());
-                        it.put("productionDate", item.getProductionDate() == null ? "" : item.getProductionDate());
-                        it.put("code", item.getProductCode() == null ? "" : item.getProductCode());
-                        it.put("name", item.getCommonName() == null ? "" : item.getCommonName());
-                        it.put("spec", item.getSpecification() == null ? "" : item.getSpecification());
-                        it.put("manufacturer", item.getManufacturer() == null ? "" : item.getManufacturer());
-                        it.put("brand", item.getBrand() == null ? "" : item.getBrand());
-                        // 单位：优先使用客户端持有的单位信息，缺失时回退到“个”
-                        String unit = item.getUnit();
-                        if (unit == null || unit.trim().isEmpty()) {
-                            unit = "个";
-                        }
-                        it.put("unit", unit);
-                        // 可选：取用并发校验（当前暂不强制，后端主要针对归还做校验）
-                        takeArr.put(it);
-                    }
+        org.json.JSONArray takeArr = new org.json.JSONArray();
+        int lineId = 1;
+        if (takeItems != null) {
+            for (ConsumableItem item : takeItems) {
+                // 校验基本字段
+                if (item == null) continue;
+                org.json.JSONObject it = new org.json.JSONObject();
+                // 明细ID使用本次提交内的递增序号
+                it.put("id", lineId++);
+                String rfid = item.getRfid();
+                it.put("rfid", rfid);
+                it.put("batch", item.getBatch() == null ? "" : item.getBatch());
+                it.put("expiryDate", item.getExpiryDate() == null ? "" : item.getExpiryDate());
+                it.put("productionDate", item.getProductionDate() == null ? "" : item.getProductionDate());
+                it.put("code", item.getProductCode() == null ? "" : item.getProductCode());
+                it.put("name", item.getCommonName() == null ? "" : item.getCommonName());
+                it.put("spec", item.getSpecification() == null ? "" : item.getSpecification());
+                it.put("manufacturer", item.getManufacturer() == null ? "" : item.getManufacturer());
+                it.put("brand", item.getBrand() == null ? "" : item.getBrand());
+                // 单位：优先使用客户端持有的单位信息，缺失时回退到“个”
+                String unit = item.getUnit();
+                if (unit == null || unit.trim().isEmpty()) {
+                    unit = "个";
                 }
-                body.put("takeList", takeArr);
-
-                org.json.JSONArray returnArr = new org.json.JSONArray();
-                if (returnItems != null) {
-                    for (ConsumableItem item : returnItems) {
-                        if (item == null) continue;
-                        org.json.JSONObject it = new org.json.JSONObject();
-                        it.put("id", lineId++);
-                        String rfid = item.getRfid();
-                        it.put("rfid", rfid);
-                        it.put("batch", item.getBatch() == null ? "" : item.getBatch());
-                        it.put("expiryDate", item.getExpiryDate() == null ? "" : item.getExpiryDate());
-                        it.put("productionDate", item.getProductionDate() == null ? "" : item.getProductionDate());
-                        it.put("code", item.getProductCode() == null ? "" : item.getProductCode());
-                        it.put("name", item.getCommonName() == null ? "" : item.getCommonName());
-                        it.put("spec", item.getSpecification() == null ? "" : item.getSpecification());
-                        it.put("manufacturer", item.getManufacturer() == null ? "" : item.getManufacturer());
-                        it.put("brand", item.getBrand() == null ? "" : item.getBrand());
-                        String unit = item.getUnit();
-                        if (unit == null || unit.trim().isEmpty()) {
-                            unit = "个";
-                        }
-                        it.put("unit", unit);
-                        // 并发校验：记录客户端看到的当前库存位置
-                        if (item.getCurrentLocationId() != null && item.getCurrentLocationId() > 0) {
-                            it.put("expected_current_location_id", String.valueOf(item.getCurrentLocationId()));
-                        }
-                        returnArr.put(it);
-                    }
-                }
-                body.put("returnList", returnArr);
-
-                String apiUrl = networkConfig.getFullUrl(ApiEndpoint.CREATE_TAKE_RETURN_LOG);
-                Log.d(TAG, "提交取用记录到: " + apiUrl);
-                Log.d(TAG, "请求数据: " + body.toString());
-
-                String resp = sendHttpRequest(apiUrl, "POST", body.toString());
-                org.json.JSONObject json = new org.json.JSONObject(resp);
-                int status = json.optInt("status", 0);
-                if (status != 200) {
-                    String msg = json.optString("message", "提交失败");
-                    throw new Exception(msg);
-                }
-                org.json.JSONObject data = json.optJSONObject("data");
-                CreateTakeAndReturnResult result = new CreateTakeAndReturnResult();
-                if (data != null) {
-                    if (!data.isNull("recordId")) result.recordId = data.optLong("recordId");
-                    if (!data.isNull("takeCount")) result.takeCount = data.optInt("takeCount");
-                    if (!data.isNull("returnCount")) result.returnCount = data.optInt("returnCount");
-                }
-                CreateTakeAndReturnResult finalResult = result;
-                mainHandler.post(() -> callback.onSuccess(finalResult));
-            } catch (Exception e) {
-                Log.e(TAG, "createTakeAndReturnLog failed", e);
-                mainHandler.post(() -> callback.onFailure(e));
+                it.put("unit", unit);
+                // 可选：取用并发校验（当前暂不强制，后端主要针对归还做校验）
+                takeArr.put(it);
             }
-        });
+        }
+        body.put("takeList", takeArr);
+
+        org.json.JSONArray returnArr = new org.json.JSONArray();
+        if (returnItems != null) {
+            for (ConsumableItem item : returnItems) {
+                if (item == null) continue;
+                org.json.JSONObject it = new org.json.JSONObject();
+                it.put("id", lineId++);
+                String rfid = item.getRfid();
+                it.put("rfid", rfid);
+                it.put("batch", item.getBatch() == null ? "" : item.getBatch());
+                it.put("expiryDate", item.getExpiryDate() == null ? "" : item.getExpiryDate());
+                it.put("productionDate", item.getProductionDate() == null ? "" : item.getProductionDate());
+                it.put("code", item.getProductCode() == null ? "" : item.getProductCode());
+                it.put("name", item.getCommonName() == null ? "" : item.getCommonName());
+                it.put("spec", item.getSpecification() == null ? "" : item.getSpecification());
+                it.put("manufacturer", item.getManufacturer() == null ? "" : item.getManufacturer());
+                it.put("brand", item.getBrand() == null ? "" : item.getBrand());
+                String unit = item.getUnit();
+                if (unit == null || unit.trim().isEmpty()) {
+                    unit = "个";
+                }
+                it.put("unit", unit);
+                // 并发校验：记录客户端看到的当前库存位置
+                if (item.getCurrentLocationId() != null && item.getCurrentLocationId() > 0) {
+                    it.put("expected_current_location_id", String.valueOf(item.getCurrentLocationId()));
+                }
+                returnArr.put(it);
+            }
+        }
+        body.put("returnList", returnArr);
+
+        return body;
     }
 
     /**

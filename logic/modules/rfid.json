@@ -3,6 +3,9 @@
   "name": "RFID硬件管理模块",
   "description": "封装UHF RFID读卡器的初始化、参数配置、标签读取、EPC编解码及音频反馈功能，提供统一的硬件抽象层",
   "code_refs": [
+    {
+      "file": "tools/package-rfid-format.sh"
+    },
     {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/UHFManager.java"},
     {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/EpcFormatter.java"},
     {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/rfid/RfidBeepManager.java"}
@@ -79,6 +82,14 @@
     }
   ],
   "rules": [
+    {
+      "id": "rfid_confirmed_input",
+      "name": "手持机与门禁共用标签解析",
+      "description": "两个应用在接收电子标签时使用同一份解析源码。门禁离线依赖由手持项目的打包脚本生成。",
+      "code_ref": {
+        "file": "app/src/main/java/com/pda/hcw/rfid/EpcFormatter.java"
+      }
+    },
     {
       "id": "epc_rule_prefix_000000",
       "name": "EPC前缀000000规则",

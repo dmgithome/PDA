@@ -164,6 +164,13 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
             
             // 初始化领用记录管理器
             recordManager = CheckoutRecordManager.getInstance(this);
+            submissions = new SubmissionQueue(this, ApiEndpoint.CREATE_TAKE_RETURN_LOG, operationMode.name(), new SubmissionQueue.Listener() {
+                @Override public void apply(String slot, org.json.JSONObject body, org.json.JSONObject display,
+                                            org.json.JSONObject receipt) throws Exception {
+                    applyCheckoutReceipt(slot, body, display, receipt);
+                }
+                @Override public void showMessage(String message) { showInfo(message); }
+            });
             // 历史列表按当前登录用户ID过滤，避免重名
             try {
                 UserInfo u = sessionManager.getCurrentUser();
@@ -1330,6 +1337,7 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
     
     private void clearAllItems() {
         try {
+            selectedItemsByRfid.clear();
             consumableGroupList.clear();
             productCodeGroups.clear();
             detailAdapter.notifyDataSetChanged();
@@ -1566,8 +1574,13 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
     
     // BaseActivity已统一处理用户信息显示，移除重复逻辑
     
+    private SubmissionQueue submissions;
+    private final java.util.List<String> checkoutResults = new ArrayList<>();
+    private final java.util.Set<String> outstandingGroups = new java.util.HashSet<>();
+
     private void confirmCheckout() {
         try {
+            if (!outstandingGroups.isEmpty()) { submissions.resumePending(); return; }
             String selectedRoom = roomSpinner.getText().toString().trim();
             // 取用需选择术间；归还无需术间
             if (operationMode == OperationMode.TAKE) {
@@ -1642,71 +1655,22 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
                 }
             }
 
-            final java.util.concurrent.atomic.AtomicInteger pending = new java.util.concurrent.atomic.AtomicInteger(groups.size());
-            final boolean[] failed = new boolean[]{false};
-            final Long[] lastServerRecordId = new Long[]{null};
-
-            if (groups.isEmpty()) {
-                showError("没有可提交的数据");
-                applyUiState(CheckoutUiState.NEW_CHECKOUT);
-                return;
-            }
-
+            checkoutResults.clear();
             for (java.util.Map.Entry<Integer, java.util.List<ConsumableItem>> entry : groups.entrySet()) {
-                final String fromIdStr = entry.getKey() > 0 ? String.valueOf(entry.getKey()) : null;
-                java.util.List<ConsumableItem> thisTake = (operationMode == OperationMode.TAKE) ? entry.getValue() : new java.util.ArrayList<>();
-                java.util.List<ConsumableItem> thisReturn = (operationMode == OperationMode.RETURN) ? entry.getValue() : new java.util.ArrayList<>();
-
-                apiService.createTakeAndReturnLog(
-                        operationMode == OperationMode.TAKE ? operationRoomId : null,
-                        thisTake,
-                        thisReturn,
-                        fromIdStr,
-                        operationMode == OperationMode.TAKE ? (operationRoomId == null ? null : String.valueOf(operationRoomId)) : null,
-                        new ConsumableApiService.ApiCallback<ConsumableApiService.CreateTakeAndReturnResult>() {
-                            @Override
-                            public void onSuccess(ConsumableApiService.CreateTakeAndReturnResult result) {
-                                if (result != null && result.recordId != null) lastServerRecordId[0] = result.recordId;
-                                int left = pending.decrementAndGet();
-                                if (left == 0 && !failed[0]) {
-                                    runOnUiThread(() -> {
-                                        String operator = null;
-                                        try { UserInfo u = sessionManager.getCurrentUser(); if (u != null) operator = u.getDisplayName(); } catch (Exception ignore) {}
-                                        if (operator == null || operator.isEmpty()) operator = recordManager.getCurrentUser();
-                                        boolean ok;
-                                        if (operationMode == OperationMode.TAKE) {
-                                            ok = recordManager.generateCheckoutRecord(selectedRoom, totalCount, takeItems, operator, lastServerRecordId[0]);
-                                        } else {
-                                            ok = recordManager.generateReturnRecord(totalCount, returnItems, operator, lastServerRecordId[0]);
-                                        }
-                                        if (ok) {
-                                            showSuccess((operationMode == OperationMode.TAKE ? "取用成功！共 " : "归还成功！共 ") + totalCount + " 项");
-                                            clearAllItems();
-                                            if (operationMode == OperationMode.TAKE && roomSpinner != null) roomSpinner.setText("");
-                                            loadHistoryRecords(TimeFilter.TODAY);
-                                            applyUiState(CheckoutUiState.NEW_CHECKOUT);
-                                        } else {
-                                            Log.e(TAG, "本地记录保存失败: room=" + selectedRoom + ", totalCount=" + totalCount);
-                                            showError("本地记录保存失败");
-                                            applyUiState(CheckoutUiState.NEW_CHECKOUT);
-                                        }
-                                    });
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Exception e) {
-                                failed[0] = true;
-                                runOnUiThread(() -> {
-                                    String msg = UIUtils.friendlyErrorMessage("提交失败", e);
-                                    showError(msg);
-                                    applyUiState(CheckoutUiState.NEW_CHECKOUT);
-                                });
-                            }
-                        }
-                );
+                final String slot = String.valueOf(entry.getKey());
+                if (submissions.hasPending(slot)) { outstandingGroups.add(slot); submissions.resumePending(); continue; }
+                boolean take = operationMode == OperationMode.TAKE;
+                List<ConsumableItem> items = entry.getValue();
+                org.json.JSONObject body = apiService.buildCheckoutBody(take ? operationRoomId : null,
+                        take ? items : java.util.Collections.emptyList(), take ? java.util.Collections.emptyList() : items,
+                        entry.getKey() > 0 ? slot : null, take && operationRoomId != null ? String.valueOf(operationRoomId) : null);
+                UserInfo user = SessionManager.getInstance(this).getCurrentUser();
+                org.json.JSONObject display = new org.json.JSONObject().put("items", CheckoutRecordDatabase.itemsToJson(items))
+                        .put("room", selectedRoom).put("operator", user.getUsername()).put("user", user.getUserId())
+                        .put("time", System.currentTimeMillis());
+                submissions.submit(slot, body, display);
+                outstandingGroups.add(slot);
             }
-
         } catch (Exception e) {
             Log.e(TAG, "Error in confirmCheckout", e);
             showError(UIUtils.friendlyErrorMessage(operationMode == OperationMode.TAKE ? "取用失败" : "归还失败", e));
@@ -1715,6 +1679,56 @@ public class ConsumableCheckoutNewActivity extends BaseActivity {
         }
     }
     
+    private void applyCheckoutReceipt(String slot, org.json.JSONObject body, org.json.JSONObject display,
+                                      org.json.JSONObject receipt) throws Exception {
+        boolean take = operationMode == OperationMode.TAKE;
+        List<ConsumableItem> items = CheckoutRecordDatabase.jsonToItems(display.getString("items"));
+        boolean success = receipt.getInt("status") == 200;
+        if (success) {
+            org.json.JSONObject result = receipt.getJSONObject("data");
+            long serverId = result.getLong("recordId");
+            if (serverId <= 0 || result.getInt(take ? "takeCount" : "returnCount") != items.size()) {
+                throw new IllegalStateException("提交回执明细不完整");
+            }
+            String localId = (take ? "LK" : "GH") + body.getString("request_id");
+            CheckoutRecordDatabase db = CheckoutRecordDatabase.getInstance(this);
+            if (db.getRecordById(localId) == null) {
+                CheckoutRecord record = new CheckoutRecord(localId, serverId, display.getLong("time"), display.getString("room"),
+                        items.size(), display.getString("operator"), items);
+                record.operatorUserId = display.getString("user");
+                if ((take ? db.insertCheckoutRecord(record) : db.insertReturnRecord(record)) < 0) {
+                    throw new IllegalStateException("本地记录未保存");
+                }
+            }
+            for (ConsumableItem item : items) {
+                selectedItemsByRfid.remove(item.getRfid());
+                addedBarcodes.remove(item.getRfid());
+                if (item.getBarcode() != null) addedBarcodes.remove(item.getBarcode());
+            }
+            // 只重建剩余条目的分组，其他来源库及回执期间新加入的条目继续保留。
+            productCodeGroups.clear();
+            consumableGroupList.clear();
+            detailAdapter.notifyDataSetChanged();
+            for (ConsumableItem remaining : selectedItemsByRfid.values()) addConsumableItem(remaining);
+            updateTotalCountDisplay();
+            loadHistoryRecords(TimeFilter.TODAY);
+        } else {
+            for (ConsumableItem item : items) {
+                if (!selectedItemsByRfid.containsKey(item.getRfid())) {
+                    selectedItemsByRfid.put(item.getRfid(), item);
+                    addConsumableItem(item);
+                    addedBarcodes.add(item.getRfid());
+                }
+            }
+        }
+        checkoutResults.add("来源库 " + slot + "：" + (success ? items.size() + (take ? " 件已取用" : " 件已归还")
+                : "失败，" + receipt.optString("message")));
+        outstandingGroups.remove(slot);
+        if (outstandingGroups.isEmpty()) applyUiState(CheckoutUiState.NEW_CHECKOUT);
+        String message = android.text.TextUtils.join("；", checkoutResults);
+        if (success && selectedItemsByRfid.isEmpty()) showSuccess(message); else showInfo(message);
+    }
+
     // 移除时间过滤功能，直接显示今日记录
     
     private void loadHistoryRecords(TimeFilter filter) {

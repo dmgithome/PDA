@@ -3,6 +3,9 @@
   "name": "耗材出库模块",
   "description": "PDA耗材取用/归还模块，支持条码扫描、批量处理、本地记录持久化及服务端同步",
   "code_refs": [
+    {
+      "file": "app/src/main/java/com/pda/hcw/SubmissionQueue.java"
+    },
     {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/ConsumableCheckoutNewActivity.java"},
     {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/CheckoutRecordDatabase.java"},
     {"file": "/Users/dm/code/PDA/app/src/main/java/com/pda/hcw/ConsumableApiService.java"}
@@ -80,7 +83,7 @@
         {
           "step": 11,
           "name": "保存本地记录",
-          "description": "调用recordManager.generateCheckoutRecord保存到SQLite",
+          "description": "凭成功回执按提交编号写入本地取用历史",
           "code_ref": {"file": "ConsumableCheckoutNewActivity.java", "line_range": "1677-1679"}
         }
       ]
@@ -121,7 +124,7 @@
         {
           "step": 5,
           "name": "保存本地记录",
-          "description": "调用recordManager.generateReturnRecord保存归还记录",
+          "description": "凭成功回执按提交编号写入本地归还历史",
           "code_ref": {"file": "ConsumableCheckoutNewActivity.java", "line_range": "1680-1681"}
         }
       ]
@@ -157,6 +160,14 @@
     }
   ],
   "rules": [
+    {
+      "id": "checkout_confirmed_input",
+      "name": "确认每个来源库的取用或归还",
+      "description": "每个来源库各有一个持久保存的提交编号。成功后按编号保存一次历史并移除该组标签，失败保留明细和原因。",
+      "code_ref": {
+        "file": "app/src/main/java/com/pda/hcw/ConsumableCheckoutNewActivity.java"
+      }
+    },
     {
       "id": "barcode_validation",
       "name": "条码格式校验",

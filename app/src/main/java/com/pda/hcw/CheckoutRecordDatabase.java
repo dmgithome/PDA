@@ -22,7 +22,9 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
     
     // 数据库信息
     private static final String DATABASE_NAME = "checkout_records.db";
-    private static final int DATABASE_VERSION = 9; // v9：确保明细表含rfid列，修复老设备缺列
+    private static final int DATABASE_VERSION = 10;
+    private static final String CREATE_PENDING_SCANS = "CREATE TABLE IF NOT EXISTS inventory_pending_scan "
+            + "(task_id TEXT NOT NULL, rfid TEXT NOT NULL, PRIMARY KEY(task_id, rfid))";
     
     // 表名
     private static final String TABLE_CHECKOUT_RECORDS = "checkout_records";
@@ -267,6 +269,7 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
     
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL(CREATE_PENDING_SCANS);
         try {
             // 创建角色表
             db.execSQL(CREATE_TABLE_ROLES);
@@ -427,6 +430,31 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_INVENTORY_TASKS);
             onCreate(db);
         }
+        if (oldVersion < 10) db.execSQL(CREATE_PENDING_SCANS);
+    }
+
+    public void recordPendingScan(String taskId, String rfid) {
+        getWritableDatabase().execSQL("INSERT OR IGNORE INTO inventory_pending_scan (task_id, rfid) VALUES (?, ?)",
+                new Object[]{taskId, rfid});
+    }
+
+    public List<String> pendingScans(String taskId) {
+        List<String> result = new ArrayList<>();
+        try (Cursor cursor = getReadableDatabase().rawQuery(
+                "SELECT rfid FROM inventory_pending_scan WHERE task_id=? ORDER BY rfid", new String[]{taskId})) {
+            while (cursor.moveToNext()) result.add(cursor.getString(0));
+        }
+        return result;
+    }
+
+    public void acknowledgeScans(String taskId, List<String> confirmed) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (String rfid : confirmed)
+                db.delete("inventory_pending_scan", "task_id=? AND rfid=?", new String[]{taskId, rfid});
+            db.setTransactionSuccessful();
+        } finally { db.endTransaction(); }
     }
 
     /**
@@ -831,7 +859,7 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
     /**
      * 将耗材列表转换为JSON字符串
      */
-    private String itemsToJson(List<ConsumableItem> items) {
+    static String itemsToJson(List<ConsumableItem> items) {
         try {
             if (items == null) {
                 return "[]";
@@ -853,6 +881,9 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                 jsonObject.put("manufacturer", item.manufacturer);
                 jsonObject.put("quantity", item.quantity);
                 jsonObject.put("unit", item.unit);
+                jsonObject.put("currentLocationId", item.getCurrentLocationId());
+                jsonObject.put("brand", item.getBrand());
+                jsonObject.put("batch", item.getBatch());
                 jsonArray.put(jsonObject);
             }
             return jsonArray.toString();
@@ -885,7 +916,7 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
     /**
      * 将JSON字符串转换为耗材列表
      */
-    private List<ConsumableItem> jsonToItems(String json) {
+    static List<ConsumableItem> jsonToItems(String json) {
         List<ConsumableItem> items = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(json);
@@ -907,6 +938,9 @@ public class CheckoutRecordDatabase extends SQLiteOpenHelper {
                 // 将rfid填入专用字段，并将条码字段也设为rfid用于显示兼容
                 item.setRfid(rfid);
                 item.setBarcode(rfid);
+                if (!jsonObject.isNull("currentLocationId")) item.setCurrentLocationId(jsonObject.getInt("currentLocationId"));
+                item.setBrand(jsonObject.optString("brand"));
+                item.setBatch(jsonObject.optString("batch"));
                 items.add(item);
             }
         } catch (JSONException e) {

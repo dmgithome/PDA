@@ -221,6 +221,13 @@ public class InboundAcceptanceActivity extends BaseActivity {
                 // 仅提示，不阻断页面；用户可先去设置
             }
 
+            submissions = new SubmissionQueue(this, ApiEndpoint.DEVICE_INBOUND_ORDER, "inbound", new SubmissionQueue.Listener() {
+                @Override public void apply(String code, org.json.JSONObject body, org.json.JSONObject display,
+                                            org.json.JSONObject receipt) throws Exception {
+                    applyInboundReceipt(code, body, receipt);
+                }
+                @Override public void showMessage(String message) { showInfo(message); }
+            });
             // 初始拉取：仅搭建骨架，解析待上架清单将于下一步完善
             loadPendingOrders();
         } catch (Exception e) {
@@ -259,11 +266,16 @@ public class InboundAcceptanceActivity extends BaseActivity {
         try { if (uhfManager != null) uhfManager.stopAllOperations(); } catch (Throwable ignore) {}
     }
 
+    private SubmissionQueue submissions;
+    private int orderLoadGeneration;
+
     private void loadPendingOrders() {
+        final int generation = ++orderLoadGeneration;
         try {
             showLoading(true);
             inboundApi.fetchPendingOrders(new ConsumableApiService.ApiCallback<List<InboundOrder>>() {
                 @Override public void onSuccess(List<InboundOrder> data) {
+                    if (generation != orderLoadGeneration) return;
                     showLoading(false);
                     mergePendingOrders(data);
                     updateEmpty();
@@ -271,6 +283,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
                 }
                 @Override public void onFailure(Exception e) {
                     showLoading(false);
+                    if (generation != orderLoadGeneration) return;
                     showError(UIUtils.friendlyErrorMessage("加载待上架清单失败", e));
                     updateEmpty();
                     updateRfidUi();
@@ -286,13 +299,19 @@ public class InboundAcceptanceActivity extends BaseActivity {
 
     private void mergePendingOrders(List<InboundOrder> data) {
         List<InboundOrder> filtered = new ArrayList<>();
+        Set<String> present = new HashSet<>();
         if (data != null) {
             for (InboundOrder o : data) {
                 if (o == null) continue;
-                if (o.accepted >= o.total) continue;
                 applySessionDelta(o);
+                if (o.accepted >= o.total && o.matchedInSession == 0) continue;
+                present.add(o.code);
                 filtered.add(o);
             }
+        }
+        for (InboundOrder previous : orders) {
+            applySessionDelta(previous);
+            if (previous.matchedInSession > 0 && present.add(previous.code)) filtered.add(previous);
         }
         dispatchOrderDiff(filtered);
     }
@@ -870,6 +889,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
     }
 
     private void submitAcceptance(InboundOrder order) {
+        if (submissions.hasPending(order.code)) { submissions.resumePending(); showInfo("正在核对上次验收结果"); return; }
         Set<String> set = deltaByOrder.get(order.code);
         int count = set == null ? 0 : set.size();
         if (count == 0) { showInfo("无新增可提交"); return; }
@@ -877,25 +897,17 @@ public class InboundAcceptanceActivity extends BaseActivity {
         if (!isInboundConfigReady()) {
             return;
         }
-        final Set<String> submitSet = set;
-        final java.util.List<String> submitRfids = (set == null || set.isEmpty())
-                ? java.util.Collections.emptyList()
-                : new java.util.ArrayList<>(set);
-        final int submittedCount = submitRfids.size();
-        final int submitOrderIndex = order != null ? orders.indexOf(order) : -1;
+        final java.util.List<String> submitRfids = new java.util.ArrayList<>(set);
         // 先选择入库的一级库（center），再实际提交
         showInfo("正在加载可用中心库...");
-        chooseCenterAndSubmit(order, submitSet, submitRfids, submittedCount, submitOrderIndex);
+        chooseCenterAndSubmit(order, submitRfids);
     }
 
     /**
      * 选择入库中心库（type=center），然后提交验收。
      */
     private void chooseCenterAndSubmit(InboundOrder order,
-                                       final Set<String> submitSet,
-                                       final java.util.List<String> submitRfids,
-                                       final int submittedCount,
-                                       final int submitOrderIndex) {
+                                       final java.util.List<String> submitRfids) {
         ConsumableApiService.getInstance(this).fetchLocations(new ConsumableApiService.ApiCallback<java.util.List<OperatingRoom>>() {
             @Override
             public void onSuccess(java.util.List<OperatingRoom> result) {
@@ -915,7 +927,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
 
                 // 若只有一个中心库，直接使用；否则弹出选择框
                 if (centers.size() == 1) {
-                    applySelectedCenterAndSubmit(order, centers.get(0), submitSet, submitRfids, submittedCount, submitOrderIndex);
+                    applySelectedCenterAndSubmit(order, centers.get(0), submitRfids);
                     return;
                 }
 
@@ -928,7 +940,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
                         .setTitle("选择入库中心库")
                         .setItems(names, (dialog, which) -> {
                             if (which >= 0 && which < centers.size()) {
-                                applySelectedCenterAndSubmit(order, centers.get(which), submitSet, submitRfids, submittedCount, submitOrderIndex);
+                                applySelectedCenterAndSubmit(order, centers.get(which), submitRfids);
                             }
                         })
                         .setCancelable(true)
@@ -947,10 +959,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
      */
     private void applySelectedCenterAndSubmit(InboundOrder order,
                                               OperatingRoom center,
-                                              final Set<String> submitSet,
-                                              final java.util.List<String> submitRfids,
-                                              final int submittedCount,
-                                              final int submitOrderIndex) {
+                                              final java.util.List<String> submitRfids) {
         try {
             if (center != null && center.serverId != null && center.serverId > 0) {
                 SharedPreferences locSp = getSharedPreferences("locations_prefs", MODE_PRIVATE);
@@ -960,17 +969,14 @@ public class InboundAcceptanceActivity extends BaseActivity {
 
         // 继续选择SPD仓库
         showInfo("正在加载SPD仓库列表...");
-        chooseSpdAndSubmit(order, submitSet, submitRfids, submittedCount, submitOrderIndex);
+        chooseSpdAndSubmit(order, center.serverId, submitRfids);
     }
 
     /**
      * 选择SPD仓库，然后提交验收。
      */
-    private void chooseSpdAndSubmit(InboundOrder order,
-                                    final Set<String> submitSet,
-                                    final java.util.List<String> submitRfids,
-                                    final int submittedCount,
-                                    final int submitOrderIndex) {
+    private void chooseSpdAndSubmit(InboundOrder order, int centerId,
+                                    final java.util.List<String> submitRfids) {
         ConsumableApiService.getInstance(this).fetchSpdRepositories(new ConsumableApiService.ApiCallback<java.util.List<ConsumableApiService.SpdRepository>>() {
             @Override
             public void onSuccess(java.util.List<ConsumableApiService.SpdRepository> result) {
@@ -981,7 +987,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
 
                 // 若只有一个SPD仓库，直接使用；否则弹出选择框
                 if (result.size() == 1) {
-                    finalSubmitWithSpdId(order, result.get(0).id, submitSet, submitRfids, submittedCount, submitOrderIndex);
+                    finalSubmitWithSpdId(order, centerId, result.get(0).id, submitRfids);
                     return;
                 }
 
@@ -994,7 +1000,7 @@ public class InboundAcceptanceActivity extends BaseActivity {
                         .setTitle("选择SPD仓库")
                         .setItems(names, (dialog, which) -> {
                             if (which >= 0 && which < result.size()) {
-                                finalSubmitWithSpdId(order, result.get(which).id, submitSet, submitRfids, submittedCount, submitOrderIndex);
+                                finalSubmitWithSpdId(order, centerId, result.get(which).id, submitRfids);
                             }
                         })
                         .setCancelable(true)
@@ -1011,65 +1017,63 @@ public class InboundAcceptanceActivity extends BaseActivity {
     /**
      * 最终提交验收（已选择中心库和SPD仓库）。
      */
-    private void finalSubmitWithSpdId(InboundOrder order,
-                                      int spdBindingId,
-                                      final Set<String> submitSet,
-                                      final java.util.List<String> submitRfids,
-                                      final int submittedCount,
-                                      final int submitOrderIndex) {
-        showInfo("正在提交验收...");
-        inboundApi.submitInboundOrder(order, submitSet, spdBindingId, new ConsumableApiService.ApiCallback<Boolean>() {
-            @Override public void onSuccess(Boolean ok) {
-                // 清空本次增量，避免重复提交
-                if (submitSet != null) submitSet.clear();
-                if (order != null && !TextUtils.isEmpty(order.code)) {
-                    deltaByOrder.remove(order.code);
-                    // 提交成功后，本次会话内匹配数量清零
-                    order.matchedInSession = 0;
-                }
-                if (!submitRfids.isEmpty() && order != null && order.plannedRfids != null) {
-                    order.plannedRfids.removeAll(submitRfids);
-                }
-                boolean removed = false;
-                if (order != null) {
-                    int remaining = order.total - submittedCount;
-                    if (remaining <= 0) {
-                        if (submitOrderIndex >= 0 && submitOrderIndex < orders.size()) {
-                            orders.remove(submitOrderIndex);
-                            adapter.notifyItemRemoved(submitOrderIndex);
-                            removed = true;
-                        } else {
-                            orders.remove(order);
-                            adapter.notifyDataSetChanged();
-                            removed = true;
-                        }
-                    } else {
-                        order.total = remaining;
-                        order.accepted = 0;
-                        if (submitOrderIndex >= 0 && submitOrderIndex < orders.size()) {
-                            adapter.notifyItemChanged(submitOrderIndex);
-                        } else {
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                } else {
-                    adapter.notifyDataSetChanged();
-                }
-                if (removed) {
-                    updateEmpty();
-                }
-                updateRfidUi();
-                showSuccess("验收提交成功");
-                // 提交成功后刷新待上架清单，保持与服务端一致
-                loadPendingOrders();
-                refocusBarcode();
+    private void finalSubmitWithSpdId(InboundOrder order, int centerId, int bindingId, java.util.List<String> labels) {
+        try {
+            Set<String> pending = deltaByOrder.get(order.code);
+            if (pending == null || !pending.containsAll(labels)) {
+                showInfo("待验收标签已变化，请按当前清单重新提交");
+                return;
             }
+            org.json.JSONObject body = inboundApi.buildInboundBody(order, labels, bindingId, centerId);
+            submissions.submit(order.code, body, new org.json.JSONObject());
+            showInfo("正在提交验收");
+        } catch (Exception e) { showError(UIUtils.friendlyErrorMessage("验收提交失败", e)); }
+    }
 
-            @Override public void onFailure(Exception e) {
-                showError(UIUtils.friendlyErrorMessage("验收提交失败", e));
-                refocusBarcode();
-            }
-        });
+    private void applyInboundReceipt(String code, org.json.JSONObject body, org.json.JSONObject receipt) throws Exception {
+        Set<String> submitted = new HashSet<>();
+        org.json.JSONArray rows = body.getJSONArray("items");
+        for (int i = 0; i < rows.length(); i++) submitted.add(rows.getJSONObject(i).getString("rfid"));
+        Set<String> pending = deltaByOrder.computeIfAbsent(code, k -> new HashSet<>());
+        int status = receipt.getInt("status");
+        if (status != 200 && status != 207) {
+            pending.addAll(submitted);
+            for (InboundOrder current : orders) if (code.equals(current.code)) applySessionDelta(current);
+            adapter.notifyDataSetChanged();
+            showError("验收失败：" + receipt.optString("message"));
+            return;
+        }
+        org.json.JSONObject data = receipt.getJSONObject("data");
+        org.json.JSONArray accepted = data.getJSONArray("accepted"), rejected = data.getJSONArray("rejected");
+        Set<String> settled = new HashSet<>();
+        for (int i = 0; i < accepted.length(); i++) settled.add(accepted.getString(i));
+        java.util.List<String> reasons = new ArrayList<>();
+        for (int i = 0; i < rejected.length(); i++) {
+            org.json.JSONObject row = rejected.getJSONObject(i);
+            settled.add(row.getString("rfid"));
+            reasons.add(row.getString("rfid") + "：" + row.getString("reason"));
+        }
+        if (settled.size() != accepted.length()+rejected.length() || !settled.equals(submitted)) {
+            throw new IllegalStateException("入库回执与提交的标签不一致");
+        }
+        pending.removeAll(settled);
+        if (pending.isEmpty()) deltaByOrder.remove(code);
+        for (InboundOrder current : orders) {
+            if (code.equals(current.code)) { current.plannedRfids.removeAll(settled); applySessionDelta(current); }
+        }
+        adapter.notifyDataSetChanged();
+        String summary = "入库成功 " + accepted.length() + " 件，待核对 " + rejected.length() + " 件";
+        if (reasons.isEmpty()) showSuccess(summary);
+        else {
+            showInfo(summary);
+            java.util.List<String> lines = new ArrayList<>();
+            for (int i = 0; i < accepted.length(); i++) lines.add("已入库 " + accepted.getString(i));
+            for (String reason : reasons) lines.add("待核对 " + reason);
+            new AlertDialog.Builder(this).setTitle(summary).setMessage(android.text.TextUtils.join("\n", lines))
+                    .setPositiveButton("确定", null).show();
+        }
+        loadPendingOrders();
+        refocusBarcode();
     }
 
     private boolean isInboundConfigReady() {

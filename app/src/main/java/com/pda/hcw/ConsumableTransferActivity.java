@@ -58,6 +58,7 @@ public class ConsumableTransferActivity extends BaseActivity {
     private TextView rfidPowerHint;
 
     // 数据
+    private SubmissionQueue submissions;
     private ConsumableApiService apiService;
     private NetworkConfig networkConfig;
     private final List<String> centerNameList = new ArrayList<>();
@@ -148,6 +149,13 @@ public class ConsumableTransferActivity extends BaseActivity {
         apiService = ConsumableApiService.getInstance(this);
         networkConfig = NetworkConfig.getInstance(this);
 
+        submissions = new SubmissionQueue(this, ApiEndpoint.TRANSFER_SUBMIT_FROM_PDA, "transfer", new SubmissionQueue.Listener() {
+            @Override public void apply(String slot, org.json.JSONObject body, org.json.JSONObject display,
+                                        org.json.JSONObject receipt) throws Exception {
+                applyTransferReceipt(body, display, receipt);
+            }
+            @Override public void showMessage(String message) { showInfo(message); }
+        });
         setupTargetCenterSpinner();
         setupBarcodeInput();
         setupButtons();
@@ -359,6 +367,11 @@ public class ConsumableTransferActivity extends BaseActivity {
     }
 
     private void submitTransfer() {
+        if (submissions.hasPending("batch")) {
+            submissions.resumePending();
+            showInfo("正在核对上次移库结果");
+            return;
+        }
         if (selectedCenterId == null) {
             showError(getString(R.string.transfer_select_center_first));
             return;
@@ -374,99 +387,73 @@ public class ConsumableTransferActivity extends BaseActivity {
         }
         List<String> rfids = new ArrayList<>(selectedByRfid.keySet());
 
-        // 构造请求体并调用底层 HTTP（直接复用 sendHttpRequest 需要新增接口；这里借助 NetworkConfig）
-        new Thread(() -> {
-            try {
-                org.json.JSONObject body = new org.json.JSONObject();
-                body.put("to_location_id", selectedCenterId);
-                org.json.JSONArray arr = new org.json.JSONArray();
-                for (String r : rfids) {
-                    if (r == null) continue;
-                    String v = r.trim();
-                    if (!v.isEmpty()) arr.put(v);
-                }
-                body.put("rfid_list", arr);
-
-                long userIdNumeric;
-                try {
-                    userIdNumeric = Long.parseLong(currentUser.getUserId());
-                } catch (Exception e) {
-                    userIdNumeric = 0L;
-                }
-                body.put("operator_id", userIdNumeric);
-                String deviceId = SessionManager.getInstance(this).getDeviceId();
-                body.put("device_id", deviceId == null ? "" : deviceId);
-
-                String url = networkConfig.getFullUrl(ApiEndpoint.TRANSFER_SUBMIT_FROM_PDA);
-                Log.d(TAG, "submitTransfer(POST): " + url + ", body=" + body);
-                String resp = apiServiceSend(url, "POST", body.toString());
-
-                org.json.JSONObject root = new org.json.JSONObject(resp);
-                int status = root.optInt("status", root.optInt("code", 0));
-                if (status != 200) {
-                    String msg = root.optString("message", root.optString("msg", "提交失败"));
-                    throw new Exception(msg);
-                }
-                org.json.JSONObject data = root.optJSONObject("data");
-                int successCount = 0;
-                int orderCount = 0;
-                if (data != null) {
-                    successCount = data.optInt("success_count", rfids.size());
-                    orderCount = data.optInt("order_count", 1);
-                }
-                int finalSuccessCount = successCount;
-                int finalOrderCount = orderCount;
-                runOnUiThread(() -> {
-                    showSuccess(getString(R.string.transfer_submit_success, finalSuccessCount, finalOrderCount));
-                    clearAll();
-                });
-            } catch (Exception e) {
-                Log.e(TAG, "submitTransfer failed", e);
-                String msg = UIUtils.friendlyErrorMessage("移库提交失败", e);
-                runOnUiThread(() -> showError(getString(R.string.transfer_submit_failed, msg)));
+        try {
+            org.json.JSONObject body = new org.json.JSONObject();
+            body.put("to_location_id", selectedCenterId);
+            org.json.JSONArray arr = new org.json.JSONArray();
+            for (String r : rfids) {
+                if (r == null) continue;
+                String v = r.trim();
+                if (!v.isEmpty()) arr.put(v);
             }
-        }).start();
+            body.put("rfid_list", arr);
+
+            long userIdNumeric;
+            try {
+                userIdNumeric = Long.parseLong(currentUser.getUserId());
+            } catch (Exception e) {
+                userIdNumeric = 0L;
+            }
+            body.put("operator_id", userIdNumeric);
+            String deviceId = SessionManager.getInstance(this).getDeviceId();
+            body.put("device_id", deviceId == null ? "" : deviceId);
+
+            org.json.JSONArray items = new org.json.JSONArray();
+            for (ConsumableApiService.TransferPreviewItem item : selectedByRfid.values()) {
+                items.put(new org.json.JSONObject().put("rfid", item.rfid).put("code", item.code)
+                        .put("name", item.name).put("from", item.fromLocationId).put("location", item.fromLocationName)
+                        .put("spec", item.spec).put("manufacturer", item.manufacturer).put("brand", item.brand).put("unit", item.unit));
+            }
+            submissions.submit("batch", body, new org.json.JSONObject().put("items", items));
+            showInfo("正在提交移库");
+        } catch (Exception e) { showError(UIUtils.friendlyErrorMessage("移库提交失败", e)); }
     }
 
-    // 由于 sendHttpRequest 是私有方法，这里做一个简化版本，仅用于移库提交。
-    private String apiServiceSend(String url, String method, String data) throws Exception {
-        java.net.HttpURLConnection connection = null;
-        try {
-            java.net.URL requestUrl = new java.net.URL(url);
-            connection = (java.net.HttpURLConnection) requestUrl.openConnection();
-            connection.setRequestMethod(method);
-            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setUseCaches(false);
-            connection.setDoInput(true);
-
-            UserInfo currentUser = SessionManager.getInstance(this).getCurrentUser();
-            if (currentUser != null && currentUser.getToken() != null && !currentUser.getToken().isEmpty()) {
-                connection.setRequestProperty("Authorization", "Bearer " + currentUser.getToken());
+    private void applyTransferReceipt(org.json.JSONObject body, org.json.JSONObject display, org.json.JSONObject receipt) throws Exception {
+        org.json.JSONArray tags = body.getJSONArray("rfid_list");
+        if (receipt.getInt("status") != 200) {
+            org.json.JSONArray items = display.getJSONArray("items");
+            for (int i = 0; i < items.length(); i++) {
+                org.json.JSONObject row = items.getJSONObject(i);
+                if (selectedByRfid.containsKey(row.getString("rfid"))) continue;
+                ConsumableApiService.TransferPreviewItem item = new ConsumableApiService.TransferPreviewItem();
+                item.rfid = row.getString("rfid");
+                item.code = row.optString("code"); item.name = row.optString("name");
+                item.fromLocationId = row.getInt("from"); item.fromLocationName = row.optString("location");
+                item.spec = row.optString("spec"); item.manufacturer = row.optString("manufacturer");
+                item.brand = row.optString("brand"); item.unit = row.optString("unit");
+                addOrUpdateGroup(item);
             }
-
-            connection.setConnectTimeout(10000);
-            connection.setReadTimeout(10000);
-            boolean hasBody = data != null && !data.isEmpty();
-            boolean methodAllowsBody = "POST".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method) || "PATCH".equalsIgnoreCase(method);
-            connection.setDoOutput(hasBody && methodAllowsBody);
-            if (hasBody && methodAllowsBody) {
-                try (java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(connection.getOutputStream()))) {
-                    writer.write(data);
-                    writer.flush();
-                }
-            }
-            int code = connection.getResponseCode();
-            java.io.InputStream is = (code / 100 == 2) ? connection.getInputStream() : connection.getErrorStream();
-            try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(is))) {
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) sb.append(line);
-                return sb.toString();
-            }
-        } finally {
-            if (connection != null) connection.disconnect();
+            showError("移库失败：" + receipt.optString("message"));
+            return;
         }
+        org.json.JSONObject result = receipt.getJSONObject("data");
+        int moved = result.getInt("success_count");
+        if (moved != tags.length()) throw new IllegalStateException("移库回执明细不完整");
+        java.util.Set<String> completed = new java.util.HashSet<>();
+        for (int i = 0; i < tags.length(); i++) completed.add(tags.getString(i));
+        for (String rfid : completed) selectedByRfid.remove(rfid);
+        for (int i = groupList.size()-1; i >= 0; i--) {
+            TransferGroupItem group = groupList.get(i);
+            group.rfids.removeAll(completed);
+            group.quantity = group.rfids.size();
+            if (group.rfids.isEmpty()) { groupMap.remove(group.groupKey); groupList.remove(i); }
+        }
+        totalCount = selectedByRfid.size();
+        detailAdapter.notifyDataSetChanged();
+        updateSummary();
+        showSuccess(getString(R.string.transfer_submit_success, moved, result.getInt("order_count"))
+                + "，待提交 " + totalCount + " 件");
     }
 
     // ===== RFID 相关逻辑（参考 InboundAcceptanceActivity） =====

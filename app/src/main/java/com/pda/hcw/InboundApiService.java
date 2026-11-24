@@ -167,128 +167,68 @@ public class InboundApiService {
     }
 
     /** 提交有单入库上架记录 (/api/stock/hasOrderInbound) */
-    public void submitInboundOrder(InboundOrder order, java.util.Set<String> rfids,
-                                   int spdBindingId,
-                                   ConsumableApiService.ApiCallback<Boolean> callback) {
-        executor.execute(() -> {
-            try {
-                if (order == null) { postFailure(callback, new Exception("未找到入库单信息")); return; }
-                // 校验登录
-                UserInfo currentUser = SessionManager.getInstance(context).getCurrentUser();
-                if (currentUser == null) { postFailure(callback, new Exception("用户未登录")); return; }
-                // 校验配置
-                SharedPreferences sp = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE);
-                String sdCode = sp.getString("sd_code", "");
-                int cabinetId = BarcodeValidator.getInstance(context).getCabinetId();
-                if (sdCode == null || sdCode.trim().isEmpty()) { postFailure(callback, new Exception("请先在设置中配置sdCode")); return; }
-                if (cabinetId <= 0) { postFailure(callback, new Exception("请先在设置中配置货柜ID")); return; }
-                if (rfids == null || rfids.isEmpty()) { postFailure(callback, new Exception("无新增可提交")); return; }
-                if (spdBindingId <= 0) { postFailure(callback, new Exception("请选择SPD仓库")); return; }
-                String userId = currentUser.getUserId();
-                if (userId == null || userId.trim().isEmpty()) { postFailure(callback, new Exception("用户信息缺少ID")); return; }
+    JSONObject buildInboundBody(InboundOrder order, java.util.Collection<String> rfids,
+                                int spdBindingId, int centerId) throws Exception {
+        if (order == null) { throw new IllegalArgumentException("未找到入库单信息"); }
+        // 校验登录
+        UserInfo currentUser = SessionManager.getInstance(context).getCurrentUser();
+        if (currentUser == null) { throw new IllegalArgumentException("用户未登录"); }
+        // 校验配置
+        SharedPreferences sp = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE);
+        String sdCode = sp.getString("sd_code", "");
+        int cabinetId = BarcodeValidator.getInstance(context).getCabinetId();
+        if (sdCode == null || sdCode.trim().isEmpty()) { throw new IllegalArgumentException("请先在设置中配置sdCode"); }
+        if (cabinetId <= 0) { throw new IllegalArgumentException("请先在设置中配置货柜ID"); }
+        if (rfids == null || rfids.isEmpty()) { throw new IllegalArgumentException("无新增可提交"); }
+        if (spdBindingId <= 0) { throw new IllegalArgumentException("请选择SPD仓库"); }
+        String userId = currentUser.getUserId();
+        if (userId == null || userId.trim().isEmpty()) { throw new IllegalArgumentException("用户信息缺少ID"); }
 
-                java.util.List<String> rfidList = new java.util.ArrayList<>(rfids);
-                org.json.JSONArray itemsArray = new org.json.JSONArray();
-                java.util.Map<String, InboundOrderDetail> detailMap = order.detailByRfid;
-                for (String rfid : rfidList) {
-                    org.json.JSONObject itemJson = new org.json.JSONObject();
-                    itemJson.put("rfid", rfid);
-                    itemJson.put("cabinetID", cabinetId);
-                    if (detailMap != null) {
-                        InboundOrderDetail detail = detailMap.get(rfid);
-                        if (detail != null) {
-                            putStringIfNotEmpty(itemJson, "code", detail.code);
-                            putStringIfNotEmpty(itemJson, "name", detail.name);
-                            putStringIfNotEmpty(itemJson, "spec", detail.spec);
-                            putStringIfNotEmpty(itemJson, "batch", detail.batch);
-                            putStringIfNotEmpty(itemJson, "productionDate", detail.productionDate);
-                            putStringIfNotEmpty(itemJson, "expiryDate", detail.expiryDate);
-                            int quantity = detail.quantity > 0 ? detail.quantity : 1;
-                            itemJson.put("quantity", quantity);
-                        } else {
-                            itemJson.put("quantity", 1);
-                        }
-                    } else {
-                        itemJson.put("quantity", 1);
-                    }
-                    itemJson.put("orderNo", order.code != null ? order.code : "");
-                    itemsArray.put(itemJson);
+        java.util.List<String> rfidList = new java.util.ArrayList<>(rfids);
+        org.json.JSONArray itemsArray = new org.json.JSONArray();
+        java.util.Map<String, InboundOrderDetail> detailMap = order.detailByRfid;
+        for (String rfid : rfidList) {
+            org.json.JSONObject itemJson = new org.json.JSONObject();
+            itemJson.put("rfid", rfid);
+            itemJson.put("cabinetID", cabinetId);
+            if (detailMap != null) {
+                InboundOrderDetail detail = detailMap.get(rfid);
+                if (detail != null) {
+                    putStringIfNotEmpty(itemJson, "code", detail.code);
+                    putStringIfNotEmpty(itemJson, "name", detail.name);
+                    putStringIfNotEmpty(itemJson, "spec", detail.spec);
+                    putStringIfNotEmpty(itemJson, "batch", detail.batch);
+                    putStringIfNotEmpty(itemJson, "productionDate", detail.productionDate);
+                    putStringIfNotEmpty(itemJson, "expiryDate", detail.expiryDate);
+                    int quantity = detail.quantity > 0 ? detail.quantity : 1;
+                    itemJson.put("quantity", quantity);
+                } else {
+                    itemJson.put("quantity", 1);
                 }
-
-                if (itemsArray.length() == 0) { postFailure(callback, new Exception("无新增可提交")); return; }
-
-                org.json.JSONObject body = new org.json.JSONObject();
-                body.put("userID", userId.trim());
-                putStringIfNotEmpty(body, "userName", currentUser.getUsername());
-                putStringIfNotEmpty(body, "sdCode", sdCode);
-                body.put("orderNo", order.code != null ? order.code : "");
-                body.put("type", "hasOrder");
-                body.put("cabinetID", cabinetId);
-                String now = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
-                        .format(new java.util.Date());
-                body.put("createDate", now);
-                body.put("items", itemsArray);
-
-                // 目标地点（入库验收要求顶层 target_location_id 必填）
-                try {
-                    SharedPreferences locSp = context.getSharedPreferences("locations_prefs", Context.MODE_PRIVATE);
-                    int targetId = locSp.getInt("default_return_location_id", -1);
-                    if (targetId <= 0) {
-                        postFailure(callback, new Exception("请先选择入库中心库"));
-                        return;
-                    }
-                    body.put("target_location_id", targetId);
-                    // SPD仓库（bindingId），由用户选择传入
-                    body.put("bindingId", spdBindingId);
-                } catch (Exception e) {
-                    postFailure(callback, new Exception("读取默认地点失败，请重试"));
-                    return;
-                }
-
-                String url = networkConfig.getFullUrl(ApiEndpoint.DEVICE_INBOUND_ORDER);
-                Log.d(TAG, "submitInboundOrder url=" + url);
-                String resp = sendHttpRequest(url, "POST", body.toString());
-                Log.d(TAG, "submitInboundOrder resp=" + resp);
-
-                // 响应：{ status/code/msg/data }
-                org.json.JSONObject root = new org.json.JSONObject(resp);
-                int status = root.optInt("status", root.optInt("code", -1));
-                int code = root.has("code") ? root.optInt("code", status) : status;
-                boolean success = (status == 200 || status == 0 || code == 200 || code == 0);
-                Object dataNode = root.opt("data");
-                boolean hasData = !(dataNode == null || org.json.JSONObject.NULL.equals(dataNode));
-                if (dataNode instanceof org.json.JSONArray) {
-                    hasData = ((org.json.JSONArray) dataNode).length() > 0;
-                } else if (dataNode instanceof org.json.JSONObject) {
-                    hasData = ((org.json.JSONObject) dataNode).length() > 0;
-                } else if (dataNode instanceof String) {
-                    hasData = !((String) dataNode).isEmpty();
-                }
-                if (!hasData && root.optBoolean("success", false)) {
-                    hasData = true;
-                }
-                if (success && !hasData) {
-                    success = false;
-                }
-                if (!success) {
-                    String msg = root.optString("msg", root.optString("message", "提交失败"));
-                    if (dataNode instanceof org.json.JSONArray && ((org.json.JSONArray) dataNode).length() > 0) {
-                        msg = msg + " - " + dataNode.toString();
-                    } else if (dataNode instanceof org.json.JSONObject && ((org.json.JSONObject) dataNode).length() > 0) {
-                        msg = msg + " - " + dataNode.toString();
-                    } else if (dataNode instanceof String && !((String) dataNode).isEmpty()) {
-                        msg = msg + " - " + dataNode;
-                    }
-                    Log.e(TAG, "submitInboundOrder error status=" + status + ", code=" + code + ", resp=" + resp);
-                    throw new Exception(msg);
-                }
-                Log.i(TAG, "submitInboundOrder success status=" + status + ", code=" + code + ", message=" + root.optString("message"));
-                postSuccess(callback, Boolean.TRUE);
-            } catch (Exception e) {
-                Log.e(TAG, "submitInboundOrder failed", e);
-                postFailure(callback, e);
+            } else {
+                itemJson.put("quantity", 1);
             }
-        });
+            itemJson.put("orderNo", order.code != null ? order.code : "");
+            itemsArray.put(itemJson);
+        }
+
+        if (itemsArray.length() == 0) { throw new IllegalArgumentException("无新增可提交"); }
+
+        org.json.JSONObject body = new org.json.JSONObject();
+        body.put("userID", userId.trim());
+        putStringIfNotEmpty(body, "userName", currentUser.getUsername());
+        putStringIfNotEmpty(body, "sdCode", sdCode);
+        body.put("orderNo", order.code != null ? order.code : "");
+        body.put("type", "hasOrder");
+        body.put("cabinetID", cabinetId);
+        String now = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
+                .format(new java.util.Date());
+        body.put("createDate", now);
+        body.put("items", itemsArray);
+
+        body.put("target_location_id", centerId);
+        body.put("bindingId", spdBindingId);
+        return body;
     }
 
     private void postSuccess(ConsumableApiService.ApiCallback<?> cb, Object data) {
